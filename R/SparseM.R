@@ -897,6 +897,16 @@ return(z)
         as.matrix.csr(x)
 }
 #--------------------------------------------------------------------
+"[.matrix.diag.csr" <- function (x, rw = 1:x@dimension[1], cl = 1:x@dimension[2])
+{
+        x <- as.matrix.coo(as(x,"matrix.csr"))
+	y <- x[rw,cl]
+	if(is(y,"matrix.coo"))
+		as(as.matrix.csr(y),"matrix.diag.csr")
+	else
+		y
+}
+#--------------------------------------------------------------------
 ".matmul.matrix.csr" <- function(x,y){
 if(is.matrix.csr(x)){
 	if(is.matrix.csr(y)){
@@ -1666,6 +1676,13 @@ setAs("vector","matrix.diag.csr",function(from){
 	return(new("matrix.diag.csr", ra = from ,ja = as.integer(1:n), 
 		ia = as.integer(1:(n+1)), dimension = as.integer(c(n,n))))
 	})
+setAs("matrix.csr","matrix.diag.csr",function(from){
+        nr <- from@dimension[1]
+        nc <- from@dimension[2]
+        if( nr!=nc) stop("Resulting 'matrix.diag.csr' matrix has to be square")
+        if(!(setequal(from@ja,1:nc)&setequal(from@ia, 1:(nr+1)))) stop("matrix not diagonal")
+        new("matrix.diag.csr", ra = from@ra, ja = from@ja, ia = from@ia, dimension = from@dimension)
+        })
 setMethod("diag","matrix.csr", function (x = 1, nrow, ncol=n){
     if (is.matrix.csr(x) && nargs() == 1) {
         if ((m <- min(dim(x))) == 0)
@@ -1693,6 +1710,11 @@ setMethod("diag<-","matrix.csr", function(x,value) {
      x[cbind(i, i)] <- value
      x
      })
+setMethod("diag<-","matrix.diag.csr",function(x,value) {
+	y <- as(x,"matrix.csr")
+	diag(y) <- value
+	as(y,"matrix.diag.csr")
+	})
 setGeneric("chol")
 setMethod("chol","matrix",get("chol", pos=NULL, mode= "function"))
 setMethod("chol","matrix.csr", function(x, pivot = FALSE, nsubmax, nnzlmax, tmpmax, ...){

@@ -6,6 +6,8 @@
 \alias{initialize,matrix.csr-method}
 \alias{initialize,matrix.coo-method}
 \alias{coerce,vector,matrix.diag.csr-method}
+\alias{coerce,matrix.csr,matrix.diag.csr-method}
+\alias{coerce,vector,matrix.csr-method}
 \alias{as.matrix,ANY-method}
 \alias{as.matrix,matrix.csr-method}
 \alias{as.matrix,csr-method}

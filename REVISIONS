@@ -198,3 +198,7 @@ The version 0.32 was completed December 20 2003
 The version 0.33 was completed January 20 2004
 
 	o  fixed bug in scalar division...identified by Renald Buter
+
+The version 0.33 was completed January 20 2004
+
+	o  fixed bug in matrix.diag.csr coercion ... identified by Nicholas Lewin-Koh

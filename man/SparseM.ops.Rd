@@ -38,6 +38,7 @@
 \alias{diag,matrix.csr-method} 
 \alias{diag<-,ANY-method} 
 \alias{diag<-,matrix.csr-method} 
+\alias{diag<-,matrix.diag.csr-method} 
 \alias{diff,matrix.csr-method} 
 \alias{diff<-,ANY-method} 
 \alias{diff<-,matrix.csr-method} 
@@ -53,6 +54,7 @@
 \alias{rbind.matrix.csr} 
 \alias{cbind.matrix.csr} 
 \alias{[.matrix.csr}
+\alias{[.matrix.diag.csr}
 \alias{[<-.matrix.csr}
 \alias{[.matrix.coo}
 \alias{[<-.matrix.coo}
