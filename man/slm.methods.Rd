@@ -49,10 +49,9 @@ Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
 \code{slm} 
 }
 \examples{
-# lsq.rra is real rectangular matrix stored in compressed sparse column format
-read.matrix.hb(system.file("HBdata","lsq.rra",package = "SparseM"))-> hb.o
-X <- model.matrix(hb.o) #extract the design matrix
-y <- model.response(hb.o) # extract the rhs
+data(lsq)
+X <- model.matrix(lsq) #extract the design matrix
+y <- model.response(lsq) # extract the rhs
 X1 <- as.matrix(X)
 slm.time <- unix.time(slm(y~X1-1) -> slm.o) # pretty fast
 cat("slm time =",slm.time,"\n")

@@ -5,6 +5,7 @@
 \alias{initialize,ANY-method}
 \alias{initialize,matrix.csr-method}
 \alias{initialize,matrix.coo-method}
+\alias{coerce,vector,matrix.diag.csr-method}
 \alias{as.matrix,ANY-method}
 \alias{as.matrix,matrix.csr-method}
 \alias{as.matrix,csr-method}
@@ -95,6 +96,9 @@ This argument is only relevant when coercing matrices from dense to sparse form.
 \details{
 The function \code{matrix.csc} acts like \code{matrix} to coerce a vector object to
 a sparse matrix object of class \code{matrix.csr}.  
+This aspect of the code is in the process of conversion from S3 to S4 classes.
+For the most part the S3 syntax prevails.  An exception is the code to
+coerce vectors to diagonal matrix form which uses \code{as(v,"matrix.diag.csr"}.
 The generic functions \code{as.matrix.xxx} coerce a matrix \code{x} into 
 a matrix of storage class \code{matrix.xxx}. The argument matrix \code{x}
 may be of conventional dense form, or of any of the four supported 

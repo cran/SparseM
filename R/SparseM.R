@@ -271,6 +271,7 @@ function (filename)
 		Rhstype = character(1),
 		PACKAGE = "SparseM"
 		)
+	if(hb1.o$errflg == -1) stop(paste("Can't find",file,sep = " "))
 	mxtype = hb1.o$mxtype
         if(substr(mxtype,1,1)!="R") stop("Doesn't handle non-real matrices")
         if(substr(mxtype,2,2) == "S")
@@ -513,51 +514,72 @@ z <- new("matrix.csr",ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dimension=c(nrow,nco
 return(z)
 }
 #--------------------------------------------------------------------
-".matrix.csr.elemul" <-
-function(A,B){
-#element-wise matrix multiplication of two sparse csr matrices 
-if(is.numeric(A) && length(A) == 1)
-	z <- new("matrix.csr",ra=A*B@ra,ja=B@ja,ia=B@ia,dimension=B@dimension)
-else if(is.numeric(B) && length(B) == 1)
-	z <- new("matrix.csr",ra=B*A@ra,ja=A@ja,ia=A@ia,dimension=A@dimension)
-else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
-	if(is.matrix(A)) A <- as.matrix.csr(A)
-	if(is.matrix(B)) B <- as.matrix.csr(B)
-	nrow <- A@dimension[1]
-	ncol <- A@dimension[2]
-	Bcol <- B@dimension[2]
-	Brow <- B@dimension[1]
-	if(ncol != Bcol | nrow != Brow)stop("matrices not conformable for element-by-element multiplication")
-	nnza <- A@ia[nrow+1]-1
-	nnzb <- B@ia[nrow+1]-1
-	nnzmax <- length(intersect(A@ja+A@dimension[2]*(rep(1:A@dimension[1],diff(A@ia))-1),
-		B@ja+B@dimension[2]*(rep(1:B@dimension[1],diff(B@ia))-1)))+1
-	z <- .Fortran("aemub",
-		as.integer(nrow),
-		as.integer(ncol),
-		as.double(A@ra),
-		as.integer(A@ja),
-		as.integer(A@ia),
-		as.double(B@ra),
-		as.integer(B@ja),
-		as.integer(B@ia),
-		ra = double(nnzmax),
-		ja = integer(nnzmax),
-		ia = integer(nrow+1),
-		integer(ncol),
-		double(ncol),
-		as.integer(nnzmax),
-		ierr = integer(1),
-		PACKAGE = "SparseM")
-	if(z$ierr != 0) stop("insufficient space for element-wise sparse matrix multiplication")
-	nnz <- z$ia[nrow+1]-1
-	if(length(z$ra)==1 & z$ra==0){#trap zero matrix
-		z$ja <- as.integer(1)
-		z$ia <- as.integer(c(1,rep(2,nrow)))
-		}
-	z <- new("matrix.csr",ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dimension=c(nrow,ncol))
-	}
-else stop("Arguments have to be class \"matrix.csr\" or numeric")
+".matrix.csr.elemul" <- function(A,B){
+if(is.vector(A)) {
+        if(length(A) == 1){
+                if(A==0) return(as.matrix.csr(0,nrow(B),ncol(B)))
+                else{B@ra <- A*B@ra;return(B)}
+                }
+        else if(length(A) == nrow(B))
+		return(as(A,"matrix.diag.csr") %*% B)
+        else if(length(A) == ncol(B))
+		return(B %*% as(A,"matrix.diag.csr"))
+        else
+                stop("A and B not conformable for element-by-element multiplication")
+        }
+else if(is.vector(B)) {
+        if(length(B) == 1){
+                if(B==0) return(as.matrix.csr(0,nrow(A),ncol(A)))
+                else{A@ra <- B*A@ra;return(A)}
+                }
+        else if(length(B) == nrow(A))
+		return(as(B,"matrix.diag.csr") %*% A)
+        else if(length(B) == ncol(A))
+		return(A %*% as(B,"matrix.diag.csr"))
+        else
+                stop("A and B not conformable for element-by-element multiplication")
+        }
+else if(is.matrix(A))
+        A <- as.matrix.csr(A)
+else if(is.matrix(B))
+        B <- as.matrix.csr(B)
+else
+        stop("Arguments must be of class:  vector, matrix or matrix.csr")
+	Arow <- nrow(A)
+        Acol <- ncol(A)
+        Brow <- nrow(B)
+        Bcol <- ncol(B)
+        if(Acol != Bcol | Arow != Brow)
+                stop("A and B not conformable for element-by-element multiplication")
+        nnza <- A@ia[Arow+1]-1
+        nnzb <- B@ia[Arow+1]-1
+        nnzmax <- length(intersect(A@ja+A@dimension[2]*(rep(1:A@dimension[1],diff(A@ia))-1),
+                B@ja+B@dimension[2]*(rep(1:B@dimension[1],diff(B@ia))-1)))+1
+        z <- .Fortran("aemub",
+                as.integer(Arow),
+                as.integer(Acol),
+                as.double(A@ra),
+                as.integer(A@ja),
+                as.integer(A@ia),
+                as.double(B@ra),
+                as.integer(B@ja),
+                as.integer(B@ia),
+                ra = double(nnzmax),
+                ja = integer(nnzmax),
+                ia = integer(Arow+1),
+                integer(Acol),
+                double(Acol),
+                as.integer(nnzmax),
+                ierr = integer(1),
+                PACKAGE = "SparseM")
+	if(z$ierr != 0)
+                stop("insufficient space for element-wise sparse matrix multiplication")
+        nnz <- z$ia[Arow+1]-1
+        if(identical(z$ra,0)){#trap zero matrix
+                z$ja <- as.integer(1)
+                z$ia <- as.integer(c(1,rep(2,nrow)))
+                }
+z <- new("matrix.csr",ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dimension=c(Arow,Acol))
 return(z)
 }
 #--------------------------------------------------------------------
@@ -1007,7 +1029,7 @@ function (x, y, weights,  ...)
         stop("negative weights not allowed")
     contr <- attr(x, "contrasts")
     w <- sqrt(weights)
-    x <- t(t(x) %*% diag.matrix.csr(w))
+    x <- x %*% as(w,"matrix.diag.csr")
     y <- y * w
     fit <- slm.fit.csr(x, y,  ...)
     fit$contrasts <- attr(x, "contrasts")
@@ -1360,7 +1382,7 @@ require(methods)
 setClass("matrix.csr",representation(ra="numeric",
 	ja="integer",ia="integer", dimension="integer"),
 	validity = function(object) {
- 		if(!length(object@dimension) == 2 )
+ 		if(!(length(object@dimension) == 2) )
                 	return("invalid dimension attribute")
         	else{
                		nrow <- object@dimension[1]
@@ -1382,8 +1404,8 @@ setClass("matrix.csr",representation(ra="numeric",
                 	return("ra has too few, or too many elements")
 		TRUE})
 setMethod("initialize", "matrix.csr", 
-	function(.Object, ra = numeric(0),  ja = integer(0),
-		ia = integer(0),dimension = integer(0)) {
+	function(.Object, ra = 0,  ja = as.integer(1),
+		ia = as.integer(c(1,2)),dimension = as.integer(c(1,1))) {
         .Object@ra <- ra
         .Object@ja <- ja
         .Object@ia <- ia
@@ -1596,11 +1618,22 @@ setMethod("diff","matrix.csr", function(x, lag = 1, differences = 1, ...) {
         for (i in 1:differences) r <- r[i1,] - r[-nrow(r):-(nrow(r) - lag + 1),]
     r
    })
-setMethod("diag","matrix.csr", function (x = 1, nrow, ncol=n) {
+setClass("matrix.diag.csr","matrix.csr")
+setAs("vector","matrix.diag.csr",function(from){
+	if(!is.numeric(from))stop("non-numeric entries in sparse matrices not allowed")
+	if(length(from)==1){
+		n <- as.integer(from)
+		if(n>0) from  <-  rep(1,n)
+		else stop("Sparse identity matrices must have positive, integer dimension") 
+		}
+	else n <- length(from)
+	return(new("matrix.diag.csr", ra = from ,ja = as.integer(1:n), 
+		ia = as.integer(1:(n+1)), dimension = as.integer(c(n,n))))
+	})
+setMethod("diag","matrix.csr", function (x = 1, nrow, ncol=n){
     if (is.matrix.csr(x) && nargs() == 1) {
         if ((m <- min(dim(x))) == 0)
             return(numeric(0))
-        #y <- c(x)[1 + 0:(m - 1) * (dim(x)[1] + 1)]
         y <- rep(0,m)
         ia <- rep(1:dim(x)[1],diff(x@ia))
         y[x@ja[ia == x@ja]] <- x@ra[ia == x@ja]
@@ -1610,21 +1643,8 @@ setMethod("diag","matrix.csr", function (x = 1, nrow, ncol=n) {
             nms[[2]][1:m]))
             names(y) <- nm
         return(y)
-    }
-    if (is.array(x) && length(dim(x)) != 1)
-        stop("first argument is array, but not matrix.")
-    if (missing(x))
-        n <- nrow
-    else if (length(x) == 1 && missing(nrow) ) {
-        n <- as.integer(x)
-        x <- 1
-    }
-    else n <- length(x)
-    ja <- 1:n
-    ra <- ja
-    ra[1:n] <- x
-    ia <- 1:(n+1)
-    new("matrix.csr",ra = ra, ja = ja, ia = ia, dimension=as.integer(c(n,n)))
+	}
+   else stop("diag method for class matrix.csr doesn't understand nrow and ncol args")
    })
 setMethod("diag<-","matrix.csr", function(x,value) {
      dx <- dim(x)

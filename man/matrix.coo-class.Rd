@@ -14,7 +14,6 @@ Objects can be created by calls of the form \code{new("matrix.coo", ...)}.
         indices of the elements stored in `ra'.}
     \item{\code{ia}:}{Object of class \code{integer}, an integer array of nnz elements containing the row
         indices of the elements stored in `ra'.}
- }
     \item{\code{dimension}:}{Object of class \code{integer}, dimension of the matrix }
   }
 }

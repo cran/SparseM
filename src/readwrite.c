@@ -3,7 +3,7 @@
 #include "iohb.h"
 
 void read_HB1(char **filename, int* M, int* N, int* nonzeros, int* Nrhs,
-char **mxtype, char **Rhstype)
+char **mxtype, char **Rhstype, int* errflg)
 {
    FILE *in_file; 
    char *Type;
@@ -21,6 +21,8 @@ char **mxtype, char **Rhstype)
    *mxtype = Type;
     if ( (in_file = fopen( *filename, "r")) == NULL ) {
        fprintf(stderr,"Error: Cannot open file: %s\n",*filename);
+       *errflg = -1;
+       return;
     }
 
    readHB_header(in_file, Title, Key, mat_type, &Nrow, &Ncol, &Nnzero, Nrhs,

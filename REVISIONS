@@ -164,4 +164,29 @@ The version 0.30 was completed August 10 2003
 	be gradually removed when more time and energy permits.  For now, I hope
 	that the changes that have been made will permit a smooth transition to
 	1.8.0 when it is released.  At the moment it does pass R CMD check on
-	the (almost) current version of R-devel. 
+	the (almost) current version of R-devel.  In particular, One
+	thing that eventually needs to be fixed is that all of the ontology 
+	stuff should be brought up todate so that you can say: 
+ 
+        	as(x,"matrix.csr") 
+ 
+	rather than 
+ 
+        	as.matrix.csr(x) 
+
+The version 0.31 was completed August 25 2003
+
+   o  At the suggestion of Kurt we removed the explicit reading of the hb
+	data and replaced it with an R dataset loading.  Comments are left
+	in the examples section indicating how to do the reading, but the
+	official view seems to be that the old approach was insufficiently
+	robust.
+
+   o  The diag() update.  Prior versions didn't really handle the coercion
+	of scalars and vectors to diag csr matrices very well.  This was
+	fixed by introducing a new subclass matrix.diag.csr of which matrix.csr
+	is the superclass (meaning that they have the same rights and responsibilities)
+	so now you can create an n-dimensional identity by as(n,"matrix.diag.csr")
+	and a matrix with diagonal v by as(v,"matrix.diag.csr").  In the process
+	some problems with the default matrix.csr object were discovered and fixed.
+	And the code for .matrix.csr.elemul was changed to reflect these changes.

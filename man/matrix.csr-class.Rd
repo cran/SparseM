@@ -1,10 +1,16 @@
 \name{matrix.csr-class}
 \docType{class}
 \alias{matrix.csr-class}
+\alias{matrix.diag.csr-class}
 \title{Class "matrix.csr"}
 \description{A new class for sparse matrices stored in compressed sparse row format}
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("matrix.csr", ...)}.
+and coerced from various other formats.  Coercion of integer scalars 
+and vectors into identity matrices and diagonal matrices respectively
+is accomplished by \code{as(x,"matrix.diag.csr")} which generates an
+object that has all the rights and responsibilties of the matrix.csr class.
+The default matrix.csr object is a scalar (1 by 1) matrix  with element 0.
 }
 \section{Slots}{
   \describe{

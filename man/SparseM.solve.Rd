@@ -67,13 +67,12 @@ pp. 1034-1056.
 \code{slm} for sparse version of \code{lm} \cr
 }
 \examples{
-# lsq.rra is real rectangular stored in csc (compressed sparse column) format
-read.matrix.hb(system.file("HBdata","lsq.rra",package = "SparseM"))-> hb.o
-class(hb.o) # -> [1] "matrix.csc.hb"
-model.matrix(hb.o)->design.o
+data(lsq)
+class(lsq) # -> [1] "matrix.csc.hb"
+model.matrix(lsq)->design.o
 class(design.o) # -> "matrix.csr"
 dim(design.o) # -> [1] 1850  712
-y <- model.response(hb.o) # extract the rhs
+y <- model.response(lsq) # extract the rhs
 length(y) # [1] 1850
 t(design.o)\%*\%design.o -> XpX
 t(design.o)\%*\%y -> Xpy

@@ -102,12 +102,13 @@ User's Guide for Harwell-Boeing Sparse Matrix Collection at
 }
 
 \examples{
-read.matrix.hb(system.file("HBdata","lsq.rra",package = "SparseM"))-> hb.o
+\dontrun{read.matrix.hb(system.file("HBdata","lsq.rra",package = "SparseM"))-> hb.o
 class(hb.o) # -> [1] "matrix.csc.hb"
 model.matrix(hb.o)->X
 class(X) # -> "matrix.csr"
 dim(X) # -> [1] 1850  712
 y <- model.response(hb.o) # extract the rhs
 length(y) # [1] 1850
+}
 }
 \keyword{IO}

@@ -37,8 +37,9 @@
 \alias{diag,matrix.csr-method} 
 \alias{diag<-,ANY-method} 
 \alias{diag<-,matrix.csr-method} 
-\alias{diff,ANY-method} 
 \alias{diff,matrix.csr-method} 
+\alias{diff<-,ANY-method} 
+\alias{diff<-,matrix.csr-method} 
 \alias{diag.assign,matrix.csr-method} 
 \alias{ncol,matrix.csr-method} 
 \alias{nrow,matrix.csr-method} 
@@ -72,10 +73,11 @@ of class \code{matrix.csr}.
 \code{matrix.csr} are designed to behave exactly as for 
 regular matrices.  In particular, matrix multiplication, kronecker
 product, addition, 
-subtraction and various logical operations work as with the conventional
+subtraction and various logical operations should work as with the conventional
 dense form of matrix storage, as does indexing, rbind, cbind, and diagonal
-assignment and extraction.
- 
+assignment and extraction.  The method diag may be used to extract the
+diagonal of a \code{matrix.csr} object, to create a sparse diagonal see
+\code{SparseM.ontology}.
 }
 \references{ 
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
