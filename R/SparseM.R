@@ -1,7 +1,6 @@
 #--------------------------------------------------------------------
 ".First.lib" <- function(lib, pkg) {
    require(methods)
-   require(stats)
    library.dynam("SparseM", pkg, lib)
    print("SparseM library loaded")
 }
@@ -270,9 +269,10 @@ function (filename)
 		Nrhs = integer(1),
 		mxtype = character(1),
 		Rhstype = character(1),
+		errflg = integer(1),
 		PACKAGE = "SparseM"
 		)
-	if(hb1.o$errflg == -1) stop(paste("Can't find",file,sep = " "))
+	if(hb1.o$errflg == -1) stop(paste("Can't find",filename,sep = " "))
 	mxtype = hb1.o$mxtype
         if(substr(mxtype,1,1)!="R") stop("Doesn't handle non-real matrices")
         if(substr(mxtype,2,2) == "S")

@@ -2484,23 +2484,26 @@ C
 C***********************************************************************
 C***********************************************************************
 C
-      REAL FUNCTION  GTIMER ()
-C       --------------------------
-C       FOR IBM RS/6000 ...
-C       INTEGER     MCLOCK
-C       GTIMER = MCLOCK()/100.0
-C       --------------------------
-C       FOR MOST BERKELEY UNIX ...
-        REAL        ETIME
-        REAL        VEC(2)
-        GTIMER = ETIME(VEC)
-C       --------------------------
-C       FOR CRAY ...
-C       REAL        SECOND
-C       GTIMER = SECOND()
-C       --------------------------
-        RETURN
-      END
+C   GTIMER is commented out for compatibility in the windoze boxes
+C
+CC
+C      REAL FUNCTION  GTIMER ()
+CC       --------------------------
+CC       FOR IBM RS/6000 ...
+CC       INTEGER     MCLOCK
+CC       GTIMER = MCLOCK()/100.0
+CC       --------------------------
+CC       FOR MOST BERKELEY UNIX ...
+C        REAL        ETIME
+C        REAL        VEC(2)
+C        GTIMER = ETIME(VEC)
+CC       --------------------------
+CC       FOR CRAY ...
+CC       REAL        SECOND
+CC       GTIMER = SECOND()
+CC       --------------------------
+C        RETURN
+C      END
 C***********************************************************************
 C***********************************************************************
 C

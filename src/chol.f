@@ -79,11 +79,11 @@ c23456789012345678901234567890123456789012345678901234567890123456789012
       double precision dsub(nnzdsm),d(nnzdmax),
      &        lnz(nnzlmax),tmpvec(tmpmax)
       double precision timed
-      real gtimer,timbegw,timendw
+c      real gtimer,timbegw,timendw
       external smxpy1,smxpy2,smxpy4,smxpy8
       external mmpy1,mmpy2,mmpy4,mmpy8
 c
-      timbegw=gtimer()
+c      timbegw=gtimer()
 c
 c Extract the non-diagonal structure  of d,jd,id
 c   The diagonal entries are stored in dsub(1:m), the off-diagonal entries
@@ -199,7 +199,7 @@ c
          go to 100
       endif
   100 continue
-      timendw=gtimer()
-      timed = timendw - timbegw
+c      timendw=gtimer()
+c      timed = timendw - timbegw
       return
       end

@@ -199,12 +199,13 @@ The version 0.33 was completed January 20 2004
 
 	o  fixed bug in scalar division...identified by Renald Buter
 
-The version 0.33 was completed January 20 2004
+The version 0.35 was completed January 20 2004
 
 	o  fixed bug in matrix.diag.csr coercion ... identified by Nicholas Lewin-Koh
 
-The version 0.36 of April 22, 2004 
+The version 0.36 was completed May 12 2004
 
-	o  fixed a problem with version number checking and 
-	added dependence on "stats" due to a reorganization of 
-	base which exiled model.matrix() to that package.
+	o  fixed a version testing problem for R-devel 2.0.0
+	o  added Depends R(>=1.8) to Description at suggestion of BDRipley
+	o  added errfig in the .C() call in read.matrix.hb
+	o  commented out some GTIMER, ETIME commands that caused AIX problems

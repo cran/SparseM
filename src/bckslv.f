@@ -38,9 +38,9 @@ c23456789012345678901234567890123456789012345678901234567890123456789012
      &        xsuper(m+1)
       double precision lnz(nnzlmax),b(m,nrhs),newrhs(m),sol(m,nrhs)
       double precision timed
-      real gtimer,timbegw,timendw
+c      real gtimer,timbegw,timendw
 c
-      timbegw=gtimer()
+c      timbegw=gtimer()
 c Call blkslv: Numerical solution
 c
       do j = 1,nrhs
@@ -53,7 +53,7 @@ c
          enddo
       enddo
   100 continue
-      timendw=gtimer()
-      timed = timendw - timbegw
+c      timendw=gtimer()
+c      timed = timendw - timbegw
       return
       end
