@@ -202,3 +202,9 @@ The version 0.33 was completed January 20 2004
 The version 0.33 was completed January 20 2004
 
 	o  fixed bug in matrix.diag.csr coercion ... identified by Nicholas Lewin-Koh
+
+The version 0.36 of April 22, 2004 
+
+	o  fixed a problem with version number checking and 
+	added dependence on "stats" due to a reorganization of 
+	base which exiled model.matrix() to that package.

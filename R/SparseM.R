@@ -1,6 +1,7 @@
 #--------------------------------------------------------------------
 ".First.lib" <- function(lib, pkg) {
    require(methods)
+   require(stats)
    library.dynam("SparseM", pkg, lib)
    print("SparseM library loaded")
 }
