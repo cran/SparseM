@@ -443,6 +443,40 @@ function (filename)
 	return(e1.op.e2)
 }
 #--------------------------------------------------------------------
+"Ops.matrix.diag.csr" <- function(e1,e2){
+        if(missing(e2)){
+                e1.op <- switch(.Generic,
+                        "+" = e1,
+                        "-" = new("matrix.csr",ra=-e1@ra,ja=e1@ja,ia=e1@ia,dimension=e1@dimension),
+                        "!" = .matrix.csr.compl(e1),
+                        stop(paste("Unary operator \"",.Generic,"\""," is undefined for class \"matrix.csr\"",sep=""))
+                        )
+        return(e1.op)
+                }
+        e1.op.e2 <- {
+                switch(.Generic,
+                "+" = .matrix.csr.addsub(e1,e2,1),
+                "-" = .matrix.csr.addsub(e1,e2,-1),
+                "*" = .matrix.csr.elemul(e1,e2),
+                "/" = .matrix.csr.elediv(e1,e2),
+                "^" = .matrix.csr.expo(e1,e2),
+                "%/%" = .matrix.csr.intdiv(e1,e2),
+                "%%" = .matrix.csr.mod(e1,e2),
+                ">" = .matrix.csr.relation(e1,e2,"gt"),
+                ">=" = .matrix.csr.relation(e1,e2,"ge"),
+                "<" = .matrix.csr.relation(e1,e2,"lt"),
+                "<=" = .matrix.csr.relation(e1,e2,"le"),
+                "==" = .matrix.csr.relation(e1,e2,"eq"),
+                "!=" = .matrix.csr.relation(e1,e2,"ne"),
+                "&" = {z <- .matrix.csr.elemul(e1,e2);z@ra <- rep(1,length(z@ja));z},
+                "|" = {z <- .matrix.csr.addsub(e1,e2,1);z@ra <- rep(1,length(z@ja));z},
+                stop(paste("Binary operator \"",.Generic,"\""," is undefined for class \"matrix.csr\"",sep=""))
+                )
+                }
+        return(e1.op.e2)
+}
+
+#--------------------------------------------------------------------
 ".matrix.csr.compl" <- function(e1){
 	nrow <- e1@dimension[1]
 	ncol <- e1@dimension[2]
@@ -1190,7 +1224,7 @@ function (x, digits = max(3, getOption("digits") - 3),
 #            sep = "")
     #else cat("\nCoefficients:\n")
     cat("\nCoefficients:\n")
-    print.coefmat(x$coef, digits = digits, signif.stars = signif.stars,
+    printCoefmat(x$coef, digits = digits, signif.stars = signif.stars,
         ...)
     cat("\nResidual standard error:", format(signif(x$sigma,
         digits)), "on", rdf, "degrees of freedom\n")

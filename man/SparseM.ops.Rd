@@ -1,5 +1,6 @@
 \name{SparseM.ops}
 \alias{Ops.matrix.csr}
+\alias{Ops.matrix.diag.csr}
 \alias{%*%-methods}
 \alias{%*%,ANY,ANY-method}
 \alias{%*%,matrix.csr,matrix.csr-method}

@@ -190,3 +190,7 @@ The version 0.31 was completed August 25 2003
 	and a matrix with diagonal v by as(v,"matrix.diag.csr").  In the process
 	some problems with the default matrix.csr object were discovered and fixed.
 	And the code for .matrix.csr.elemul was changed to reflect these changes.
+
+The version 0.32 was completed December 20 2003
+
+	o  Fixed a defunct call to print.coefmat
