@@ -64,8 +64,8 @@ Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
 \example{
 # lsq.rra is real rectangular matrix stored in compressed sparse column format
 read.matrix.hb(system.file("HBdata","lsq.rra",package = "SparseM"))-> hb.o
-X <- model.matrix.hb(hb.o) #extract the design matrix
-y <- model.response.hb(hb.o) # extract the rhs
+X <- model.matrix(hb.o) #extract the design matrix
+y <- model.response(hb.o) # extract the rhs
 class(X) # -> "matrix.csr"
 class(y) # -> NULL
 slm.fit(X,y)->slm.fit.o # this is much more efficient in memory usage than slm()

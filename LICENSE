@@ -1,22 +1,15 @@
-All R code and documentation in this package is licensed under the terms 
-of the GPL (2) license -- see COPYING in the top level of the main R 
-directory tree for further details.  
+All R code and documentation in this package is licensed under the terms of the GPL license -- 
+see COPYING in the top level of the R directory tree for further details.  
 
-All fortran and C code in the SparseM src directory, with the exception of 
-iohb.c and cholesky.f is also licensed under the GPL license.  See
+All fortran and C code in the src directory, with the exception of cholesky.f is also
+licensed on the GPL license, see
 
 	http://www.cs.umn.edu/Research/arpa/SPARSKIT/sparskit.html
 
-for explicit stipulation by the author Yousef Saad for sparskit.f.  
-
-The code in iohb.c is written by K.A. Remington and is distributable under
-the terms specified in the comments appearing at the top of the source file.
-
-The code in cholesky.f  is a modified version of code originally written 
-by Esmond Ng and Barry Peyton.  The modified version is distributed
-as part of PCx by Czyzyk, Mehrotra, Wagner, and Wright and is copywrited 
-by the University of Chicago.  The PCx distribution makes the following 
-stipulation:
+for explicit stipulation for sparskit.f.  The code in cholesky.f  is a modified version of
+code originally written by Esmond Ng and Barry Peyton.  The modified version is distributed
+as part of PCx by Czyzyk, Mehrotra, Wagner, and Wright and is copywrite by the University
+of Chicago.  The PCx distribution makes the following stipulation:
 
 
 	This software discloses material protectable under copyright 
@@ -37,32 +30,6 @@ stipulation:
 		Argonne, IL 60439
 		(630) 252-4962
 		FAX: (630) 252-5230 
-__________________________________________________________________________
-The code in iohb.c and iohb.h to read and write matrices in the
-Harwell Boeing  sparse format is governed by the following stipulation.
-
-                       Harwell-Boeing File I/O in C
-                                V. 1.0
-
-           National Institute of Standards and Technology, MD.
-                             K.A. Remington
-
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                                NOTICE
-
- Permission to use, copy, modify, and distribute this software and
- its documentation for any purpose and without fee is hereby granted
- provided that the above copyright notice appear in all copies and
- that both the copyright notice and this permission notice appear in
- supporting documentation.
-
- Neither the Author nor the Institution (National Institute of Standards
- and Technology) make any representations about the suitability of this
- software for any purpose. This software is provided "as is" without
- expressed or implied warranty.
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 
 
 

@@ -1,164 +1,38 @@
 #--------------------------------------------------------------------
-".First.lib" <-
-function(lib, pkg) {
+".First.lib" <- function(lib, pkg) {
+   require(methods)
    library.dynam("SparseM", pkg, lib)
-   print("SparseM library loaded")}
-#--------------------------------------------------------------------
-"is.matrix.csr" <- function(x, ...) inherits(x,"matrix.csr")
-#--------------------------------------------------------------------
-"is.matrix.csc" <- function(x, ...) inherits(x,"matrix.csc")
-#--------------------------------------------------------------------
-"is.matrix.ssr" <- function(x, ...) inherits(x,"matrix.ssr")
-#--------------------------------------------------------------------
-"is.matrix.ssc" <- function(x, ...) inherits(x,"matrix.ssc")
-#--------------------------------------------------------------------
-"as.matrix.csr" <- function(x, ...) UseMethod("as.matrix.csr")
-#--------------------------------------------------------------------
-"as.matrix.csc" <- function(x, ...) UseMethod("as.matrix.csc")
-#--------------------------------------------------------------------
-"as.matrix.ssr" <- function(x, ...) UseMethod("as.matrix.ssr")
-#--------------------------------------------------------------------
-"as.matrix.ssc" <- function(x, ...) UseMethod("as.matrix.ssc")
-#--------------------------------------------------------------------
-"as.matrix.csr.default" <- function (x, ...) 
-{
-    if (is.matrix.csr(x)) 
-        x
-    else matrix.csr(x, ...)
+   print("SparseM library loaded")
 }
 #--------------------------------------------------------------------
-"as.matrix.csr.matrix.csc" <- function(x, ...)
-{
-	x <- t(x)
-	x$dim <- rev(dim(x))
-	class(x) <- "matrix.csr"
-	x
-}
+"is.matrix.csr" <- function(x, ...) is(x,"matrix.csr")
 #--------------------------------------------------------------------
-"as.matrix.csr.matrix.ssr" <- function(x, ...)
-{
-	.ssr.csr(x)
-}
+"is.matrix.csc" <- function(x, ...) is(x,"matrix.csc")
 #--------------------------------------------------------------------
-"as.matrix.csr.matrix.ssc" <- function(x, ...)
-{
-	.ssr.csr(x)
-}
+"is.matrix.ssr" <- function(x, ...) is(x,"matrix.ssr")
 #--------------------------------------------------------------------
-"as.matrix.matrix.csr" <-
-function(x){
-	nrow <- x$dim[1]
-	ncol <- x$dim[2]
-	if(length(x$ra)==1 && is.na(x$ra)){ #trap zero matrix
-		dns <- matrix(0,nrow=nrow,ncol=ncol)
-		return(dns)
-		}
-	nan <- is.nan(x$ra)
-        infty <- is.infinite(x$ra) & x$ra >0
-        ninfty <- is.infinite(x$ra) & x$ra <0
-        uniq <- rnorm(3)
-        while(any(uniq %in% x$ra[!(nan|infty|ninfty)]))
-                uniq <- rnorm(3)
-	x$ra[nan] <- uniq[1]
-        x$ra[infty] <- uniq[2]
-        x$ra[ninfty] <- uniq[3]
-	z <- .Fortran("csrdns",
-		as.integer(nrow),
-		as.integer(ncol),
-		as.double(x$ra),
-		as.integer(x$ja),
-		as.integer(x$ia),
-		dns = double(nrow*ncol),
-		ndns = as.integer(nrow),
-		ierr = integer(1),
-		PACKAGE = "SparseM")
-	if(z$ierr != 0) stop("insufficient space for dns")
-	dns <- matrix(z$dns,nrow=nrow,ncol=ncol)
-	dns[dns==uniq[1]] <- NaN
-	dns[dns==uniq[2]] <- Inf
-	dns[dns==uniq[3]] <- -Inf
-	return(dns)
-}
+"is.matrix.ssc" <- function(x, ...) is(x,"matrix.ssc")
 #--------------------------------------------------------------------
-"as.matrix.csc.matrix.csr" <- function(x, ...)
-{
-	x <- t(x)
-	x$dim <- rev(dim(x))
-	class(x) <- "matrix.csc"
-	x
-}
-#--------------------------------------------------------------------
-"as.matrix.ssr.matrix.csr" <- function(x, ...)
-{
-	.csr.ssr(x)
-}
-#--------------------------------------------------------------------
-"as.matrix.ssc.matrix.csr" <- function(x, ...)
-{
-	x <- as.matrix.csc(x)
-	x <- .csc.ssc(x)
-	class(x) <- "matrix.ssc"
-	x
-}
-#--------------------------------------------------------------------
-"as.matrix.csc.default" <- function(x, ...)
-{
-    if (is.matrix.csc(x)) x
-    else as.matrix.csc(as.matrix.csr(x, ...))
-}
-#--------------------------------------------------------------------
-"as.matrix.csc.matrix.ssr" <- function(x, ...)
-{
-	as.matrix.csc(as.matrix.csr(x))
-}
-#--------------------------------------------------------------------
-"as.matrix.csc.matrix.ssc" <- function(x, ...)
-{
-	as.matrix.csc(as.matrix.csr(x))
-}
-#--------------------------------------------------------------------
-"as.matrix.ssr.default" <- function(x, ...)
-{
-	if (is.matrix.ssr(x)) x
-	else as.matrix.ssr(as.matrix.csr(x, ...))
-}
-#--------------------------------------------------------------------
-"as.matrix.ssr.matrix.csc" <- function(x, ...)
-{
-	as.matrix.ssr(as.matrix.csr(x))
-}
-#--------------------------------------------------------------------
-"as.matrix.ssr.matrix.ssc" <- function(x, ...)
-{
-	as.matrix.ssr(as.matrix.csr(x))
-}
-#--------------------------------------------------------------------
-"as.matrix.ssc.default" <- function(x, ...)
-{
-	if (is.matrix.ssc(x)) x
-	else as.matrix.ssc(as.matrix.csc(x, ...))
-}
-#--------------------------------------------------------------------
-"as.matrix.ssc.matrix.csc" <- function(x, ...)
-{
-	.csc.ssc(x)
-}
-#--------------------------------------------------------------------
-"as.matrix.ssc.matrix.ssr" <- function(x, ...)
-{
-	as.matrix.ssc(as.matrix.csr(x))
-}
-#--------------------------------------------------------------------
-"matrix.csr" <-
-function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
+"as.matrix.csr" <-
+function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps){
+	 if(is.matrix.csr(x)) {x; return(x)}
          if (!is.matrix(x)) {
-		x <-return(as.matrix.csr(matrix(x,nrow,ncol)))
+		if (missing(nrow))
+                         nrow <- ceiling(length(x)/ncol)
+		else if (missing(ncol))
+                         ncol <- ceiling(length(x)/nrow)
+		if (length(x) == nrow * ncol)
+                         x <- matrix(x, nrow, ncol)
+		else{
+			if(length(x)!=1 && (nrow*ncol)%%length(x)!=0)
+				warning("Replacement length not a multiple of the elements to replace in as.matrix.csr(...)")
+			x <- matrix(rep(x,ceiling(nrow*ncol/length(x)))[1:(nrow*ncol)],nrow,ncol)
+			}
 		}
 	dimx <- dim(x)
 	nnz <- sum(abs(x)>eps)
 	if(nnz==0){
-	        z<-list(ra=0,ja=1,ia=c(1,rep(2,dimx[1])),dim=dimx)
-		class(z) <- "matrix.csr"
+	        z<-new("matrix.csr",ra=0,ja=1,ia=c(1,rep(2,dimx[1])),dimension=dimx)
 		return(z)
         }
 	z <- .Fortran("csr",
@@ -173,13 +47,133 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 		PACKAGE = "SparseM")
 	if(nnz!=z$nnz)warning("nnz values inconsistent")
 	nnz <- z$nnz
-	z <- list(ra = z$ra[1:nnz], ja = z$ja[1:nnz], ia = z$ia, dim = dimx)
-	class(z) <- "matrix.csr"
+	z <- new("matrix.csr",ra = z$ra[1:nnz], ja = z$ja[1:nnz], ia = z$ia, dimension = dimx)
 	return(z)
 }
 #--------------------------------------------------------------------
+"as.matrix.csc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+    if (is.matrix.csc(x)) x
+    else as.matrix.csc(as.matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps))
+}
+#--------------------------------------------------------------------
+"as.matrix.ssr" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	if (is.matrix.ssr(x)) x
+	else as.matrix.ssr(as.matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps))
+}
+#--------------------------------------------------------------------
+"as.matrix.ssc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	if (is.matrix.ssc(x)) x
+	else as.matrix.ssc(as.matrix.csc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps))
+}
+#--------------------------------------------------------------------
+"as.matrix.csr.matrix.csc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	x <- t(x)
+	x@dimension <- rev(dim(x))
+	x <- new("matrix.csr",ra = x@ra, ja = x@ja, ia = x@ia, dimension = x@dimension)
+	x
+}
+#--------------------------------------------------------------------
+"as.matrix.csr.matrix.ssr" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	.ssr.csr(x)
+}
+#--------------------------------------------------------------------
+"as.matrix.csr.matrix.ssc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	.ssr.csr(x)
+}
+#--------------------------------------------------------------------
+"as.matrix.matrix.csr" <-
+function(x){
+	nrow <- x@dimension[1]
+	ncol <- x@dimension[2]
+	if(length(x@ra)==1 && is.na(x@ra)){ #trap zero matrix
+		dns <- matrix(0,nrow=nrow,ncol=ncol)
+		return(dns)
+		}
+	nan <- is.nan(x@ra)
+        infty <- is.infinite(x@ra) & x@ra >0
+        ninfty <- is.infinite(x@ra) & x@ra <0
+        uniq <- rnorm(3)
+        while(any(uniq %in% x@ra[!(nan|infty|ninfty)]))
+                uniq <- rnorm(3)
+	x@ra[nan] <- uniq[1]
+        x@ra[infty] <- uniq[2]
+        x@ra[ninfty] <- uniq[3]
+	z <- .Fortran("csrdns",
+		as.integer(nrow),
+		as.integer(ncol),
+		as.double(x@ra),
+		as.integer(x@ja),
+		as.integer(x@ia),
+		dns = double(nrow*ncol),
+		ndns = as.integer(nrow),
+		ierr = integer(1),
+		PACKAGE = "SparseM")
+	if(z$ierr != 0) stop("insufficient space for dns")
+	dns <- matrix(z$dns,nrow=nrow,ncol=ncol)
+	dns[dns==uniq[1]] <- NaN
+	dns[dns==uniq[2]] <- Inf
+	dns[dns==uniq[3]] <- -Inf
+	return(dns)
+}
+#--------------------------------------------------------------------
+"as.matrix.csc.matrix.csr" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	x <- t(x)
+	x@dimension <- rev(dim(x))
+	x <- new("matrix.csc",ra = x@ra, ja = x@ja, ia = x@ia, dimension = x@dimension)
+	x
+}
+#--------------------------------------------------------------------
+"as.matrix.ssr.matrix.csr" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	.csr.ssr(x)
+}
+#--------------------------------------------------------------------
+"as.matrix.ssc.matrix.csr" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	x <- as.matrix.csc(x)
+	x <- as.matrix.ssc(x)
+	x
+}
+#--------------------------------------------------------------------
+"as.matrix.csc.matrix.ssr" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	as.matrix.csc(as.matrix.csr(x))
+}
+#--------------------------------------------------------------------
+"as.matrix.csc.matrix.ssc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	as.matrix.csc(as.matrix.csr(x))
+}
+#--------------------------------------------------------------------
+"as.matrix.ssr.matrix.csc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	as.matrix.ssr(as.matrix.csr(x))
+}
+#--------------------------------------------------------------------
+"as.matrix.ssr.matrix.ssc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	as.matrix.ssr(as.matrix.csr(x))
+}
+#--------------------------------------------------------------------
+"as.matrix.ssc.matrix.csc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	.csc.ssc(x)
+}
+#--------------------------------------------------------------------
+"as.matrix.ssc.matrix.ssr" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+{
+	as.matrix.ssc(as.matrix.csr(x))
+}
+#--------------------------------------------------------------------
 "dim.matrix.csr" <-
-function(x){x$dim}
+function(x){x@dimension}
 #--------------------------------------------------------------------
 "ncol.matrix.csr" <-
 function(x){dim(x)[2]}
@@ -191,23 +185,22 @@ function(x){dim(x)[1]}
 function(x){
 # transpose a sparse matrix stored in csr format; a.k.a. transform the matrix
 # stored in csr format to csc format
-	nrow <- x$dim[1]
-	ncol <- x$dim[2]
-	nnz <- x$ia[nrow+1]-1
+	nrow <- x@dimension[1]
+	ncol <- x@dimension[2]
+	nnz <- x@ia[nrow+1]-1
 	z <- .Fortran("csrcsc2",
 		as.integer(nrow),
 		as.integer(ncol),
 		as.integer(1),
 		as.integer(1),
-		as.double(x$ra),
-		as.integer(x$ja),
-		as.integer(x$ia),
+		as.double(x@ra),
+		as.integer(x@ja),
+		as.integer(x@ia),
 		ao=double(nnz),
 		jao=integer(nnz),
 		iao=integer(ncol+1),
 		PACKAGE = "SparseM")
-	z <- list(ra = z$ao, ja = z$jao, ia = z$iao, dim = rev(x$dim))
-	class(z) <- "matrix.csr"
+	z <- new("matrix.csr",ra = z$ao, ja = z$jao, ia = z$iao, dimension = rev(x@dimension))
 	return(z)
 }
 #--------------------------------------------------------------------
@@ -229,78 +222,68 @@ function(x){
 "dim.matrix.csc" <-
 function (x) 
 {
-    x$dim
+    x@dimension
 }
 #--------------------------------------------------------------------
 "dim.matrix.ssr" <-
 function (x) 
 {
-    x$dim
+    x@dimension
 }
 #--------------------------------------------------------------------
 "dim.matrix.ssc" <-
 function (x) 
 {
-    x$dim
+    x@dimension
 }
 #--------------------------------------------------------------------
 "t.matrix.csc" <- function (x) 
 {
-    nrow <- x$dim[1]
-    ncol <- x$dim[2]
-    nnz <- x$ia[ncol + 1] - 1
+    nrow <- x@dimension[1]
+    ncol <- x@dimension[2]
+    nnz <- x@ia[ncol + 1] - 1
     z <- .Fortran("csrcsc2", as.integer(ncol), as.integer(nrow), 
-        as.integer(1), as.integer(1), as.double(x$ra), as.integer(x$ja), 
-        as.integer(x$ia), ao = double(nnz), jao = integer(nnz), 
+        as.integer(1), as.integer(1), as.double(x@ra), as.integer(x@ja), 
+        as.integer(x@ia), ao = double(nnz), jao = integer(nnz), 
         iao = integer(nrow + 1), PACKAGE = "SparseM")
-    z <- list(ra = z$ao, ja = z$jao, ia = z$iao, dim = rev(x$dim))
-    class(z) <- "matrix.csc"
+    z <- new("matrix.csc",ra = z$ao, ja = z$jao, ia = z$iao, dimension = rev(x@dimension))
     return(z)
 }
 #--------------------------------------------------------------------
-"model.matrix.hb" <- function(object, ...) UseMethod("model.matrix.hb")
-#--------------------------------------------------------------------
-"model.matrix.hb.default" <- function(object, ...){
-	object
-}
-#--------------------------------------------------------------------
-"model.matrix.hb.matrix.csc.hb" <- function(object, ...){
-	object <- list(ra=object$ra,ja=object$ja,ia=object$ia,dim=object$dim)
-	class(object) <- "matrix.csc"
+"model.matrix.matrix.csc.hb" <- function(object,...){
+	object <- new("matrix.csc",ra=object@ra,ja=object@ja,ia=object@ia,dimension=object@dimension)
 	object <- as.matrix.csr(object)
 	object
 }
 #--------------------------------------------------------------------
-"model.matrix.hb.matrix.ssc.hb" <- function(object, ...){
-	object <- .ssc.csc(object)
-	class(object) <- "matrix.csc"
+"model.matrix.matrix.ssc.hb" <- function(object,...){
+	object <- new("matrix.ssc",ra=object@ra,ja=object@ja,ia=object@ia,dimension=object@dimension)
 	object <- as.matrix.csr(object)
 	object
 }
 #--------------------------------------------------------------------
-"model.response.hb" <- function(x){
-	if(is.null(x$rhs.mode)) stop("Right-hand side doesn't exist")
-	if (x$rhs.mode == "F")
-		z <- x$rhs.ra
+"model.response.matrix.csc.hb" <- function(data){
+	if(is.null(data@rhs.mode)) stop("Right-hand side doesn't exist")
+	if (data@rhs.mode == "F")
+		z <- data@rhs.ra
 	else{
-		z <- list(ra=x$rhs.ra,ja=x$rhs.ja,ia=x$rhs.ia,dim=x$rhs.dim)
-		class(z) <- "matrix.csc"
+		z <- new("matrix.csc",ra=data@rhs.ra,ja=data@rhs.ja,ia=data@rhs.ia,dimension=data@rhs.dim)
 		z <- as.matrix.csr(z)
 		}
 	z
 }
 #--------------------------------------------------------------------
 ".ssr.csr" <- function(x){
-	nrow <- x$dim[1]
-	nnza <- x$ia[nrow+1]-1
+	nrow <- x@dimension[1]
+	nnza <- x@ia[nrow+1]-1
 	nnzao <- 2*nnza #can be set smaller
 	z <- .Fortran("ssrcsr",
 		job = as.integer(0),
 		value2 = as.integer(1),
 		nrow = as.integer(nrow),
-		a = as.double(x$ra),
-		ja = as.integer(x$ja),
-		ia = as.integer(x$ia),
+		a = as.double(x@ra),
+		ja = as.integer(x@ja),
+		ia = as.integer(x@ia),
 		nzmax = as.integer(nnzao),
 		ao = double(nnzao),
 		jao = integer(nnzao),
@@ -311,75 +294,66 @@ function (x)
 		PACKAGE = "SparseM")
 	if(z$ierr != 0) stop("Not enough space")		
 	nnz <- z$iao[nrow+1]-1
-	z <- list(ra=z$ao[1:nnz],ja=z$jao[1:nnz],ia=z$iao,dim=x$dim)
-	class(z) <- "matrix.csr"
-	return(z)
-}
-#--------------------------------------------------------------------
-".ssc.csc" <- function(x){
-	z <- .ssr.csr(x)
-	class(z) <- "matrix.csc"
+	z <- new("matrix.csr",ra=z$ao[1:nnz],ja=z$jao[1:nnz],ia=z$iao,dimension=x@dimension)
 	return(z)
 }
 #--------------------------------------------------------------------
 ".csr.ssr" <- function(x){
-	nrow <- x$dim[1]
-	nnza <- ceiling((x$ia[nrow+1]-1)/2)+nrow
-	if(nrow!=x$dim[2]) 
+	nrow <- x@dimension[1]
+	nnza <- ceiling((x@ia[nrow+1]-1)/2)+nrow
+	if(nrow!=x@dimension[2]) 
                 stop("Cannot convert an asymmetric matrix into `matrix.ssr' class")
 
-        if(sum(abs((t(as.matrix.csr(x))-as.matrix.csr(x))$ra))!=0)
+        if(sum(abs((t(as.matrix.csr(x))-as.matrix.csr(x))@ra))!=0)
                 stop("Cannot convert an asymmetric matrix into `matrix.ssr' class")
 	z <- .Fortran("csrssr",
 		as.integer(nrow),
-		as.double(x$ra),
-		as.integer(x$ja),
-		as.integer(x$ia),
+		as.double(x@ra),
+		as.integer(x@ja),
+		as.integer(x@ia),
 		as.integer(nnza),
-		ao = as.double(x$ra),
-		jao = as.integer(x$ja),
-		iao = as.integer(x$ia),
+		ao = as.double(x@ra),
+		jao = as.integer(x@ja),
+		iao = as.integer(x@ia),
 		ierr = integer(1),
 		PACKAGE = "SparseM")
 	if(z$ierr != 0) stop("Not enough space. This is usually caused by trying to convert an asymmetric matrix into ssr format")
 	nnza <- z$iao[nrow+1]-1
-	z <- list(ra=z$ao[1:nnza],ja=z$jao[1:nnza],ia=z$iao,dim=x$dim)
-	class(z) <- "matrix.ssr"
+	z <- new("matrix.ssr",ra=z$ao[1:nnza],ja=z$jao[1:nnza],ia=z$iao,dimension=x@dimension)
 	z
 }
 #--------------------------------------------------------------------
 ".csc.ssc" <- function(x){
-	nrow <- x$dim[2]
-	nnza <- ceiling((x$ia[nrow+1]-1)/2)+nrow
-	if(nrow!=x$dim[1])
+	nrow <- x@dimension[2]
+	nnza <- ceiling((x@ia[nrow+1]-1)/2)+nrow
+	if(nrow!=x@dimension[1])
                 stop("Cannot convert an asymmetric matrix into `matrix.ssc' class")
-        if(sum(abs((t(as.matrix.csr(x))-as.matrix.csr(x))$ra))!=0)
+        if(sum(abs((t(as.matrix.csr(x))-as.matrix.csr(x))@ra))!=0)
                 stop("Cannot convert an asymmetric matrix into `matrix.ssc' class")
 	z <- .Fortran("cscssc",
 		as.integer(nrow),
-		as.double(x$ra),
-		as.integer(x$ja),
-		as.integer(x$ia),
+		as.double(x@ra),
+		as.integer(x@ja),
+		as.integer(x@ia),
 		as.integer(nnza),
-		ao = as.double(x$ra),
-		jao = as.integer(x$ja),
-		iao = as.integer(x$ia),
+		ao = as.double(x@ra),
+		jao = as.integer(x@ja),
+		iao = as.integer(x@ia),
 		ierr = integer(1),
 		PACKAGE = "SparseM")
 	if(z$ierr != 0) stop("Not enough space. This is usually caused by trying to convert an asymmetric matrix into ssc format")
 	nnza <- z$iao[nrow+1]-1
-	z <- list(ra=z$ao[1:nnza],ja=z$jao[1:nnza],ia=z$iao,dim=x$dim)
-	class(z) <- "matrix.ssc"
+	z <- new("matrix.ssc",ra=z$ao[1:nnza],ja=z$jao[1:nnza],ia=z$iao,dimension=x@dimension)
 	return(z)
 }
 #--------------------------------------------------------------------
 image.matrix.csr <- function(x,col=c("white","gray"),xlab="column",ylab="row", ...){
 #plot non-zero elements of a sparse matrix in csr format
-n <- x$dim[1]
-p <- x$dim[2]
+n <- x@dimension[1]
+p <- x@dimension[2]
 z <- matrix(0,n,p)
-column <- x$ja
-row <- rep(n:1,diff(x$ia))
+column <- x@ja
+row <- rep(n:1,diff(x@ia))
 z[cbind(row,column)] <- 1
 image(x=1:p,y=-(n:1),t(z),axes=FALSE, col=col,xlab=xlab,ylab=ylab)
 axis(1,pretty(1:p))
@@ -397,7 +371,6 @@ function (x, ...)
 "rbind.matrix.csr" <- function(...) {
 # Very preliminary function to rbind matrix.csr objects no name handling
     allargs <- list(...)
-    allargs <- allargs[sapply(allargs, length) > 0]
     n <- length(allargs)
     if (n == 0)
        stop("nothing to rbind")
@@ -418,14 +391,13 @@ function (x, ...)
     ra <- ja <- ia <- dim <- NULL
     for(i in 1:n){
         xi <- allargs[[i]]
-        ra <- c(ra,xi$ra)
-        ja <- c(ja,xi$ja)
-        ia <- c(ia[-(Nrow+1)],nia + xi$ia)
+        ra <- c(ra,xi@ra)
+        ja <- c(ja,xi@ja)
+        ia <- c(ia[-(Nrow+1)],nia + xi@ia)
         nia <- ia[length(ia)]-1
-        Nrow <- Nrow + length(xi$ia)-1
+        Nrow <- Nrow + length(xi@ia)-1
         }
-z <- list(ra=ra, ja=ja, ia = ia, dim = c(Nrow,Ncol))
-class(z) <- "matrix.csr"
+z <- new("matrix.csr", ra=ra, ja=ja, ia = ia, dimension = c(Nrow,Ncol))
 return(z)
 }
 #--------------------------------------------------------------------
@@ -433,7 +405,6 @@ return(z)
 {
 # Very preliminary function to cbind matrix.csr objects no name handling
     allargs <- list(...)
-    allargs <- allargs[sapply(allargs, length) > 0]
     n <- length(allargs)
     if (n == 0)
         return(structure(list(), class = "data.frame", row.names = character()))
@@ -455,14 +426,13 @@ return(z)
     ra <- ja <- ia <- dim <- NULL
 for(i in 1:n){
         xi <- allargs[[i]]
-        ra <- c(ra,xi$ra)
-        ja <- c(ja,xi$ja)
-        ia <- c(ia[-(Nrow+1)],nia + xi$ia)
+        ra <- c(ra,xi@ra)
+        ja <- c(ja,xi@ja)
+        ia <- c(ia[-(Nrow+1)],nia + xi@ia)
         nia <- ia[length(ia)]-1
-        Nrow <- Nrow + length(xi$ia)-1
+        Nrow <- Nrow + length(xi@ia)-1
         }
-z <- list(ra=ra, ja=ja, ia = ia, dim = c(Nrow,Ncol))
-class(z) <- "matrix.csr"
+z <- new("matrix.csr",ra=ra, ja=ja, ia = ia, dimension = c(Nrow,Ncol))
 z <- t(z)
 return(z)
 }
@@ -540,18 +510,24 @@ function (filename)
 				)
 			Xflag <- "Yes"
 			}
-		rd.o <- list(ra = hb2.o$val, ja = hb2.o$rowind, ia = hb2.o$colptr, 
+		if(format == "csc")
+			rd.o <- new("matrix.csc.hb", ra = hb2.o$val, ja = hb2.o$rowind, ia = hb2.o$colptr, 
 			rhs.ra = hb3.o$rhs, guess = switch(Gflag, Yes = hb4.o$rhs, No = NULL), 
-			xexact = switch(Xflag, Yes = hb5.o$rhs, No = NULL), dim = c(hb1.o$M, hb1.o$N),
+			xexact = switch(Xflag, Yes = hb5.o$rhs, No = NULL), dimension = c(hb1.o$M, hb1.o$N),
+			rhs.dim = c(hb1.o$M, hb1.o$Nrhs), rhs.mode=rhs.mode)
+		else
+			rd.o <- new("matrix.ssc.hb", ra = hb2.o$val, ja = hb2.o$rowind, ia = hb2.o$colptr, 
+			rhs.ra = hb3.o$rhs, guess = switch(Gflag, Yes = hb4.o$rhs, No = NULL), 
+			xexact = switch(Xflag, Yes = hb5.o$rhs, No = NULL), dimension = c(hb1.o$M, hb1.o$N),
 			rhs.dim = c(hb1.o$M, hb1.o$Nrhs), rhs.mode=rhs.mode)
 		}
 	else
-		rd.o <- list(ra = hb2.o$val, ja = hb2.o$rowind, ia = hb2.o$colptr,
-			dim=c(hb1.o$M,hb1.o$N),rhs.mode=rhs.mode)
-        if(format=="csc")
-                class(rd.o) <- c("matrix.csc.hb")
-        else
-                class(rd.o) <- c("matrix.ssc.hb")
+        	if(format=="csc")
+			rd.o <- new("matrix.csc.hb",ra = hb2.o$val, ja = hb2.o$rowind, ia = hb2.o$colptr,
+			dimension=c(hb1.o$M,hb1.o$N),rhs.mode=rhs.mode)
+        	else
+			rd.o <- new("matrix.ssc.hb",ra = hb2.o$val, ja = hb2.o$rowind, ia = hb2.o$colptr,
+			dimension=c(hb1.o$M,hb1.o$N),rhs.mode=rhs.mode)
 
    return(rd.o)
 }
@@ -564,9 +540,9 @@ function (filename)
         if(!substr(mxtype,3,3)%in%c("a","A")) stop("The third character of `mxtype' can only be `A'")
         if(substr(mxtype,2,2)%in%c("s","S") && !is.matrix.ssc(X)) stop("Matrix X has to be in in ssc format")
         if(substr(mxtype,2,2)%in%c("u","U","r","R") && !is.matrix.csc(X)) stop("Matrix X has to be in in csc format")
-	M <- X$dim[1]
-	N <- X$dim[2]
-	nnz <- length(X$ra)
+	M <- X@dimension[1]
+	N <- X@dimension[2]
+	nnz <- length(X@ra)
 	nrhs <- 0
 	guesol <- NULL
 	Rhs <- Guess <- Exact <- rep(0,M)
@@ -592,9 +568,9 @@ function (filename)
 		as.integer(M),
 		as.integer(N),
 		as.integer(nnz),
-		as.integer(X$ia),
-		as.integer(X$ja),
-		as.double(X$ra),
+		as.integer(X@ia),
+		as.integer(X@ja),
+		as.double(X@ra),
 		as.integer(nrhs),
 		as.double(Rhs),
 		as.double(Guess),
@@ -609,13 +585,14 @@ function (filename)
 		as.character(rhsfmt),
 		PACKAGE = "SparseM"
 		)
+	invisible(X)
 }
 #--------------------------------------------------------------------
 "Ops.matrix.csr" <- function(e1,e2){
 	if(missing(e2)){
 		e1.op <- switch(.Generic,
 			"+" = e1,
-			"-" = structure(list(ra=-e1$ra,ja=e1$ja,ia=e1$ia,dim=e1$dim),class="matrix.csr"),
+			"-" = new("matrix.csr",ra=-e1@ra,ja=e1@ja,ia=e1@ia,dimension=e1@dimension),
 			"!" = .matrix.csr.compl(e1),
 			stop(paste("Unary operator \"",.Generic,"\""," is undefined for class \"matrix.csr\"",sep=""))
 			)
@@ -645,18 +622,18 @@ function (filename)
 }
 #--------------------------------------------------------------------
 ".matrix.csr.compl" <- function(e1){
-	nrow <- e1$dim[1]
-	ncol <- e1$dim[2]
-	nnz <- e1$ia[nrow+1]-1
+	nrow <- e1@dimension[1]
+	ncol <- e1@dimension[2]
+	nnz <- e1@ia[nrow+1]-1
 	nz <- nrow*ncol - nnz
-	if(length(e1$ra) == 1 && is.na(e1$ra)){ #trap zero matrix
-		z <- list(ra=rep(1,nz),ja=rep(1:ncol,nrow),ia=seq(1,nz+1,by=ncol),dim=e1$dim)
+	if(length(e1@ra) == 1 && is.na(e1@ra)){ #trap zero matrix
+		z <- list(ra=rep(1,nz),ja=rep(1:ncol,nrow),ia=seq(1,nz+1,by=ncol),dim=e1@dimension)
 		}
 	else{
 		z <- .Fortran("nzero",
-			as.double(e1$ra),
-			as.integer(e1$ja),
-			as.integer(e1$ia),
+			as.double(e1@ra),
+			as.integer(e1@ja),
+			as.integer(e1@ia),
 			as.integer(nrow),
 			as.integer(ncol),
 			as.integer(nnz),
@@ -666,56 +643,55 @@ function (filename)
 			ia = integer(nrow+1),
 			logical(ncol),
 			PACKAGE = "SparseM")
-		z <- list(ra=z$ra,ja=z$ja,ia=z$ia,dim=e1$dim)
+		z <- new("matrix.csr",ra=z$ra,ja=z$ja,ia=z$ia,dimension=e1@dimension)
 		}
-	class(z) <- "matrix.csr"
 	z
 }
 #--------------------------------------------------------------------
 ".matrix.csr.addsub" <-
 function(A,B,s){
 #matrix addition/subtraction of two sparse csr matrices 
-nrow <- A$dim[1]
-ncol <- A$dim[2]
-Bcol <- B$dim[2]
-Brow <- B$dim[1]
+nrow <- A@dimension[1]
+ncol <- A@dimension[2]
+Bcol <- B@dimension[2]
+Brow <- B@dimension[1]
 if(ncol != Bcol | nrow != Brow)stop("matrices not conformable for addition")
-nnza <- A$ia[nrow+1]-1
-nnzb <- B$ia[nrow+1]-1
+nnza <- A@ia[nrow+1]-1
+nnzb <- B@ia[nrow+1]-1
 z <- .Fortran("csort",
 	as.integer(nrow),
-	ra = as.double(A$ra),
-	ja = as.integer(A$ja),
-	ia = as.integer(A$ia),
+	ra = as.double(A@ra),
+	ja = as.integer(A@ja),
+	ia = as.integer(A@ia),
 	integer(max(nrow+1,2*nnza)),
 	as.logical(TRUE),
 	PACKAGE = "SparseM")
-A$ra <- z$ra
-A$ja <- z$ja
-A$ia <- z$ia
+A@ra <- z$ra
+A@ja <- z$ja
+A@ia <- z$ia
 z <- .Fortran("csort",
 	as.integer(nrow),
-	ra = as.double(B$ra),
-	ja = as.integer(B$ja),
-	ia = as.integer(B$ia),
+	ra = as.double(B@ra),
+	ja = as.integer(B@ja),
+	ia = as.integer(B@ia),
 	integer(max(nrow+1,2*nnzb)),
 	as.logical(TRUE),
 	PACKAGE = "SparseM")
-B$ra <- z$ra
-B$ja <- z$ja
-B$ia <- z$ia
-nnzmax <- length(union(A$ja+A$dim[2]*(rep(1:A$dim[1],diff(A$ia))-1),
-	B$ja+B$dim[2]*(rep(1:B$dim[1],diff(B$ia))-1)))+1
+B@ra <- z$ra
+B@ja <- z$ja
+B@ia <- z$ia
+nnzmax <- length(union(A@ja+A@dimension[2]*(rep(1:A@dimension[1],diff(A@ia))-1),
+	B@ja+B@dimension[2]*(rep(1:B@dimension[1],diff(B@ia))-1)))+1
 z <- .Fortran("aplsb",
 	as.integer(nrow),
 	as.integer(ncol),
-	as.double(A$ra),
-	as.integer(A$ja),
-	as.integer(A$ia),
+	as.double(A@ra),
+	as.integer(A@ja),
+	as.integer(A@ia),
 	as.double(s),
-	as.double(B$ra),
-	as.integer(B$ja),
-	as.integer(B$ia),
+	as.double(B@ra),
+	as.integer(B@ja),
+	as.integer(B@ia),
 	ra = double(nnzmax),
 	ja = integer(nnzmax),
 	ia = integer(nrow+1),
@@ -724,8 +700,7 @@ z <- .Fortran("aplsb",
 	PACKAGE = "SparseM")
 if(z$ierr != 0) stop("insufficient space for sparse matrix addition")
 nnz <- z$ia[nrow+1]-1
-z <- list(ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dim=c(nrow,ncol))
-class(z) <- "matrix.csr"
+z <- new("matrix.csr",ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dimension=c(nrow,ncol))
 return(z)
 }
 #--------------------------------------------------------------------
@@ -733,52 +708,52 @@ return(z)
 function(A,B){
 #element-wise matrix multiplication of two sparse csr matrices 
 if(is.numeric(A) && length(A) == 1)
-	z <- list(ra=A*B$ra,ja=B$ja,ia=B$ia,dim=B$dim)
+	z <- new("matrix.csr",ra=A*B@ra,ja=B@ja,ia=B@ia,dimension=B@dimension)
 else if(is.numeric(B) && length(B) == 1)
-	z <- list(ra=B*A$ra,ja=A$ja,ia=A$ia,dim=A$dim)
+	z <- new("matrix.csr",ra=B*A@ra,ja=A@ja,ia=A@ia,dimension=A@dimension)
 else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
 	if(is.matrix(A)) A <- as.matrix.csr(A)
 	if(is.matrix(B)) B <- as.matrix.csr(B)
-	nrow <- A$dim[1]
-	ncol <- A$dim[2]
-	Bcol <- B$dim[2]
-	Brow <- B$dim[1]
+	nrow <- A@dimension[1]
+	ncol <- A@dimension[2]
+	Bcol <- B@dimension[2]
+	Brow <- B@dimension[1]
 	if(ncol != Bcol | nrow != Brow)stop("matrices not conformable for element-by-element multiplication")
-	nnza <- A$ia[nrow+1]-1
-	nnzb <- B$ia[nrow+1]-1
+	nnza <- A@ia[nrow+1]-1
+	nnzb <- B@ia[nrow+1]-1
 	z <- .Fortran("csort",
 		as.integer(nrow),
-		ra = as.double(A$ra),
-		ja = as.integer(A$ja),
-		ia = as.integer(A$ia),
+		ra = as.double(A@ra),
+		ja = as.integer(A@ja),
+		ia = as.integer(A@ia),
 		integer(max(nrow+1,2*nnza)),
 		as.logical(TRUE),
 		PACKAGE = "SparseM")
-	A$ra <- z$ra
-	A$ja <- z$ja
-	A$ia <- z$ia
+	A@ra <- z$ra
+	A@ja <- z$ja
+	A@ia <- z$ia
 	z <- .Fortran("csort",
 		as.integer(nrow),
-		ra = as.double(B$ra),
-		ja = as.integer(B$ja),
-		ia = as.integer(B$ia),
+		ra = as.double(B@ra),
+		ja = as.integer(B@ja),
+		ia = as.integer(B@ia),
 		integer(max(nrow+1,2*nnzb)),
 		as.logical(TRUE),
 		PACKAGE = "SparseM")
-	B$ra <- z$ra
-	B$ja <- z$ja
-	B$ia <- z$ia
-	nnzmax <- length(intersect(A$ja+A$dim[2]*(rep(1:A$dim[1],diff(A$ia))-1),
-		B$ja+B$dim[2]*(rep(1:B$dim[1],diff(B$ia))-1)))+1
+	B@ra <- z$ra
+	B@ja <- z$ja
+	B@ia <- z$ia
+	nnzmax <- length(intersect(A@ja+A@dimension[2]*(rep(1:A@dimension[1],diff(A@ia))-1),
+		B@ja+B@dimension[2]*(rep(1:B@dimension[1],diff(B@ia))-1)))+1
 	z <- .Fortran("aemub",
 		as.integer(nrow),
 		as.integer(ncol),
-		as.double(A$ra),
-		as.integer(A$ja),
-		as.integer(A$ia),
-		as.double(B$ra),
-		as.integer(B$ja),
-		as.integer(B$ia),
+		as.double(A@ra),
+		as.integer(A@ja),
+		as.integer(A@ia),
+		as.double(B@ra),
+		as.integer(B@ja),
+		as.integer(B@ia),
 		ra = double(nnzmax),
 		ja = integer(nnzmax),
 		ia = integer(nrow+1),
@@ -787,10 +762,9 @@ else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
 		PACKAGE = "SparseM")
 	if(z$ierr != 0) stop("insufficient space for element-wise sparse matrix multiplication")
 	nnz <- z$ia[nrow+1]-1
-	z <- list(ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dim=c(nrow,ncol))
+	z <- new("matrix.csr",ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dimension=c(nrow,ncol))
 	}
 else stop("Arguments have to be class \"matrix.csr\" or numeric")
-class(z) <- "matrix.csr"
 return(z)
 }
 #--------------------------------------------------------------------
@@ -798,52 +772,52 @@ return(z)
 # Element-wise matrix division of two sparse csr matrices 
 # This operation is not efficient storage-wise for sparse matrices
 if(is.numeric(A) && length(A) == 1)
-	z <- list(ra=A/B$ra,ja=B$ja,ia=B$ia,dim=B$dim)
+	z <- new("matrix.csr",ra=A/B@ra,ja=B@ja,ia=B@ia,dimension=B@dimension)
 else if(is.numeric(B) && length(B) == 1)
-	z <- list(ra=B/A$ra,ja=A$ja,ia=A$ia,dim=A$dim)
+	z <- new("matrix.csr",ra=B/A@ra,ja=A@ja,ia=A@ia,dimension=A@dimension)
 else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
 	if(is.matrix(A)) A <- as.matrix.csr(A)
 	if(is.matrix(B)) B <- as.matrix.csr(B)
-	nrow <- A$dim[1]
-	ncol <- A$dim[2]
-	Bcol <- B$dim[2]
-	Brow <- B$dim[1]
+	nrow <- A@dimension[1]
+	ncol <- A@dimension[2]
+	Bcol <- B@dimension[2]
+	Brow <- B@dimension[1]
 	if(ncol != Bcol | nrow != Brow)stop("matrices not conformable for element-by-element division")
-	nnza <- A$ia[nrow+1]-1
-	nnzb <- B$ia[nrow+1]-1
+	nnza <- A@ia[nrow+1]-1
+	nnzb <- B@ia[nrow+1]-1
 	z <- .Fortran("csort",
 		as.integer(nrow),
-		ra = as.double(A$ra),
-		ja = as.integer(A$ja),
-		ia = as.integer(A$ia),
+		ra = as.double(A@ra),
+		ja = as.integer(A@ja),
+		ia = as.integer(A@ia),
 		integer(max(nrow+1,2*nnza)),
 		as.logical(TRUE),
 		PACKAGE = "SparseM")
-	A$ra <- z$ra
-	A$ja <- z$ja
-	A$ia <- z$ia
+	A@ra <- z$ra
+	A@ja <- z$ja
+	A@ia <- z$ia
 	z <- .Fortran("csort",
 		as.integer(nrow),
-		ra = as.double(B$ra),
-		ja = as.integer(B$ja),
-		ia = as.integer(B$ia),
+		ra = as.double(B@ra),
+		ja = as.integer(B@ja),
+		ia = as.integer(B@ia),
 		integer(max(nrow+1,2*nnzb)),
 		as.logical(TRUE),
 		PACKAGE = "SparseM")
-	B$ra <- z$ra
-	B$ja <- z$ja
-	B$ia <- z$ia
-	nnzmax <- length(union(A$ja+A$dim[2]*(rep(1:A$dim[1],diff(A$ia))-1),
-		B$ja+B$dim[2]*(rep(1:B$dim[1],diff(B$ia))-1)))+1
+	B@ra <- z$ra
+	B@ja <- z$ja
+	B@ia <- z$ia
+	nnzmax <- length(union(A@ja+A@dimension[2]*(rep(1:A@dimension[1],diff(A@ia))-1),
+		B@ja+B@dimension[2]*(rep(1:B@dimension[1],diff(B@ia))-1)))+1
 	z <- .Fortran("aedib",
 		as.integer(nrow),
 		as.integer(ncol),
-		as.double(A$ra),
-		as.integer(A$ja),
-		as.integer(A$ia),
-		as.double(B$ra),
-		as.integer(B$ja),
-		as.integer(B$ia),
+		as.double(A@ra),
+		as.integer(A@ja),
+		as.integer(A@ia),
+		as.double(B@ra),
+		as.integer(B@ja),
+		as.integer(B@ia),
 		ra = double(nnzmax),
 		ja = integer(nnzmax),
 		ia = integer(nrow+1),
@@ -854,15 +828,14 @@ else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
 	nnz <- z$ia[nrow+1]-1
 	z1 <- vector("numeric",nrow*ncol)
         idx1 <- z$ja[1:nnz]+ncol*(rep(1:nrow,diff(z$ia))-1)
-        idx2 <- union(A$ja+A$dim[2]*(rep(1:A$dim[1],diff(A$ia))-1),
-                B$ja+B$dim[2]*(rep(1:B$dim[1],diff(B$ia))-1))
+        idx2 <- union(A@ja+A@dimension[2]*(rep(1:A@dimension[1],diff(A@ia))-1),
+                B@ja+B@dimension[2]*(rep(1:B@dimension[1],diff(B@ia))-1))
         idx3 <- setdiff(1:(nrow*ncol),idx2)
 	z1[idx1] <- z$ra[1:nnz]
 	z1[idx3] <- NaN
-	z <- list(ra=z1,ja=rep(1:ncol,nrow),ia=seq(1,nrow*ncol+1,by=ncol),dim=c(nrow,ncol))
+	z <- new("matrix.csr",ra=z1,ja=rep(1:ncol,nrow),ia=seq(1,nrow*ncol+1,by=ncol),dimension=c(nrow,ncol))
 	}
 else stop("Arguments have to be class \"matrix.csr\" or numeric")
-class(z) <- "matrix.csr"
 return(z)
 }
 #--------------------------------------------------------------------
@@ -883,10 +856,10 @@ return(z)
         AB[infty] <- uniq[2]
         AB[ninfty] <- uniq[3]
         AB <- as.matrix.csr(AB)
-        AB$ra[AB$ra==uniq[1]] <- NaN
-        AB$ra[AB$ra==uniq[2]] <- Inf
-        AB$ra[AB$ra==uniq[3]] <- -Inf
-        class(AB) <- "matrix.csr"
+        AB@ra[AB@ra==uniq[1]] <- NaN
+        AB@ra[AB@ra==uniq[2]] <- Inf
+        AB@ra[AB@ra==uniq[3]] <- -Inf
+	as(AB,"matrix.csr")
 	AB
 }
 #--------------------------------------------------------------------
@@ -907,10 +880,10 @@ return(z)
         AB[infty] <- uniq[2]
         AB[ninfty] <- uniq[3]
         AB <- as.matrix.csr(AB)
-        AB$ra[AB$ra==uniq[1]] <- NaN
-        AB$ra[AB$ra==uniq[2]] <- Inf
-        AB$ra[AB$ra==uniq[3]] <- -Inf
-        class(AB) <- "matrix.csr"
+        AB@ra[AB@ra==uniq[1]] <- NaN
+        AB@ra[AB@ra==uniq[2]] <- Inf
+        AB@ra[AB@ra==uniq[3]] <- -Inf
+	as(AB,"matrix.csr")
 	AB
 }
 #--------------------------------------------------------------------
@@ -931,10 +904,10 @@ return(z)
         AB[infty] <- uniq[2]
         AB[ninfty] <- uniq[3]
         AB <- as.matrix.csr(AB)
-        AB$ra[AB$ra==uniq[1]] <- NaN
-        AB$ra[AB$ra==uniq[2]] <- Inf
-        AB$ra[AB$ra==uniq[3]] <- -Inf
-        class(AB) <- "matrix.csr"
+        AB@ra[AB@ra==uniq[1]] <- NaN
+        AB@ra[AB@ra==uniq[2]] <- Inf
+        AB@ra[AB@ra==uniq[3]] <- -Inf
+	as(AB,"matrix.csr")
 	AB
 }
 #--------------------------------------------------------------------
@@ -958,13 +931,13 @@ return(z)
 			"ne" = e1 != e2)
 		z <- as.matrix.csr(z)
 		}
-	z$ra <- rep(1,length(z$ra))
+	z@ra <- rep(1,length(z@ra))
 	z
 }
 #--------------------------------------------------------------------
 ".csr.relation" <- function(A,drptol,rel){
-	nrow <- A$dim[1]
-	nnza <- A$ia[nrow+1]-1
+	nrow <- A@dimension[1]
+	nnza <- A@ia[nrow+1]-1
 	flag <- FALSE
 	if(rel=="gt" && drptol >=0){
 		relidx <- 1
@@ -977,13 +950,13 @@ return(z)
 	if(rel=="lt" && drptol <=0){
 		relidx <- 1
 		drptol <- -drptol
-		A$ra <- -A$ra
+		A@ra <- -A@ra
 		flag <- TRUE
 		}
 	if(rel=="le" && drptol <=0){
 		relidx <- 2
 		drptol <- -drptol
-		A$ra <- -A$ra
+		A@ra <- -A@ra
 		flag <- TRUE
 		}
 	if(rel=="eq" && drptol !=0){
@@ -999,9 +972,9 @@ return(z)
 			as.integer(nrow),
 			as.integer(relidx),
 			as.double(drptol),
-			as.double(A$ra),
-			as.integer(A$ja),
-			as.integer(A$ia),
+			as.double(A@ra),
+			as.integer(A@ja),
+			as.integer(A@ia),
 			ra = double(nnza),
 			ja = integer(nnza),
 			ia = integer(nrow+1),
@@ -1011,40 +984,39 @@ return(z)
 		if(z$ierr !=0) stop("Not enough space")
 		nnza <- z$ia[nrow+1]-1
 		if(rel == "lt" || rel == "le")
-			z <- list(ra=z$ra[1:nnza],ja=z$ja[1:nnza],ia=z$ia,dim=A$dim)
+			z <- new("matrix.csr",ra=z$ra[1:nnza],ja=z$ja[1:nnza],ia=z$ia,dimension=A@dimension)
 		else
-			z <- list(ra=-z$ra[1:nnza],ja=z$ja[1:nnza],ia=z$ia,dim=A$dim)
+			z <- new("matrix.csr",ra=-z$ra[1:nnza],ja=z$ja[1:nnza],ia=z$ia,dimension=A@dimension)
 		}
 	else{ #This operation is inefficient storage-wise
 		z <- as.matrix.csr(as.matrix(A) > drptol)
 		}
-	class(z) <- "matrix.csr"
 	z
 }
 #--------------------------------------------------------------------
-"[.matrix.csr" <- function(x,rw=1:x$dim[1],cl=1:x$dim[2]){
+"[.matrix.csr" <- function(x,rw=1:x@dimension[1],cl=1:x@dimension[2]){
 	sorted <- FALSE
-	nrow <- nrow1 <- x$dim[1]
-	ncol <- ncol1 <- x$dim[2]
-	nnza <- x$ia[nrow+1]-1
+	nrow <- nrow1 <- x@dimension[1]
+	ncol <- ncol1 <- x@dimension[2]
+	nnza <- x@ia[nrow+1]-1
 	z <- .Fortran("csrcoo",
 		as.integer(nrow),
 		as.integer(1),
 		as.integer(nnza),
-		as.double(x$ra),
-		as.integer(x$ja),
-		as.integer(x$ia),
+		as.double(x@ra),
+		as.integer(x@ja),
+		as.integer(x@ia),
 		nnz = integer(1),
-		ao = as.double(x$ra),
+		ao = as.double(x@ra),
 		ir = integer(nnza),
-		jc = as.integer(x$ja),
+		jc = as.integer(x@ja),
 		ierr = integer(1),
 		PACKAGE = "SparseM")
 	xir <- z$ir
 	xic <- z$jc
 	if(z$ierr !=0) stop("Not enough space")
 	if(is.matrix.csr(rw)){
-		if(nrow!=rw$dim[1] || ncol!=rw$dim[2]) 
+		if(nrow!=rw@dimension[1] || ncol!=rw@dimension[2]) 
 			stop("Indexing matrix has a different dimension than the matrix to be indexed")
 		}
 	else{
@@ -1087,16 +1059,16 @@ return(z)
 		else if(is.matrix.csr(rw)){
 			case <- "csridx"
 			rw <- t(rw)
-			nrw <- rw$dim[1]
+			nrw <- rw@dimension[1]
 			if(ncol != nrw) stop("dimension of the indexing matrix is not the same as the matrix being indexed")
-			nnzb <- rw$ia[nrw+1]-1
+			nnzb <- rw@ia[nrw+1]-1
 			z <- .Fortran("csrcoo",
 				as.integer(nrw),
 				as.integer(1),
 				as.integer(nnzb),
-				as.double(rw$ra),
-				as.integer(rw$ja),
-				as.integer(rw$ia),
+				as.double(rw@ra),
+				as.integer(rw@ja),
+				as.integer(rw@ia),
 				nnz = integer(1),
 				ao = double(nnzb),
 				ir = integer(nnzb),
@@ -1105,7 +1077,7 @@ return(z)
 				PACKAGE = "SparseM")
 			if(z$ierr !=0) stop("Not enough space")
 			clidx <- z$ir
-			rwidx <- rw$ja
+			rwidx <- rw@ja
 			nsub <- length(rwidx)
 			}
 		else stop("Invalid indexing")
@@ -1159,9 +1131,9 @@ return(z)
 		as.integer(nsub),
 		as.integer(rwidx),
 		as.integer(clidx),
-		as.double(x$ra),
-		as.integer(x$ja),
-		as.integer(x$ia),
+		as.double(x@ra),
+		as.integer(x@ja),
+		as.integer(x@ia),
 		as.logical(sorted),
 		values = double(nsub),
 		iadd = integer(nsub),
@@ -1177,8 +1149,7 @@ return(z)
 			jao = integer(nsub),
 			iao = integer(nrow1+1),
 			PACKAGE = "SparseM")
-		x.sub <- list(ra=z1$ao,ja=z1$jao,ia=z1$iao,dim=c(nrow1,ncol1))
-		class(x.sub) <- "matrix.csr"
+		x.sub <- new("matrix.csr",ra=z1$ao,ja=z1$jao,ia=z1$iao,dimension=c(nrow1,ncol1))
 		}
 	values <- switch(case,
 		"rwclidx" = x.sub,
@@ -1189,13 +1160,13 @@ return(z)
 	return(values)
 }
 #--------------------------------------------------------------------
-"[<-.matrix.csr" <- function(x,rw=1:x$dim[1],cl=1:x$dim[2],value){
+"[<-.matrix.csr" <- function(x,rw=1:x@dimension[1],cl=1:x@dimension[2],value){
 	sorted <- FALSE
-	nrow <- x$dim[1]
-	ncol <- x$dim[2]
-	nnza <- x$ia[nrow+1]-1
+	nrow <- x@dimension[1]
+	ncol <- x@dimension[2]
+	nnza <- x@ia[nrow+1]-1
 	if(is.matrix.csr(rw)){
-                if(nrow!=rw$dim[1] || ncol!=rw$dim[2])
+                if(nrow!=rw@dimension[1] || ncol!=rw@dimension[2])
                         stop("Indexing matrix has a different dimension than the matrix to be indexed")
                 }
         else{
@@ -1233,16 +1204,16 @@ return(z)
 		else if(is.matrix.csr(rw)){
 			case <- "csridx"
 			rw <- t(rw)
-			nrw <- rw$dim[1]
+			nrw <- rw@dimension[1]
 			if(ncol != nrw) stop("dimension of the indexing matrix is not the same as the matrix being indexed")
-			nnzb <- rw$ia[nrw+1]-1
+			nnzb <- rw@ia[nrw+1]-1
 			z <- .Fortran("csrcoo",
 				as.integer(nrw),
 				as.integer(1),
 				as.integer(nnzb),
-				as.double(rw$ra),
-				as.integer(rw$ja),
-				as.integer(rw$ia),
+				as.double(rw@ra),
+				as.integer(rw@ja),
+				as.integer(rw@ia),
 				nnz = integer(1),
 				ao = double(nnzb),
 				ir = integer(nnzb),
@@ -1251,7 +1222,7 @@ return(z)
 				PACKAGE = "SparseM")
 			if(z$ierr !=0) stop("Not enough space")
 			clidx <- z$ir
-			rwidx <- rw$ja
+			rwidx <- rw@ja
 			nsub <- length(rwidx)
 			}
 		else stop("Invalid indexing")
@@ -1294,9 +1265,9 @@ return(z)
                 as.integer(nsub),
                 as.integer(rwidx),
                 as.integer(clidx),
-                as.double(x$ra),
-                as.integer(x$ja),
-                as.integer(x$ia),
+                as.double(x@ra),
+                as.integer(x@ja),
+                as.integer(x@ia),
                 as.logical(sorted),
                 value = double(nsub),
                 iadd = integer(nsub),
@@ -1311,9 +1282,9 @@ return(z)
 		as.integer(nnzb),
 		as.integer(rwidx),
 		as.integer(clidx),
-		as.double(x$ra),
-		as.integer(x$ja),
-		as.integer(x$ia),
+		as.double(x@ra),
+		as.integer(x@ja),
+		as.integer(x@ia),
 		ra = double(nnzb),
 		ja = integer(nnzb),
 		ia = integer(nrow+1),
@@ -1322,52 +1293,42 @@ return(z)
 		ierr = integer(1),
 		PACKAGE = "SparseM")
         if(z$ierr != 0) stop("not enough space")
-	z <- list(ra=z$ra,ja=z$ja,ia=z$ia,dim=x$dim)
-	class(z) <- "matrix.csr"
+	z <- new("matrix.csr",ra=z$ra,ja=z$ja,ia=z$ia,dimension=x@dimension)
 	return(z)
 }
 #--------------------------------------------------------------------
-"%*%" <-
-function(e1, e2) UseMethod("%*%")
-#--------------------------------------------------------------------
-"%*%.default" <-
-.Primitive("%*%")
-#--------------------------------------------------------------------
-"%*%.matrix.csr" <-
-function(A,B,nnzmax){
-if(is.matrix.csr(B)){
+".matmul.matrix.csr" <- function(x,y){
+if(is.matrix.csr(y)){
    #matrix multiply two sparse csr matrices 
-   nrow <- A$dim[1]
-   ncol <- B$dim[2]
-   Acol <- A$dim[2]
-   Brow <- B$dim[1]
+   nrow <- x@dimension[1]
+   ncol <- y@dimension[2]
+   Acol <- x@dimension[2]
+   Brow <- y@dimension[1]
    if(Acol != Brow)
 	stop("matrices not conformable for multiplication")
-   if(missing(nnzmax)){
 	z <- .Fortran("amubdg",
 		as.integer(nrow),
 		as.integer(Acol),
 		as.integer(ncol),
-		as.integer(A$ja),
-		as.integer(A$ia),
-		as.integer(B$ja),
-		as.integer(B$ia),
+		as.integer(x@ja),
+		as.integer(x@ia),
+		as.integer(y@ja),
+		as.integer(y@ia),
 		integer(nrow),
 		nnz = integer(1),
 		integer(ncol),
 		PACKAGE = "SparseM")
 	nnzmax <- z$nnz
-	}
    z <- .Fortran("amub",
    	as.integer(nrow),
    	as.integer(ncol),
    	as.integer(1),
-   	as.double(A$ra),
-   	as.integer(A$ja),
-   	as.integer(A$ia),
-   	as.double(B$ra),
-   	as.integer(B$ja),
-   	as.integer(B$ia),
+   	as.double(x@ra),
+   	as.integer(x@ja),
+   	as.integer(x@ia),
+   	as.double(y@ra),
+   	as.integer(y@ja),
+   	as.integer(y@ia),
    	ra = double(nnzmax),
    	ja = integer(nnzmax),
    	ia = integer(nrow+1),
@@ -1377,26 +1338,26 @@ if(is.matrix.csr(B)){
 	PACKAGE = "SparseM")
    nnz <- z$ia[nrow+1]-1
    if(z$ierr != 0) stop("insufficient space for sparse matrix multiplication")
-   z <- list(ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dim=c(nrow,ncol))
-   class(z) <- "matrix.csr"
+   z <- new("matrix.csr",ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dimension=c(nrow,ncol))
    }
 else{
-   if(is.matrix(B))stop("Can't multiply sparse times dense matrix (yet)")
+   if(is.matrix(y))stop("Can't multiply sparse times dense matrix (yet)")
    #matrix-vector multiplication: multiply a sparse csr matrix by a vector
    #	A -- csr structure returned from call to function "as.matrix.csr"
    #	B -- vector
-   nrow <- A$dim[1]
-   ncol <- A$dim[2]
-   if(length(B) != ncol)stop("not conformable for multiplication")
+   nrow <- x@dimension[1]
+   ncol <- x@dimension[2]
+   if(length(y) != ncol)stop("not conformable for multiplication")
    z <- .Fortran("amux",
    	as.integer(nrow),
-   	as.double(B),
+   	as.double(y),
    	y=double(nrow),
-   	as.double(A$ra),
-   	as.integer(A$ja),
-   	as.integer(A$ia),
+   	as.double(x@ra),
+   	as.integer(x@ja),
+   	as.integer(x@ia),
 	PACKAGE = "SparseM")
    z <- z$y
+   class(z) <- "matrix"
    }
 return(z)
 }
@@ -1405,18 +1366,17 @@ return(z)
 #--------------------------------------------------------------------
 "chol.default" <-get("chol", pos=NULL, mode= "function")
 #--------------------------------------------------------------------
-formals(chol.default) <- c(formals(chol.default), alist(... =))
-#--------------------------------------------------------------------
 "chol.matrix.csr" <-
-function(x,cachsz=64,nsubmax,nnzlmax,tmpmax, ...){
+function(x, pivot = FALSE, nsubmax, nnzlmax, tmpmax, ...){
 # Interface for a sparse least squares solver via Ng-Peyton's Cholesky
 # factorization
 #	x -- csr structure returned from call to function "as.matrix.csr"
 #       cachsz -- size of the cache memory; it's machine dependent
-	nrow <- x$dim[1]
-	ncol <- x$dim[2]
+	cachsz <- 64
+	nrow <- x@dimension[1]
+	ncol <- x@dimension[2]
 	if(nrow!=ncol) stop("Can't perform Cholesky Factorization for Non-square matrix\n")
-	nnzdmax <- x$ia[nrow+1]-1
+	nnzdmax <- x@ia[nrow+1]-1
 	nnzdsm <- nnzdmax + nrow + 1
 	iwmax <- 7*nrow+3
 	if(missing(nsubmax)) nsubmax <- nnzdmax
@@ -1426,9 +1386,9 @@ function(x,cachsz=64,nsubmax,nnzlmax,tmpmax, ...){
 	z <- .Fortran("chol",
 		nrow = as.integer(nrow),
 		nnzdmax = as.integer(nnzdmax),
-		d = as.double(x$ra),
-		jd = as.integer(x$ja),
-		id = as.integer(x$ia),
+		d = as.double(x@ra),
+		jd = as.integer(x@ja),
+		id = as.integer(x@ia),
 		nnzdsm = as.integer(nnzdsm),
 		dsub = double(nnzdsm),
 		jdsub = integer(nnzdsm),
@@ -1464,50 +1424,45 @@ function(x,cachsz=64,nsubmax,nnzlmax,tmpmax, ...){
 	        }
 	nnzl <- z$xlnz[length(z$xlnz)]-1
         nnzlindx <- z$xlindx[nrow+1]-1
-	z <- list(nrow=z$nrow,nnzlindx=nnzlindx,nsuper=z$nsuper,
-                lindx=z$lindx[1:nnzlindx],xlindx=z$xlindx,nnzl=nnzl,
-                lnz=z$lnz[1:nnzl],xlnz=z$xlnz,invp=z$invp,perm=z$perm,
-                xsuper=z$xsuper,ierr=z$ierr,time=z$time)
-	class(z) <- "matrix.csr.chol"
+	z <- new("matrix.csr.chol",nrow=z$nrow,nnzlindx=nnzlindx,
+		nsuper=z$nsuper,lindx=z$lindx[1:nnzlindx],xlindx=z$xlindx,
+		nnzl=nnzl,lnz=z$lnz[1:nnzl],xlnz=z$xlnz,invp=z$invp,
+		perm=z$perm,xsuper=z$xsuper,ierr=z$ierr,time=z$time)
 	return(z)
 }
 #--------------------------------------------------------------------
-"chol.matrix.csc" <- function(x,cachsz=64, ...){
+"chol.matrix.csc" <- function(x, pivot = FALSE,...){
+	cachsz <- 64
 	x <- as.matrix.csr(x)
-	x <- chol(x,cachsz=cachsz)
+	x <- chol(x,...)
 	x
 }
 #--------------------------------------------------------------------
-"backsolve" <- function(r, x, ...) UseMethod("backsolve")
-#--------------------------------------------------------------------
-"backsolve.default" <-get("backsolve", pos=NULL, mode = "function")
-#--------------------------------------------------------------------
-formals(backsolve.default) <- c(formals(backsolve.default), alist(... =))
-#--------------------------------------------------------------------
 "backsolve.matrix.csr.chol" <-
-function(r,x,cachsz=64, ...){
+function(r, x, k = NULL, upper.tri = NULL, transpose = NULL){
 # backsolve for Ng-Peyton's Cholesky factorization
 #	Solves linear system A b = x where r is chol(A)
 # Input:
 #	r -- structure returned by chol.matrix.csr
 #	x --  rhs  may be a matrix in dense form
-	m <- r$nrow
+	cachsz <- 64
+	m <- r@nrow
 	if(!is.matrix(x)) x <- as.matrix(x) 
 	if(nrow(x)!=m)stop("chol not conformable with x")
 	p <- ncol(x)
 	z <- .Fortran("bckslv",
 		m = as.integer(m),
-		nnzlindx = as.integer(r$nnzlindx),
-		as.integer(r$nsuper),
+		nnzlindx = as.integer(r@nnzlindx),
+		as.integer(r@nsuper),
 		as.integer(p),
-		as.integer(r$lindx),	
-		as.integer(r$xlindx),
-		as.integer(r$nnzl),
-		as.double(r$lnz),
-		as.integer(r$xlnz),
-		as.integer(r$invp),
-		as.integer(r$perm),
-		as.integer(r$xsuper),
+		as.integer(r@lindx),	
+		as.integer(r@xlindx),
+		as.integer(r@nnzl),
+		as.double(r@lnz),
+		as.integer(r@xlnz),
+		as.integer(r@invp),
+		as.integer(r@perm),
+		as.integer(r@xsuper),
 		double(m),
 		sol = double(m*p),
 		as.double(x),
@@ -1518,23 +1473,18 @@ function(r,x,cachsz=64, ...){
 return(z)
 }
 #--------------------------------------------------------------------
-"diag" <- function(x, ...) UseMethod("diag")
-#--------------------------------------------------------------------
-"diag.default" <- get("diag", pos= NULL, mode="function")
-#--------------------------------------------------------------------
-formals(diag.default) <- c(formals(diag.default), alist(... =))
-#--------------------------------------------------------------------
 "diag.matrix.csr" <-
-function (x = 1, nrow, ...) 
+function (x = 1, nrow, ncol=n) 
+#function (x = 1, nrow, ...) 
 {
     if (is.matrix.csr(x) && nargs() == 1) {
         if ((m <- min(dim(x))) == 0) 
             return(numeric(0))
         #y <- c(x)[1 + 0:(m - 1) * (dim(x)[1] + 1)]
 	y <- rep(0,m)
-        ia <- rep(1:dim(x)[1],diff(x$ia))
-        y[x$ja[ia == x$ja]] <- x$ra[ia == x$ja]
-	n <- sum(ia == x$ja)
+        ia <- rep(1:dim(x)[1],diff(x@ia))
+        y[x@ja[ia == x@ja]] <- x@ra[ia == x@ja]
+	n <- sum(ia == x@ja)
         nms <- dimnames(x)
         if (is.list(nms) && !any(sapply(nms, is.null)) && all((nm <- nms[[1]][1:m]) == 
             nms[[2]][1:m])) 
@@ -1554,25 +1504,20 @@ function (x = 1, nrow, ...)
     ra <- ja
     ra[1:n] <- x
     ia <- 1:(n+1)
-    y <- list(ra = ra, ja = ja, ia = ia, dim=c(n,n))
-    class(y) <- "matrix.csr"
+    y <- new("matrix.csr",ra = ra, ja = ja, ia = ia, dimension=c(n,n))
     return(y)
 }
 #--------------------------------------------------------------------
-"diag<-" <- function(x, value) UseMethod("diag<-")
-#--------------------------------------------------------------------
-"diag<-.default" <-get("diag<-", pos=NULL, mode="function")
-#--------------------------------------------------------------------
-"diag<-.matrix.csr" <- function(x,value)
+"diag.assign.matrix.csr" <- function(x,value)
 {
-	dx <- x$dim
+	dx <- x@dimension
 	if (length(dx) != 2 || prod(dx) == 1) 
 		stop("only matrix diagonals can be replaced")
-	nrow <- x$dim[1]
-	ncol <- x$dim[2]
-	nnza <- x$ia[nrow+1]-1
-	ia <- rep(1:nrow,diff(x$ia))
-	idx <- x$ja[ia == x$ja]
+	nrow <- x@dimension[1]
+	ncol <- x@dimension[2]
+	nnza <- x@ia[nrow+1]-1
+	ia <- rep(1:nrow,diff(x@ia))
+	idx <- x@ja[ia == x@ja]
 	m <- nsub <- min(dx)
 	ir <- jc <- 1:m
 	if (length(value) != 1 && length(value) != m) 
@@ -1583,9 +1528,9 @@ function (x = 1, nrow, ...)
                 as.integer(nsub),
                 as.integer(ir),
                 as.integer(jc),
-                as.double(x$ra),
-                as.integer(x$ja),
-                as.integer(x$ia),
+                as.double(x@ra),
+                as.integer(x@ja),
+                as.integer(x@ia),
                 as.logical(sorted),
                 value = double(nsub),
                 iadd = integer(nsub),
@@ -1600,9 +1545,9 @@ function (x = 1, nrow, ...)
 		as.integer(nnzb),
 		as.integer(ir),
 		as.integer(jc),
-		as.double(x$ra),
-		as.integer(x$ja),
-		as.integer(x$ia),
+		as.double(x@ra),
+		as.integer(x@ja),
+		as.integer(x@ia),
 		ra = double(nnzb),
 		ja = integer(nnzb),
 		ia = integer(nrow+1),
@@ -1611,12 +1556,11 @@ function (x = 1, nrow, ...)
 		ierr = integer(1),
 		PACKAGE = "SparseM")
         if(z$ierr != 0) stop("not enough space")
-	x <- list(ra = z$ra, ja = z$ja, ia = z$ia, dim=x$dim)
-	class(x) <- "matrix.csr"
+	x <- new("matrix.csr",ra = z$ra, ja = z$ja, ia = z$ia, dimension=x@dimension)
 	x
 }
 #--------------------------------------------------------------------
-solve.matrix.csr <-
+"solve.matrix.csr" <-
 function (a, b, ...) 
 {
     if(!is.matrix.csr(a))stop("a not in csr format")
@@ -1690,15 +1634,12 @@ function (x, y, weights,  ...)
 function (x, y, ...) 
 {
     n <- length(y)
-    p <- x$dim[2]
-    if (n != x$dim[1]) 
+    p <- x@dimension[2]
+    if (n != x@dimension[1]) 
         stop("x and y don't match n")
     chol <- chol(t(x)%*%x)
     xy <- t(x) %*% y
     coefficients <- backsolve(chol,xy)
-    #if (z$info != 0) 
-    #    stop(paste("Error info = ", z$info, "in stepy: singular design"))
-    #names(coefficients) <- dimnames(x)[[2]]
     fitted <-  x %*% coefficients
     residuals <- y - fitted
     return(coefficients, chol, residuals, fitted)
@@ -1837,4 +1778,3 @@ function (x, digits = max(3, getOption("digits") - 3),
     cat("\n")
     invisible(x)
 }
-#--------------------------------------------------------------------

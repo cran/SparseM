@@ -1,1 +1,2 @@
-SparseM.pdf:	A comprehensive description of package SparseM
+inst/doc/SparseM.pdf: An Introduction to the SparseM Package for Sparse
+    Linear Algebra

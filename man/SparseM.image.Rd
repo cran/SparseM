@@ -28,11 +28,11 @@ Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
 \code{SparseM.ontology} 
 }
 \examples{
-a_rnorm(20*5)
-A_matrix(a,20,5)
+a <- rnorm(20*5)
+A <- matrix(a,20,5)
 A[row(A)>col(A)+4|row(A)<col(A)+3] <- 0
-b_rnorm(20*5)
-B_matrix(b,20,5)
+b <- rnorm(20*5)
+B <- matrix(b,20,5)
 B[row(A)>col(A)+2|row(A)<col(A)+2] <- 0
 image(as.matrix.csr(A)\%*\%as.matrix.csr(t(B)))
 }

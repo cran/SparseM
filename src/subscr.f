@@ -1,5 +1,3 @@
-c SparseM
-c Author:  Pin Ng
       subroutine subext(nsub,ir,jc,a,ja,ia,sorted,values,iadd)
 c        1         2         3         4         5         6         7
 c23456789012345678901234567890123456789012345678901234567890123456789012

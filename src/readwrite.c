@@ -1,5 +1,3 @@
-/* SparseM Package --   Author:  Pin Ng */
-
 #include<stdlib.h>
 #include<stdio.h>
 #include "iohb.h"

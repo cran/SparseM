@@ -1,5 +1,3 @@
-c SparseM
-c Author: Pin Ng
       subroutine bckslv(m,nsubmax,nsuper,nrhs,lindx,xlindx,nnzlmax,lnz,
      &                   xlnz,invp,perm,xsuper,newrhs,sol,b,timed)
 c        1         2         3         4         5         6         7

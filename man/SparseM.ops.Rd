@@ -1,8 +1,4 @@
 \name{SparseM.ops}
-\alias{diag}
-\alias{diag.default}
-\alias{diag<-}
-\alias{diag<-.default}
 \alias{%*%}
 \alias{%*%.default}
 \alias{Ops.matrix.csr}
@@ -26,7 +22,7 @@
 \alias{t.matrix.csr} 
 \alias{t.matrix.csc} 
 \alias{diag.matrix.csr} 
-\alias{diag<-.matrix.csr} 
+\alias{diag.assign.matrix.csr} 
 \alias{ncol.matrix.csr} 
 \alias{nrow.matrix.csr} 
 \alias{dim.matrix.csr} 

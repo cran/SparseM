@@ -31,10 +31,10 @@ therwise.}  \item{guess}{vector of the initial guess of the solutions if they ex
 \examples{
 data(lsq)
 class(lsq) # -> [1] "matrix.csc.hb"
-model.matrix.hb(lsq)->X
+model.matrix(lsq)->X
 class(X) # -> "matrix.csr"
 dim(X) # -> [1] 1850  712
-y <- model.response.hb(lsq) # extract the rhs
+y <- model.response(lsq) # extract the rhs
 length(y) # [1] 1850 
 }
 \references{

@@ -2,11 +2,9 @@
 \alias{SparseM.hb}
 \alias{read.matrix.hb}
 \alias{write.matrix.hb}
-\alias{model.matrix.hb}
-\alias{model.matrix.hb.matrix.csc.hb}
-\alias{model.matrix.hb.matrix.ssc.hb}
-\alias{model.matrix.hb.default}
-\alias{model.response.hb}
+\alias{model.matrix.matrix.csc.hb}
+\alias{model.matrix.matrix.ssc.hb}
+\alias{model.response.matrix.csc.hb}
 \title{Harwell-Boeing Format Sparse Matrices}
 \description{
 Read, write and extract components of data in Harwell-Boeing  
@@ -17,13 +15,16 @@ read.matrix.hb(filename)
 write.matrix.hb(filename = "hb.out", X, title, key, mxtype, rhs = NULL, 
 guess = FALSE,  xsol = FALSE, ptrfmt = "(16I5)", indfmt = "(16I5)",
 valfmt = "(5D16.9)", rhsfmt = "(5D16.9)")
-\method{model.matrix.hb}{matrix.csc.hb}(object, \dots)
-model.response.hb(x)
+\method{model.matrix}{matrix.csc.hb}(object, \dots)
+\method{model.response}{matrix.csc.hb}(data)
 }
 \arguments{
   \item{filename}{file name to read from or write to }
-  \item{x, object}{an object of either \code{matrix.csc.hb} or \code{matrix.ssc.hb} 
+  \item{data, object}{an object of either \code{matrix.csc.hb} or \code{matrix.ssc.hb} 
 class}
+  \item{type}{One of `"any"', `"numeric"', `"double"'. Using the either of
+          latter two coerces the result to have storage mode
+          `"double"'.}
   \item{X}{coefficient matrix stored in csc (for unsymmetric and rectangular
         matrix) or ssc (for symmetric matrix) format}
   \item{title}{72-character title for the matrix}
@@ -54,11 +55,11 @@ summary information on the storage formats and storage requirements.
 The data blocks contain information of the sparse coefficient matrix and 
 data for the right-hand-side of the linear system of equations, 
 initial guess of the solution and the exact solutions if they exist.
-The function \code{model.matrix.hb} extracts the X matrix component.
-The function \code{model.response.hb} extracts the y vector (or matrix).
+The function \code{model.matrix} extracts the X matrix component.
+The function \code{model.response} extracts the y vector (or matrix).
 }
 \value{
-A list of class \code{matrix.csc.hb} or \code{matrix.ssc.hb} depending
+The function \code{read.matrix.hb} returns a list of class \code{matrix.csc.hb} or \code{matrix.ssc.hb} depending
 on how the coefficient matrix is stored in the \code{file}.
   \item{ra }{ra component of the csc or ssc format of the coefficient matrix, X.}
   \item{ja }{ja component of the csc or ssc format of the coefficient matrix, X.}
@@ -72,10 +73,13 @@ on how the coefficient matrix is stored in the \code{file}.
   \item{xexact}{vector of the exact solutions, b, if they exist; a null vector otherwise.}
   \item{guess}{vector of the initial guess of the solutions if they exist; 
 	a null vector otherwise.}
-  \item{dim}{dimenson of the coefficient matrix, X.}
+  \item{dimension}{dimenson of the coefficient matrix, X.}
   \item{rhs.dim}{dimenson of the right-hand-side, y.}
   \item{rhs.mode}{storage mode of the right-hand-side; can be full storage or
 	same format as the coefficient matrix.}
+
+The function \code{model.matrix} returns the X matrix of class \code{matrix.csr}.
+The function \code{model.response} returns the y vector (or matrix).
 }
 \references{ 
 Duff, I.S., Grimes, R.G. and Lewis, J.G. (1992) 
@@ -94,10 +98,10 @@ User's Guide for Harwell-Boeing Sparse Matrix Collection at
 \examples{
 read.matrix.hb(system.file("HBdata","lsq.rra",package = "SparseM"))-> hb.o
 class(hb.o) # -> [1] "matrix.csc.hb"
-model.matrix.hb(hb.o)->X
+model.matrix(hb.o)->X
 class(X) # -> "matrix.csr"
 dim(X) # -> [1] 1850  712
-y <- model.response.hb(hb.o) # extract the rhs
+y <- model.response(hb.o) # extract the rhs
 length(y) # [1] 1850
 }
 \keyword{IO}

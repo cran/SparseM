@@ -1,31 +1,30 @@
 \name{SparseM.ontology}
 \alias{SparseM.ontology}
 \alias{matrix.csr}
-\alias{as.matrix.csr} 
 \alias{as.matrix.matrix.csr} 
+\alias{as.matrix.csr}
 \alias{is.matrix.csr} 
-\alias{is.matrix.csc} 
-\alias{is.matrix.ssr} 
-\alias{is.matrix.ssc} 
 \alias{as.matrix.csc}
-\alias{as.matrix.csc.default}     
+\alias{is.matrix.csc} 
+\alias{as.matrix.ssr}
+\alias{is.matrix.ssr} 
+\alias{as.matrix.ssc}
+\alias{is.matrix.ssc} 
+\alias{matrix.csc}
 \alias{as.matrix.csc.matrix.csr} 
 \alias{as.matrix.csc.matrix.ssc}  
 \alias{as.matrix.csc.matrix.ssr} 
-\alias{as.matrix.csr.default}     
 \alias{as.matrix.csr.matrix.csc} 
 \alias{as.matrix.csr.matrix.ssc}  
 \alias{as.matrix.csr.matrix.ssr} 
 \alias{as.matrix.matrix.csc}      
 \alias{as.matrix.matrix.ssc}     
 \alias{as.matrix.matrix.ssr}      
-\alias{as.matrix.ssc}            
-\alias{as.matrix.ssc.default}     
+\alias{matrix.ssc}            
 \alias{as.matrix.ssc.matrix.csc} 
 \alias{as.matrix.ssc.matrix.csr}  
 \alias{as.matrix.ssc.matrix.ssr} 
-\alias{as.matrix.ssr}             
-\alias{as.matrix.ssr.default}    
+\alias{matrix.ssr}             
 \alias{as.matrix.ssr.matrix.csc}  
 \alias{as.matrix.ssr.matrix.csr} 
 \alias{as.matrix.ssr.matrix.ssc}  
@@ -34,11 +33,10 @@
 This group of functions evaluates and coerces changes in class structure.
 }
 \usage{
-matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
-as.matrix.csr(x, ...)
-as.matrix.csc(x, ...)
-as.matrix.ssr(x, ...)
-as.matrix.ssc(x, ...)
+as.matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+as.matrix.csc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+as.matrix.ssr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+as.matrix.ssc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
 is.matrix.csr(x, ...)
 is.matrix.csc(x, ...)
 is.matrix.ssr(x, ...)
@@ -116,6 +114,6 @@ as.matrix(A.csr)
 as.matrix(A.csc)
 as.matrix(B.ssr)
 as.matrix(B.ssc)
-matrix.csr(rep(0,9),3,3) #sparse matrix of all zeros
+as.matrix.csr(rep(0,9),3,3) #sparse matrix of all zeros
 }
 \keyword{algebra}

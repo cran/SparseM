@@ -80,8 +80,8 @@ design matrix directly to the fitting process.
 \examples{
 # lsq.rra is real rectangular matrix stored in compressed sparse column format
 read.matrix.hb(system.file("HBdata","lsq.rra",package = "SparseM"))-> hb.o
-X <- model.matrix.hb(hb.o) #extract the design matrix
-y <- model.response.hb(hb.o) # extract the rhs
+X <- model.matrix(hb.o) #extract the design matrix
+y <- model.response(hb.o) # extract the rhs
 X1 <- as.matrix(X)
 slm.time <- unix.time(slm(y~X1-1) -> slm.o) # pretty fast
 lm.time <- unix.time(lm(y~X1-1) -> lm.o) # very slow

@@ -1,5 +1,3 @@
-c SparseM
-c Author Pin Ng
       subroutine chol(m,nnzdmax,d,jd,id,nnzdsm,dsub,jdsub,nsubmax,lindx,
      &                xlindx,nsuper,nnzlmax,lnz,xlnz,invp,perm,iwmax,
      &                iwork,colcnt,snode,xsuper,split,tmpmax,tmpvec,
@@ -20,7 +18,7 @@ c           row in d and jd
 c     dsub -- the values of d excluding the diagonal elements
 c     jdsub -- the indices to dsub
 c     nsubmax -- upper bound of the dimension of lindx
-c     lindx -- an nsub-vector of interger which contains, in 
+c     lindx -- an nsub-vector of integer which contains, in 
 c           column major oder, the row subscripts of the nonzero
 c           entries in L in a compressed storage format
 c     xlindx -- an nsuper-vector of integer of pointers for lindx
