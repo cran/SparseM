@@ -17,9 +17,12 @@ slm.fit.csr(x, y, \dots)
   \item{y}{ vector of response observations.  }
   \item{method}{ only \code{csr} is supported currently }
   \item{weights}{an optional vector of weights to be used in the fitting
-          process. If specified, weighted least squares is used with
-          weights `weights' (that is, minimizing 
-	\deqn{\sum w_i*e_i^2}{sum w e^2}}
+     process. If specified, weighted least squares is used with
+     weights `weights' (that is, minimizing \deqn{\sum w_i*e_i^2}{sum w e^2}
+    The length of weights must be the same as
+    the number of observations.  The weights must be nonnegative
+    and it is strongly recommended that they be strictly positive,
+    since zero weights are ambiguous.}
   \item{\dots}{additional arguments.}
 }
 \details{
@@ -29,20 +32,6 @@ slm.fit.csr(x, y, \dots)
    These functions can be called directly if the user is willing to
    specify the design matrix in \code{matrix.csr} form.  This is often
    advantageous in large problems to reduce memory requirements.
-}
-\item{weights}{
-    vector of observation weights to be used by `slm.wfit'; 
-    if supplied, the algorithm fits
-    to minimize the sum of the weights multiplied by the
-    squared residuals. The length of weights must be the same as
-    the number of observations.  The weights must be nonnegative
-    and it is strongly recommended that they be strictly positive,
-    since zero weights are ambiguous.
-  }
-\item{\dots}{
-   additional arugments.
-  }
-}
 }
 \value{
 A list of class \code{slm} consisting of:

@@ -287,9 +287,9 @@ sum.lm
 \section{Some Potential Refinements}
 
 There are still many features that could be usefully added to the package. Among these
-we would especially like to see in the near future: \texttt{crossprod},
-\texttt{row},\texttt{ col}, \texttt{eigen}, \texttt{det}, \texttt{svd} and the
-set of functions for QR decomposition. 
+we would especially like to see: \texttt{crossprod},
+\texttt{row},\texttt{ col}, code for \texttt{eigen}, \texttt{svd}
+would also be desirable, but seems somewhat more problematic.
 Support for other storage formats might
 be eventually useful, although \textbf{csr, csc, ssr, ssc} formats seem quite
 sufficient for most purposes. A major improvement in the \texttt{slm}
@@ -302,7 +302,7 @@ model.matrix into the sparse form. Ideally, this would be done with a special
 \texttt{.csr} form of
 \texttt{model.matrix}, thus obviating the need to construct the dense form
 of the matrix. We have not looked carefully at the question of implementing
-this suggestion, but we hope that someone else might be inspired to do so.
+this suggestion, but we (still) hope that someone else might be inspired to do so.
 
 Our primary motivation for $R$ sparse linear algebra comes from
 our experience, see  e.g. Koenker, Ng and Portnoy (1994) and He and Ng (1999),
