@@ -144,12 +144,12 @@ The following commands illustrate typical coercion operations.
 > A
 \end{Sinput}
 \begin{Soutput}
-     [,1]       [,2]      [,3]       [,4]
-[1,]    0 -1.2520927 0.0000000  0.0000000
-[2,]    0  0.8256068 0.0000000  1.0553557
-[3,]    0  2.7278160 0.0000000 -0.9552583
-[4,]    0 -1.1450069 0.7368707 -0.9915961
-[5,]    0  0.0000000 0.0000000  1.9204870
+           [,1]       [,2]       [,3]       [,4]
+[1,] -0.8317441  0.9982346  0.0000000  0.0000000
+[2,]  0.0000000 -0.7891478 -1.1156573  0.0000000
+[3,]  0.0000000  0.0000000 -1.0397776  0.7489430
+[4,]  1.4535739  0.0000000  0.0000000 -0.7303481
+[5,]  0.0000000  1.0515062  0.7994089  0.0000000
 \end{Soutput}
 \begin{Sinput}
 > A.csr <- as.matrix.csr(A)
@@ -158,14 +158,14 @@ The following commands illustrate typical coercion operations.
 \begin{Soutput}
 An object of class "matrix.csr"
 Slot "ra":
-[1] -1.2520927  0.8256068  1.0553557  2.7278160 -0.9552583 -1.1450069  0.7368707
-[8] -0.9915961  1.9204870
+ [1] -0.8317441  0.9982346 -0.7891478 -1.1156573 -1.0397776  0.7489430
+ [7]  1.4535739 -0.7303481  1.0515062  0.7994089
 
 Slot "ja":
-[1] 2 2 4 2 4 2 3 4 4
+ [1] 1 2 2 3 3 4 1 4 2 3
 
 Slot "ia":
-[1]  1  2  4  6  9 10
+[1]  1  3  5  7  9 11
 
 Slot "dimension":
 [1] 5 4
@@ -174,12 +174,12 @@ Slot "dimension":
 > as.matrix(A.csr)
 \end{Sinput}
 \begin{Soutput}
-     [,1]       [,2]      [,3]       [,4]
-[1,]    0 -1.2520927 0.0000000  0.0000000
-[2,]    0  0.8256068 0.0000000  1.0553557
-[3,]    0  2.7278160 0.0000000 -0.9552583
-[4,]    0 -1.1450069 0.7368707 -0.9915961
-[5,]    0  0.0000000 0.0000000  1.9204870
+           [,1]       [,2]       [,3]       [,4]
+[1,] -0.8317441  0.9982346  0.0000000  0.0000000
+[2,]  0.0000000 -0.7891478 -1.1156573  0.0000000
+[3,]  0.0000000  0.0000000 -1.0397776  0.7489430
+[4,]  1.4535739  0.0000000  0.0000000 -0.7303481
+[5,]  0.0000000  1.0515062  0.7994089  0.0000000
 \end{Soutput}
 \end{Schunk}
 To facilitate testing we have included \texttt{read.matrix.hb} 
@@ -305,7 +305,7 @@ and related image processing contexts.
 > cat("slm time =", slm.time, "\n")
 \end{Sinput}
 \begin{Soutput}
-slm time = 1.63 0.94 2.57 0 0 
+slm time = 1.69 0.89 2.57 0 0 
 \end{Soutput}
 \begin{Sinput}
 > cat("lm time =", lm.time, "\n")
@@ -317,13 +317,13 @@ lm time = 3.39 1.06 4.44 0 0
 > cat("slm.fit time =", slm.fit.time, "\n")
 \end{Sinput}
 \begin{Soutput}
-slm.fit time = 0.17 0.05 0.21 0 0 
+slm.fit time = 0.16 0.06 0.22 0 0 
 \end{Soutput}
 \begin{Sinput}
 > cat("lm.fit time =", lm.fit.time, "\n")
 \end{Sinput}
 \begin{Soutput}
-lm.fit time = 2.42 0.27 2.7 0 0 
+lm.fit time = 2.47 0.2 2.7 0 0 
 \end{Soutput}
 \begin{Sinput}
 > cat("slm Results: Reported Coefficients Truncated to 5  ", "\n")
