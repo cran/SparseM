@@ -1,37 +1,53 @@
 \name{SparseM.ops}
-\alias{%*%}
-\alias{%x%}
-\alias{%*%.default}
 \alias{Ops.matrix.csr}
-\alias{SparseM.ops}
-\alias{\%*\%.matrix.csr}
-\alias{+.matrix.csr}
-\alias{-.matrix.csr}
-\alias{*.matrix.csr}
-\alias{/.matrix.csr}
-\alias{^.matrix.csr}
-\alias{\%\%.matrix.csr}
-\alias{\%/\%.matrix.csr}
-\alias{>.matrix.csr}
-\alias{>=.matrix.csr}
-\alias{<.matrix.csr}
-\alias{<=.matrix.csr}
-\alias{==.matrix.csr}
-\alias{!=.matrix.csr}
-\alias{&.matrix.csr}
-\alias{|.matrix.csr}
-\alias{t.matrix.csr} 
-\alias{t.matrix.csc} 
-\alias{diag.matrix.csr} 
-\alias{diff.matrix.csr} 
-\alias{diag.assign.matrix.csr} 
-\alias{ncol.matrix.csr} 
-\alias{nrow.matrix.csr} 
-\alias{dim.matrix.csr} 
-\alias{dim.matrix.csc} 
-\alias{dim.matrix.ssr} 
-\alias{dim.matrix.ssc} 
-\alias{dim.matrix.coo} 
+\alias{%*%-methods}
+\alias{%*%,ANY,ANY-method}
+\alias{%*%,matrix.csr,matrix.csr-method}
+\alias{%*%,matrix.csr,matrix-method}
+\alias{%*%,matrix.csr,numeric-method}
+\alias{%*%,matrix,matrix.csr-method}
+\alias{%*%,numeric,matrix.csr-method}
+\alias{%x%-methods}
+\alias{%x%,ANY,ANY-method}
+\alias{%x%,matrix.csr,matrix.csr-method}
+\alias{%x%,matrix.csr,matrix-method}
+\alias{%x%,matrix.csr,numeric-method}
+\alias{%x%,matrix,matrix.csr-method}
+\alias{%x%,numeric,matrix.csr-method}
+\alias{+,matrix.csr-method}
+\alias{-,matrix.csr-method}
+\alias{*,matrix.csr-method}
+\alias{/,matrix.csr-method}
+\alias{^,matrix.csr-method}
+\alias{\%\%,matrix.csr-method}
+\alias{\%/\%,matrix.csr-method}
+\alias{>,matrix.csr-method}
+\alias{>=,matrix.csr-method}
+\alias{<,matrix.csr-method}
+\alias{<=,matrix.csr-method}
+\alias{==,matrix.csr-method}
+\alias{!=,matrix.csr-method}
+\alias{&,matrix.csr-method}
+\alias{|,matrix.csr-method}
+\alias{t,ANY-method} 
+\alias{t,matrix.csr-method} 
+\alias{t,matrix.csc-method} 
+\alias{t,matrix.coo-method} 
+\alias{diag,ANY-method} 
+\alias{diag,matrix.csr-method} 
+\alias{diag<-,ANY-method} 
+\alias{diag<-,matrix.csr-method} 
+\alias{diff,ANY-method} 
+\alias{diff,matrix.csr-method} 
+\alias{diag.assign,matrix.csr-method} 
+\alias{ncol,matrix.csr-method} 
+\alias{nrow,matrix.csr-method} 
+\alias{dim,ANY-method} 
+\alias{dim,matrix.csr-method} 
+\alias{dim,matrix.csc-method} 
+\alias{dim,matrix.ssr-method} 
+\alias{dim,matrix.ssc-method} 
+\alias{dim,matrix.coo-method} 
 \alias{rbind.matrix.csr} 
 \alias{cbind.matrix.csr} 
 \alias{[.matrix.csr}
@@ -42,11 +58,7 @@
 \description{Basic linear algebra operations for sparse matrices
 of class \code{matrix.csr}.  
 }
-\usage{
-t(x); diff(x, lag, differences,...); diag(x, nrow); diag(x) <- value; ncol(x); nrow(x); dim(x);rbind(...);
-cbind(...);x[i,j]; x \%*\% y; x \%x\% y;x \%\% y; x \%/\% y; x + y; x - y; x * y;
-x / y; x ^ y; x > y; x >= y; x < y; x <= y; x == y; x != y; x & y; x | y
-}
+\usage{ }
 \arguments{
 \item{x}{matrix of class \code{matrix.csr}.}
 \item{y}{matrix of class \code{matrix.csr} or a dense matrix or vector.}

@@ -2,9 +2,15 @@
 \alias{SparseM.hb}
 \alias{read.matrix.hb}
 \alias{write.matrix.hb}
-\alias{model.matrix.matrix.csc.hb}
+\alias{model.matrix,ANY-method}
+\alias{model.matrix,matrix.csc.hb-method}
+\alias{model.matrix,matrix.ssc.hb-method}
 \alias{model.matrix.matrix.ssc.hb}
-\alias{model.response.matrix.csc.hb}
+\alias{model.response,ANY-method}
+\alias{model.response,matrix.csc.hb-method}
+\alias{model.response,matrix.ssc.hb-method}
+\alias{model.response}
+\alias{model.matrix}
 \title{Harwell-Boeing Format Sparse Matrices}
 \description{
 Read, write and extract components of data in Harwell-Boeing  
@@ -15,8 +21,8 @@ read.matrix.hb(filename)
 write.matrix.hb(filename = "hb.out", X, title, key, mxtype, rhs = NULL, 
 guess = FALSE,  xsol = FALSE, ptrfmt = "(16I5)", indfmt = "(16I5)",
 valfmt = "(5D16.9)", rhsfmt = "(5D16.9)")
-\method{model.matrix}{matrix.csc.hb}(object, \dots)
-\method{model.response}{matrix.csc.hb}(data,type)
+model.matrix(object, \dots)
+model.response(data,type)
 }
 \arguments{
   \item{filename}{file name to read from or write to }

@@ -1,12 +1,18 @@
 \name{SparseM.solve}
 \alias{SparseM.solve}
-\alias{chol.matrix.csr}              
-\alias{chol.matrix.csc}              
+\alias{chol,ANY-method}
+\alias{chol,matrix.csr-method}
+\alias{chol,matrix.csc-method}              
+\alias{chol,matrix-method}              
 \alias{chol}              
 \alias{chol.default}              
+\alias{backsolve-methods}
+\alias{backsolve,ANY-method}
 \alias{backsolve}
-\alias{backsolve.matrix.csr.chol}
-\alias{solve.matrix.csr}
+\alias{solve}
+\alias{backsolve,matrix.csr.chol-method}
+\alias{solve,ANY-method}
+\alias{solve,matrix.csr-method}
 \title{Linear Equation Solving for Sparse Matrices}
 \description{
 \code{chol} performs a Cholesky
@@ -19,9 +25,9 @@ combines \code{chol} and \code{backsolve} and will
 compute the inverse of a matrix if the right-hand-side is missing.
 }
 \usage{
-\method{chol}{matrix.csr}(x, pivot = FALSE, nsubmax, nnzlmax, tmpmax, \dots)
-\method{backsolve}{matrix.csr.chol}(r, x, k, upper.tri, transpose)
-\method{solve}{matrix.csr}(a, b, \dots)
+chol(x, \dots)
+backsolve(r, x, k, upper.tri, transpose)
+solve(a, b, \dots)
 }
 \arguments{
 \item{a}{symmetric positive definite matrix of class \code{matrix.csr}.}
@@ -29,9 +35,8 @@ compute the inverse of a matrix if the right-hand-side is missing.
 \code{chol}.}
 \item{x,b}{vector(regular matrix) of right-hand-side(s) of a system of linear equations.}
 \item{k}{inherited from the generic; not used here.}
-\item{pivot}{inherited from the generic; not used here.}
-\item{nsubmax,nnzlmax,tmpmax}{dimensions of work arrays, in normal
-operation these are determined inside the algorithm.}
+#\item{pivot}{inherited from the generic; not used here.}
+#\item{nsubmax,nnzlmax,tmpmax}{dimensions of work arrays, in normal operation these are determined inside the algorithm.}
 \item{upper.tri}{inherited from the generic; not used here.}
 \item{transpose}{inherited from the generic; not used here.}
 \item{\dots}{further arguments passed to or from other methods.}

@@ -1,0 +1,167 @@
+This directory contains the development version of the sparse matrix
+package SparseM.  This is an informal revision history.
+
+The initial version 0.01 was sent to David Meyer in Vienna June 10.
+
+The new version is in SparseM and incorporates the Harwell Boeing stuff.
+It needs some tweaking however to pass R CMD check.
+
+The version 0.05 was completed Oct 11 and was sent to CRAN for Kurt Hornik's
+blessing prior to submission to JSS.  There were several problems the most
+serious being that the fortran versions of the hb routines weren't sufficiently
+portable.
+
+The version 0.09 was completed Oct 19 2002 incorporating the following changes:
+
+   o  read.hb and write.hb are now in C and more portable this was the
+   	major problem identified by Kurt in the initial posting
+   o  the generic issues were all resolved thanks to the hint in Sec 6.1
+   	of the Writing R-Exts which explains how to add ... to the
+   	argument list of new generics using formals().
+   o  a bug in matrix.csr was fixed to accomodate vector arguments 
+   	and zero matrices
+   o  PACKAGE args were added to all .Fortran and .C calls 
+   o  Lots of minor inconsistencies in the man pages were fixed.
+
+The version 0.10 was completed Nov 5 2002 and incorporates the following:
+
+   o  remade the pdf version of the vignette in type 1 ps fonts using
+   	dvips -Pwww SparseM 
+   	distill SparseM.ps
+      At the suggestion of  Brian Ripley.
+   o altered matrix.csr to generalize the way it handled vector args.
+   o removed the unused variables from readwrite.c.  
+   o moved lsq.rra from the "data" subdirectory to "inst/HBdata"; added
+     lsq.R in "data" so that the content can be read in using 
+     "data(lsq)" in R; added "lsq.Rd" in "man"; and updated the 
+     00Index.dcf file in "inst/doc"; updated the INDEX file.
+   o changed all the ".find.package" in the Rd files to "system.file".
+   o changed the call to read.matrix.hb to use "system.file" in
+     SparseM.Rnw
+
+The version 0.11 was begun Jan 1 2003 and incorporates the following:
+
+   o the malloc.h header requirements in iohb.c and iohb.h were
+     removed...they are redundant given stdlib.h and caused problems
+     on my mac
+
+The version 0.12 was begun Jan 20 2003 and incorporates the following:
+
+   o conversion from S3 to S4 method dispatch
+
+The version 0.20 was completed Jan 24 2003 and incorporates the following:
+
+   o conversion from S3 to S4 method dispatch and extensive documentation changes
+
+The version 0.21 was begun Mar 7 2003 and incorporates the following:
+
+   o matrix valued response in the slm formula 
+
+   o a fix of a "design infelicity" in the multiplication of a csr times a 
+     vector which created a matrix object without dimension attribute -- 
+     identified by John Chambers.
+
+   o matrix multiplication now allows csr times dense multiplication by coercion
+     of the dense matrix to sparse form, so is returned in sparse form.
+
+The version 0.22 was begun Mar 11 2003 and incorporates the following:
+
+   o added a class matrix.coo for coordinate format sparse matrices
+
+   o [<-.matrix.csr  and [.matrix.csr rewritten to use the .coo class
+
+   o validity checking added to both .csr and .coo classes.  See the setClass
+     definitions and their methods for "initialize".  This required quite a lot
+     of editing to insure that ja,ia, and dim attributes were really integer.
+
+The version 0.24 was begun about April 1 2003 
+
+   o commented out  'value <- as.matrix.coo(value)' in '[<-.matrix.csr' to move the class
+   	transformation of value inside '[<-.matrix.coo.  This is a workaround for
+   	misbehavior of missing() in our opinion.
+
+   o added 'setMethod("t","matrix.coo",function(x) as.matrix.coo(t(as.matrix.csr(x)))' in
+   	SparseM_Methods.R to define "t" for class "matrix.coo".
+
+   o uncommented 
+   	"setMethod("%*%",signature(x="matrix",y="matrix.csr"),.matmul.matrix.csr)" 
+   	"setMethod("%*%",signature(x="numeric",y="matrix.csr"),.matmul.matrix.csr)"
+   	so that "%*%" will perform matrix times matrix.csr and vector times
+   	matrix.csr multiplication
+
+   o removed the definition of "ncol.matrix.csr" and "nrow.matrix.csr" from SparseM.R 
+
+   o added "dim.matrix.coo" to SparseM.R and 
+   	"setMethod("dim","matrix.coo",dim.matrix.coo)" to SparseM_Methods.R
+
+   o created matrix.coo-class.Rd
+
+   o fixed some of the inconsistency on matrix.csc-class.Rd, etc.
+
+   o added matrix subscripting to '[.matrix.coo' and '[<-.matrix.coo' so that 
+   	one can perform, e.g., as.matrix.csr(A)[cbind(c(1,2,3),c(2,3,1))] 
+   	and as.matrix.csr(A)[cbind(c(1,2,3),c(2,3,1))] <- 100 
+
+   o added matrix.csr class subscripting to '[.matrix.coo' and '[<-.matrix.coo' 
+   	so that one can perform, e.g., as.matrix.csr(A)[as.matrix.csr(A)>0] 
+   	and as.matrix.csr(A)[as.matrix.csr(A)>0] <- 100 for whatever it's worth.
+
+   o added logical subscripting to [.matrix.coo and [.matrix.csr
+
+   o fixed some bugs in group Ops.
+
+   o added some commentary in man and in vignette to encourage use of new()
+   	in the definition of new .csr and .coo objects so that validation is done.
+
+   o simplified diag.assign.matrix.csr so that it looked just like the default
+   	version -- this eliminates the need for a couple of the fortran functions.
+
+   o fixed several places where as.integer() was needed to wrap a definition of
+   	a dimension attribute of a sparse object.
+
+
+The version 0.25 was begun about April 16 2003 
+
+   o fixed a bug in chol.matrix.csr that incorrected allocated 
+   	space in large problems
+
+The version 0.26 was done April 26 2003
+
+   o  fixed a bug in * and %*% that returned an error when the answer
+   	was a matrix or vector of all zeros
+
+   o  refixed the malloc.h problem
+
+The version 0.27 was done April 28 2003
+
+   o  removed some debugging print statements from chol.f
+   o  removed the uncompressed files from inst/doc
+
+The version 0.28 was begun May 28 2003
+
+   o  the .R files were consolidated at the suggestion of John Chambers after we
+	discovered that different machines ordered them differently and
+	the methods code needs to be read AFTER the function definitions.
+
+   o  a bug in as.matrix.coo that mistook vector arguments for scalars was fixed
+
+   o  a kronecker product operator %x% was added.
+
+   o  return statements checked for the dreaded deprecated unlisted form
+
+   o  updated some setIs() calls to conform to JC's new setClassUnion() form.
+	this is implemented with a version check to accomodate 1.7.0 users.
+
+The version 0.30 was completed August 10 2003
+
+   o  initially intended to conform with Kurt's changed of %x% to insist
+	that it was a binary operator, but this revealed a number of problems
+	with documentation that were attributable to an incomplete conversion
+	from S3 to S4 methods.
+
+   o  Many S3 functions were incorporated directly into the setMethod calls so
+	that now there are fewer, but still many S3 method calls, these should
+	be gradually removed when more time and energy permits.  For now, I hope
+	that the changes that have been made will permit a smooth transition to
+	1.8.0 when it is released.  At the moment it does pass R CMD check on
+	the (almost) current version of R-devel. 

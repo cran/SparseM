@@ -12,19 +12,18 @@
   Summarize, print, and extract objects from  \code{\link{slm}} objects.
 }
 \usage{
-\method{summary}{slm}(object, correlation = FALSE, \dots)
-\method{summary}{mslm}(object, \dots)
-\method{print}{summary.slm}(x, digits = max(3, getOption("digits") - 3), 
-	symbolic.cor = p > 4, signif.stars = getOption("show.signif.stars"), 
-	\dots)
-\method{fitted}{slm}(object, \dots)
-\method{residuals}{slm}(object, \dots)
-\method{coef}{slm}(object, \dots)
+summary.slm(object, correlation, \dots)
+summary.mslm(object, \dots)
+print.slm(x, digits, \dots)
+print.summary.slm(x, digits, symbolic.cor, signif.stars, \dots)
+fitted.slm(object, \dots)
+residuals.slm(object, \dots)
+coef.slm(object, \dots)
 }
 \arguments{
 \item{object,x}{ object of class \code{slm}.  }
 \item{digits}{minimum number of significant digits to be used for most numbers.}
-\item{symbolic.cor}{logical; if \code{TRUE}, the correlation of coefficients 
+\item{symbolic.cor}{logical; if \code{TRUE}, the correlation of coefficients
       will be printed. The default is \code{FALSE}}
 \item{signif.stars}{logical; if \code{TRUE}, P-values are additionally encoded
           visually as ``significance stars'' in order to help scanning
@@ -33,7 +32,6 @@
 \item{correlation}{logical; if \code{TRUE}, the correlation matrix of the
           estimated parameters is returned and printed.}
 \item{\dots}{additional arguments passed to methods.}
-}
 }
 \value{
   \code{print.slm} and \code{print.summary.slm} return invisibly.
