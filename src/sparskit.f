@@ -1045,7 +1045,100 @@ c------------end of aplb -----------------------------------------------
 c-----------------------------------------------------------------------
       end
 c-----------------------------------------------------------------------
-      subroutine aplsb (nrow,ncol,a,ja,ia,s,b,jb,ib,c,jc,ic,
+      subroutine aplsb (nrow,ncol,job,a,ja,ia,s,b,jb,ib,
+     *     c,jc,ic,nzmax,iw,ierr)
+      real*8 a(*), b(*), c(*), s 
+      integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1),
+     *     iw(ncol)
+c-----------------------------------------------------------------------
+c performs the matrix sum  C = A+*B. 
+c Modified from aplb by Pin Ng on 2/26/03
+c There is no difference between the original aplsb and aplsb1 in SPARSKIT2
+c-----------------------------------------------------------------------
+c on entry:
+c ---------
+c nrow	= integer. The row dimension of A and B
+c ncol  = integer. The column dimension of A and B.
+c job   = integer. Job indicator. When job = 0, only the structure
+c                  (i.e. the arrays jc, ic) is computed and the
+c                  real values are ignored.
+c
+c a,
+c ja,
+c ia   = Matrix A in compressed sparse row format.
+c 
+c b, 
+c jb, 
+c ib	=  Matrix B in compressed sparse row format.
+c
+c nzmax	= integer. The  length of the arrays c and jc.
+c         amub will stop if the result matrix C  has a number 
+c         of elements that exceeds exceeds nzmax. See ierr.
+c 
+c on return:
+c----------
+c c, 
+c jc, 
+c ic	= resulting matrix C in compressed sparse row sparse format.
+c	    
+c ierr	= integer. serving as error message. 
+c         ierr = 0 means normal return,
+c         ierr .gt. 0 means that amub stopped while computing the
+c         i-th row  of C with i=ierr, because the number 
+c         of elements in C exceeds nzmax.
+c
+c work arrays:
+c------------
+c iw	= integer work array of length equal to the number of
+c         columns in A.
+c
+c-----------------------------------------------------------------------
+      logical values
+      values = (job .ne. 0) 
+      ierr = 0
+      len = 0
+      ic(1) = 1 
+      do 1 j=1, ncol
+         iw(j) = 0
+ 1    continue
+c     
+      do 500 ii=1, nrow
+c     row i 
+         do 200 ka=ia(ii), ia(ii+1)-1 
+            len = len+1
+            jcol    = ja(ka)
+            if (len .gt. nzmax) goto 999
+            jc(len) = jcol 
+            if (values) c(len)  = a(ka) 
+            iw(jcol)= len
+ 200     continue
+c     
+         do 300 kb=ib(ii),ib(ii+1)-1
+            jcol = jb(kb)
+            jpos = iw(jcol)
+            if (jpos .eq. 0) then
+               len = len+1
+               if (len .gt. nzmax) goto 999
+               jc(len) = jcol
+               if (values) c(len)  = s*b(kb)
+               iw(jcol)= len
+            else
+               if (values) c(jpos) = c(jpos) + s*b(kb)
+            endif
+ 300     continue
+         do 301 k=ic(ii), len
+	    iw(jc(k)) = 0
+ 301     continue
+         ic(ii+1) = len+1
+ 500  continue
+      return
+ 999  ierr = ii
+      return
+c------------end of aplsb ----------------------------------------------- 
+c-----------------------------------------------------------------------
+      end
+c-----------------------------------------------------------------------
+      subroutine aplsb1 (nrow,ncol,a,ja,ia,s,b,jb,ib,c,jc,ic,
      *     nzmax,ierr)
       real*8 a(*), b(*), c(*), s
       integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1)
@@ -1211,7 +1304,101 @@ c-----------------------------------------------------------------------
 c-----------end-of-amudiag----------------------------------------------
       end 
 c-----------------------------------------------------------------------
-      subroutine aemub (nrow,ncol,a,ja,ia,b,jb,ib,c,jc,ic,
+      subroutine aemub (nrow,ncol,a,ja,ia,amask,jmask,imask,
+     *                  c,jc,ic,iw,aw,nzmax,ierr)
+c---------------------------------------------------------------------
+      real*8 a(*),c(*),amask(*),aw(ncol)
+      integer ia(nrow+1),ja(*),jc(*),ic(nrow+1),jmask(*),imask(nrow+1)
+      logical iw(ncol)
+c-----------------------------------------------------------------------
+c Modified from amask by Pin T. Ng on 2/27/03 to perform 
+c element-wise multiplication
+c-----------------------------------------------------------------------
+c On entry:
+c---------
+c nrow  = integer. row dimension of input matrix
+c ncol  = integer. Column dimension of input matrix.
+c
+c a,
+c ja,
+c ia    = the A matrix in Compressed Sparse Row format
+c
+c amask,
+c jmask,
+c imask = matrix defining mask stored in compressed
+c         sparse row format. (This is the B matrix)
+c
+c nzmax = length of arrays c and jc. see ierr.
+c
+c On return:
+c-----------
+c
+c a, ja, ia and amask, jmask, imask are unchanged.
+c
+c c
+c jc,
+c ic    = the output matrix in Compressed Sparse Row format.
+c
+c ierr  = integer. serving as error message.c
+c         ierr = 1  means normal return
+c         ierr .gt. 1 means that amask stopped when processing
+c         row number ierr, because there was not enough space in
+c         c, jc according to the value of nzmax.
+c
+c work arrays:
+c-------------
+c iw    = logical work array of length ncol.
+c aw    = real work array of length ncol.
+c
+c note:
+c------ the  algorithm is in place: c, jc, ic can be the same as
+c a, ja, ia in which cas the code will overwrite the matrix c
+c on a, ja, ia
+c
+c-----------------------------------------------------------------------
+      ierr = 0
+      len = 0
+      do 1 j=1, ncol
+         iw(j) = .false.
+         aw(j) = 0.0
+ 1    continue
+c     unpack the mask for row ii in iw
+      do 100 ii=1, nrow
+c     save pointer and value in order to be able to do things in place
+         do 2 k=imask(ii), imask(ii+1)-1
+            iw(jmask(k)) = .true.
+            aw(jmask(k)) = amask(k)
+ 2       continue
+c     add umasked elemnts of row ii
+         k1 = ia(ii)
+         k2 = ia(ii+1)-1
+         ic(ii) = len+1
+         do 200 k=k1,k2
+            j = ja(k)
+            if (iw(j)) then
+               len = len+1
+               if (len .gt. nzmax) then
+                  ierr = ii
+                  return
+               endif
+               jc(len) = j
+               c(len) = a(k)*aw(j)
+            endif
+ 200     continue
+c
+         do 3 k=imask(ii), imask(ii+1)-1
+            iw(jmask(k)) = .false.
+            aw(jmask(k)) = 0.0
+ 3       continue
+ 100  continue
+      ic(nrow+1)=len+1
+c
+      return
+c-----end-of-aemub -----------------------------------------------------
+c-----------------------------------------------------------------------
+      end
+c-----------------------------------------------------------------------
+      subroutine aemub1 (nrow,ncol,a,ja,ia,b,jb,ib,c,jc,ic,
      *     nzmax,ierr)
       real*8 a(*), b(*), c(*)
       integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1)
@@ -1313,33 +1500,34 @@ c
       return
  999  ierr = i 
       return
-c------------end-of-aemub --------------------------------------------- 
+c------------end-of-aemub1 --------------------------------------------- 
 c-----------------------------------------------------------------------
       end
 c-----------------------------------------------------------------------
-      subroutine aedib (nrow,ncol,a,ja,ia,b,jb,ib,c,jc,ic,
-     *     nzmax,ierr)
-      real*8 a(*), b(*), c(*), one
-      integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1)
+      subroutine aedib (nrow,ncol,job,a,ja,ia,b,jb,ib,
+     *     c,jc,ic,nzmax,iw,aw,ierr)
+      real*8 a(*), b(*), c(*), aw(ncol) 
+      integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1),
+     *     iw(ncol)
 c-----------------------------------------------------------------------
-c performs the operation C = A/B for matrices in sorted CSR format.
-c Modified by Pin Ng based on aplsb on 6/20/02
+c performs the element-wise matrix division  C = A/B. 
+c Modified from aplsb by Pin Ng on 2/27/03
 c-----------------------------------------------------------------------
 c on entry:
 c ---------
 c nrow	= integer. The row dimension of A and B
 c ncol  = integer. The column dimension of A and B.
+c job   = integer. Job indicator. When job = 0, only the structure
+c                  (i.e. the arrays jc, ic) is computed and the
+c                  real values are ignored.
 c
 c a,
 c ja,
-c ia   = Matrix A in compressed sparse row format with entries sorted
-c
-c s	= real. scalar factor for B.
+c ia   = Matrix A in compressed sparse row format.
 c 
 c b, 
 c jb, 
-c ib	=  Matrix B in compressed sparse row format with entries sorted
-c        ascendly in each row   
+c ib	=  Matrix B in compressed sparse row format.
 c
 c nzmax	= integer. The  length of the arrays c and jc.
 c         amub will stop if the result matrix C  has a number 
@@ -1349,8 +1537,7 @@ c on return:
 c----------
 c c, 
 c jc, 
-c ic	= resulting matrix C in compressed sparse row sparse format
-c         with entries sorted ascendly in each row. 
+c ic	= resulting matrix C in compressed sparse row sparse format.
 c	    
 c ierr	= integer. serving as error message. 
 c         ierr = 0 means normal return,
@@ -1358,95 +1545,84 @@ c         ierr .gt. 0 means that amub stopped while computing the
 c         i-th row  of C with i=ierr, because the number 
 c         of elements in C exceeds nzmax.
 c
-c Notes: 
-c-------
-c     this will not work if any of the two input matrices is not sorted
+c work arrays:
+c------------
+c iw	= integer work array of length equal to the number of
+c         columns in A.
+c aw	= real work array of length equal to the number of
+c         columns in A.
+c
 c-----------------------------------------------------------------------
-      parameter (one = 1.0)
+      logical values
+      values = (job .ne. 0) 
       ierr = 0
-      kc = 1
-      ic(1) = kc 
-c
-c     the following loop does a merge of two sparse rows + adds  them.
-c 
-      do 6 i=1, nrow
-         ka = ia(i)
-         kb = ib(i)
-         kamax = ia(i+1)-1
-         kbmax = ib(i+1)-1 
- 5       continue 
-c
-c     this is a while  -- do loop -- 
-c 
-         if (ka .le. kamax .or. kb .le. kbmax) then 
+      len = 0
+      ic(1) = 1 
+      do 1 j=1, ncol
+         iw(j) = 0
+ 1    continue
 c     
-            if (ka .le. kamax) then
-               j1 = ja(ka)
+      do 500 ii=1, nrow
+c     row i 
+         do 200 ka=ia(ii), ia(ii+1)-1 
+            len = len+1
+            jcol    = ja(ka)
+            if (len .gt. nzmax) goto 999
+            jc(len) = jcol 
+            if (values) c(len)  = a(ka)/0.0 
+            iw(jcol)= len
+            aw(jcol) = a(ka)
+ 200     continue
+c     
+         do 300 kb=ib(ii),ib(ii+1)-1
+            jcol = jb(kb)
+            jpos = iw(jcol)
+            if (jpos .eq. 0) then
+               len = len+1
+               if (len .gt. nzmax) goto 999
+               jc(len) = jcol
+               if (values) c(len)  = 0.0
+               iw(jcol)= len
             else
-c     take j1 large enough  that always j2 .lt. j1
-               j1 = ncol+1
+               if (values) c(jpos) = aw(jcol)/b(kb)
             endif
-            if (kb .le. kbmax) then 
-               j2 = jb(kb)         
-            else 
-c     similarly take j2 large enough  that always j1 .lt. j2 
-               j2 = ncol+1
-            endif
-c     
-c     three cases
-c     
-            if (j1 .eq. j2) then 
-               c(kc) = a(ka)/b(kb)
-               jc(kc) = j1
-               ka = ka+1
-               kb = kb+1
-               kc = kc+1
-            else if (j1 .lt. j2) then
-               jc(kc) = j1
-               c(kc) = a(ka)/(one-one)
-               ka = ka+1
-               kc = kc+1
-            else if (j1 .gt. j2) then
-               kb = kb+1
-            endif
-            if (kc .gt. nzmax) goto 999
-            goto 5
-c
-c     end while loop
-c
-         endif
-         ic(i+1) = kc
- 6    continue
+ 300     continue
+         do 301 k=ic(ii), len
+	    iw(jc(k)) = 0
+ 301     continue
+         ic(ii+1) = len+1
+ 500  continue
       return
- 999  ierr = i 
+ 999  ierr = ii
       return
-c------------end-of-aedib --------------------------------------------- 
+c------------end of aedib ----------------------------------------------- 
 c-----------------------------------------------------------------------
       end
 c-----------------------------------------------------------------------
-      subroutine aeexpb (nrow,ncol,a,ja,ia,b,jb,ib,c,jc,ic,
-     *     nzmax,ierr)
-      real*8 a(*), b(*), c(*), one, zero
-      integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1)
+      subroutine aeexpb (nrow,ncol,job,a,ja,ia,b,jb,ib,
+     *     c,jc,ic,nzmax,iw,aw,ierr)
+      real*8 a(*), b(*), c(*), aw(ncol) 
+      integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1),
+     *     iw(ncol)
 c-----------------------------------------------------------------------
-c performs the operation C = A/B for matrices in sorted CSR format.
-c Modified by Pin Ng based on aplsb on 6/20/02
+c performs the element-wise matrix division  C = A/B. 
+c Modified from aplsb by Pin Ng on 2/27/03
 c-----------------------------------------------------------------------
 c on entry:
 c ---------
 c nrow	= integer. The row dimension of A and B
 c ncol  = integer. The column dimension of A and B.
+c job   = integer. Job indicator. When job = 0, only the structure
+c                  (i.e. the arrays jc, ic) is computed and the
+c                  real values are ignored.
 c
 c a,
 c ja,
-c ia   = Matrix A in compressed sparse row format with entries sorted
-c
-c s	= real. scalar factor for B.
+c ia   = Matrix A in compressed sparse row format.
 c 
 c b, 
 c jb, 
-c ib	=  Matrix B in compressed sparse row format with entries sorted
-c        ascendly in each row   
+c ib	=  Matrix B in compressed sparse row format.
 c
 c nzmax	= integer. The  length of the arrays c and jc.
 c         amub will stop if the result matrix C  has a number 
@@ -1456,8 +1632,7 @@ c on return:
 c----------
 c c, 
 c jc, 
-c ic	= resulting matrix C in compressed sparse row sparse format
-c         with entries sorted ascendly in each row. 
+c ic	= resulting matrix C in compressed sparse row sparse format.
 c	    
 c ierr	= integer. serving as error message. 
 c         ierr = 0 means normal return,
@@ -1465,77 +1640,60 @@ c         ierr .gt. 0 means that amub stopped while computing the
 c         i-th row  of C with i=ierr, because the number 
 c         of elements in C exceeds nzmax.
 c
-c Notes: 
-c-------
-c     this will not work if any of the two input matrices is not sorted
+c work arrays:
+c------------
+c iw	= integer work array of length equal to the number of
+c         columns in A.
+c aw	= real work array of length equal to the number of
+c         columns in A.
+c
 c-----------------------------------------------------------------------
-      parameter (one = 1.0, zero = 0.0)
+      logical values
+      values = (job .ne. 0) 
       ierr = 0
-      kc = 1
-      ic(1) = kc 
-c
-c     the following loop does a merge of two sparse rows + adds  them.
-c 
-      do 6 i=1, nrow
-         ka = ia(i)
-         kb = ib(i)
-         kamax = ia(i+1)-1
-         kbmax = ib(i+1)-1 
- 5       continue 
-c
-c     this is a while  -- do loop -- 
-c 
-         if (ka .le. kamax .or. kb .le. kbmax) then 
+      len = 0
+      ic(1) = 1 
+      do 1 j=1, ncol
+         iw(j) = 0
+ 1    continue
 c     
-            if (ka .le. kamax) then
-               j1 = ja(ka)
+      do 500 ii=1, nrow
+c     row i 
+         do 200 ka=ia(ii), ia(ii+1)-1 
+            len = len+1
+            jcol    = ja(ka)
+            if (len .gt. nzmax) goto 999
+            jc(len) = jcol 
+            if (values) c(len)  = 1.0
+            iw(jcol)= len
+            aw(jcol) = a(ka)
+ 200     continue
+c     
+         do 300 kb=ib(ii),ib(ii+1)-1
+            jcol = jb(kb)
+            jpos = iw(jcol)
+            if (jpos .eq. 0) then
+               len = len+1
+               if (len .gt. nzmax) goto 999
+               jc(len) = jcol
+               if (values) c(len)  = 0.0**b(kb)
+               iw(jcol)= len
             else
-c     take j1 large enough  that always j2 .lt. j1
-               j1 = ncol+1
+               if (values) c(jpos) = aw(jcol)**b(kb)
             endif
-            if (kb .le. kbmax) then 
-               j2 = jb(kb)         
-            else 
-c     similarly take j2 large enough  that always j1 .lt. j2 
-               j2 = ncol+1
-            endif
-c     
-c     three cases
-c     
-            if (j1 .eq. j2) then 
-               c(kc) = a(ka)**b(kb)
-               jc(kc) = j1
-               ka = ka+1
-               kb = kb+1
-               kc = kc+1
-            else if (j1 .lt. j2) then
-               jc(kc) = j1
-               c(kc) = a(ka)**zero
-               ka = ka+1
-               kc = kc+1
-            else if (j1 .gt. j2) then
-               if (b(kb) .ne. 0) then
-               c(kc) = zero**b(kb)
-               jc(kc) = j2
-               kc = kc+1
-               endif
-               kb = kb+1
-            endif
-            if (kc .gt. nzmax) goto 999
-            goto 5
-c
-c     end while loop
-c
-         endif
-         ic(i+1) = kc
- 6    continue
+ 300     continue
+         do 301 k=ic(ii), len
+	    iw(jc(k)) = 0
+ 301     continue
+         ic(ii+1) = len+1
+ 500  continue
       return
- 999  ierr = i 
+ 999  ierr = ii
       return
-c------------end-of-aeexpb --------------------------------------------- 
+c------------end of aeexpb ----------------------------------------------- 
 c-----------------------------------------------------------------------
       end
-c----------------------------------------------------------------------- 
+c-----------------------------------------------------------------------
 c                          S P A R S K I T                             c
 c----------------------------------------------------------------------c
 c          BASIC MATRIX-VECTOR OPERATIONS - MATVEC MODULE              c

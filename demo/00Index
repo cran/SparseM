@@ -1,0 +1,6 @@
+Binding		Binding and Indexing for Sparse Matrices
+Coercion	Coercion of Matrices into Various New Classes
+LeastSquares	Least Squares Linear Regression
+LinearAlgebra	Basic Linear Algebra for Sparse Matrices
+Solve		Linear Equation Solving
+Visualization	Visualization Tools for Sparse Matrices

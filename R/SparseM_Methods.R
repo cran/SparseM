@@ -1,8 +1,70 @@
 require(methods)
-setClass("matrix.csr",representation(ra="numeric",ja="numeric",ia="numeric", dimension="numeric"))
-setClass("matrix.csc","matrix.csr")
-setClass("matrix.ssr","matrix.csr")
-setClass("matrix.ssc","matrix.csr")
+setClass("matrix.csr",representation(ra="numeric",
+	ja="integer",ia="integer", dimension="integer"),
+	validity = function(x) {
+ 		if(!length(x@dimension) == 2 )
+                	return("invalid dimension attribute")
+        	else{
+               		nrow <- x@dimension[1]
+               		ncol <- x@dimension[2]
+               	 	}
+        	if(!(length(x@ra) ==length(x@ja)))
+                	return("ra and ja don't have equal lengths")
+        	if(any(x@ja < 1) || any(x@ja > ncol)) 
+                	return("ja exceeds dim bounds")
+        	if(any(x@ia < 1))
+                	return("some elements of ia are <= 0")
+		if(any(diff(x@ia)<0))
+			return("ia vector not monotone increasing") 
+		if(x@ia[length(x@ia)] != length(x@ra)+1)
+			return("last element of ia doesn't conform")
+		if(length(x@ia) != nrow+1)
+			return("ia has wrong number of elments")
+        	if(length(x@ra) < 1 || length(x@ra) > nrow*ncol)
+                	return("ra has too few, or too many elements")
+		TRUE})
+setMethod("initialize", "matrix.csr", 
+	function(.Object, ra = numeric(0),  ja = integer(0),
+		ia = integer(0),dimension = integer(0)) {
+        .Object@ra <- ra
+        .Object@ja <- ja
+        .Object@ia <- ia
+        .Object@dimension <- dimension
+	validObject(.Object)
+        .Object
+       })
+setClass("matrix.csc",representation(ra="numeric",ja="integer",ia="integer", dimension="integer"))
+setClass("matrix.ssr",representation(ra="numeric",ja="integer",ia="integer", dimension="integer"))
+setClass("matrix.ssc",representation(ra="numeric",ja="integer",ia="integer", dimension="integer"))
+setClass("matrix.coo",representation(ra="numeric",
+	ja="integer",ia="integer", dimension="integer"),
+	validity = function(x) {
+ 		if(!length(x@dimension) == 2 )
+                	return("invalid dimension attribute")
+        	else{
+               		nrow <- x@dimension[1]
+               		ncol <- x@dimension[2]
+               	 	}
+        	if(!(length(x@ra) ==length(x@ja) && length(x@ra) ==length(x@ia)))
+                	return("ra,ja,ia don't have equal lengths")
+        	if(any(x@ja < 1) || any(x@ja > ncol)) 
+                	return("ja exceeds dim bounds")
+        	if(any(x@ia < 1) || any(x@ia > nrow))
+                	return("ia exceeds dim bounds")
+        	if(length(x@ra) < 1 || length(x@ra) > nrow*ncol)
+                	return("ra has too few, or too many elements")
+		TRUE})
+setMethod("initialize", "matrix.coo", 
+	function(.Object, ra = numeric(0),  ja = integer(0),
+		ia = integer(0),dimension = integer(0)) {
+        .Object@ra <- ra
+        .Object@ja <- ja
+        .Object@ia <- ia
+        .Object@dimension <- dimension
+	validObject(.Object)
+        .Object
+       })
+#-------------------------------------------------------------------------
 setClass("matrix.csr.chol",representation(nrow="numeric",nnzlindx="numeric",
 	nsuper="numeric",lindx="numeric",xlindx="numeric",nnzl="numeric",
 	lnz="numeric",xlnz="numeric",invp="numeric",perm="numeric",
@@ -13,18 +75,20 @@ setIs("NULL","numeric or NULL")
 setClass("character or NULL")
 setIs("character","character or NULL")
 setIs("NULL","character or NULL")
-setClass("matrix.csc.hb",representation(ra="numeric",ja="numeric",ia="numeric", 
-	rhs.ra="numeric",guess="numeric or NULL",xexact="numeric or NULL",dimension ="numeric",
+setClass("matrix.csc.hb",representation(ra="numeric",ja="integer",ia="integer", 
+	rhs.ra="numeric",guess="numeric or NULL",xexact="numeric or NULL",dimension ="integer",
 	rhs.dim="numeric",rhs.mode="character or NULL"))
 setClass("matrix.ssc.hb","matrix.csc.hb")
-setClass("slm",representation("lm",coefficients="numeric",chol="matrix.csr.chol",
+setClass("slm",representation(coefficients="numeric",chol="matrix.csr.chol",
 	residuals="numeric",fitted="numeric"))
-setClass("summary.slm")
+setClass("mslm","slm")
+setClass("summary.slm","slm")
 #--------------------------------------------------------------------
 setGeneric("as.matrix.csr")
 setMethod("as.matrix.csr","matrix.csc",as.matrix.csr.matrix.csc)
 setMethod("as.matrix.csr","matrix.ssr",as.matrix.csr.matrix.ssr)
 setMethod("as.matrix.csr","matrix.ssc",as.matrix.csr.matrix.ssc)
+setMethod("as.matrix.csr","matrix.coo",as.matrix.csr.matrix.coo)
 setGeneric("as.matrix.csc")
 setMethod("as.matrix.csc","matrix.csr",as.matrix.csc.matrix.csr)
 setMethod("as.matrix.csc","matrix.ssr",as.matrix.csc.matrix.ssr)
@@ -37,16 +101,23 @@ setGeneric("as.matrix.ssc")
 setMethod("as.matrix.ssc","matrix.csr",as.matrix.ssc.matrix.csr)
 setMethod("as.matrix.ssc","matrix.csc",as.matrix.ssc.matrix.csc)
 setMethod("as.matrix.ssc","matrix.ssr",as.matrix.ssc.matrix.ssr)
+setGeneric("as.matrix.coo")
+setMethod("as.matrix.coo","matrix.csr",as.matrix.coo.matrix.csr)
 setMethod("as.matrix","matrix.csr",as.matrix.matrix.csr)
 setMethod("as.matrix","matrix.csc",as.matrix.matrix.csc)
 setMethod("as.matrix","matrix.ssr",as.matrix.matrix.ssr)
 setMethod("as.matrix","matrix.ssc",as.matrix.matrix.ssc)
+setMethod("as.matrix","matrix.coo",as.matrix.matrix.coo)
 setMethod("t","matrix.csr",t.matrix.csr)
 setMethod("t","matrix.csc",t.matrix.csc)
+setMethod("t","matrix.coo",function(x) as.matrix.coo(t(as.matrix.csr(x))))
 setMethod("dim","matrix.csr",dim.matrix.csr)
 setMethod("dim","matrix.csc",dim.matrix.csc)
 setMethod("dim","matrix.ssr",dim.matrix.ssr)
 setMethod("dim","matrix.ssc",dim.matrix.ssc)
+setMethod("dim","matrix.coo",dim.matrix.coo)
+setMethod("diff","matrix.csr",diff.matrix.csr)
+setGeneric("diag")
 setMethod("diag","matrix.csr",diag.matrix.csr)
 setMethod("diag<-","matrix.csr",diag.assign.matrix.csr)
 setGeneric("chol")
@@ -60,9 +131,13 @@ setMethod("model.matrix","matrix.ssc.hb",model.matrix.matrix.ssc.hb)
 setMethod("model.response","matrix.csc.hb",model.response.matrix.csc.hb)
 setMethod("model.response","matrix.ssc.hb",model.response.matrix.csc.hb)
 setMethod("%*%",signature(x="matrix.csr",y="matrix.csr"),.matmul.matrix.csr)
+setMethod("%*%",signature(x="matrix.csr",y="matrix"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="matrix.csr",y="numeric"),.matmul.matrix.csr)
+setMethod("%*%",signature(x="matrix",y="matrix.csr"),.matmul.matrix.csr)
+setMethod("%*%",signature(x="numeric",y="matrix.csr"),.matmul.matrix.csr)
 setMethod("image","matrix.csr",image.matrix.csr)
 setMethod("summary","slm",summary.slm)
+setMethod("summary","mslm",summary.mslm)
 setMethod("coef","slm",coef.slm)
 setMethod("fitted","slm",fitted.slm)
 setMethod("residuals","slm",residuals.slm)

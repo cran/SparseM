@@ -10,6 +10,8 @@
 \alias{is.matrix.ssr} 
 \alias{as.matrix.ssc}
 \alias{is.matrix.ssc} 
+\alias{as.matrix.coo}
+\alias{is.matrix.coo} 
 \alias{matrix.csc}
 \alias{as.matrix.csc.matrix.csr} 
 \alias{as.matrix.csc.matrix.ssc}  
@@ -17,9 +19,12 @@
 \alias{as.matrix.csr.matrix.csc} 
 \alias{as.matrix.csr.matrix.ssc}  
 \alias{as.matrix.csr.matrix.ssr} 
+\alias{as.matrix.csr.matrix.coo} 
+\alias{as.matrix.coo.matrix.csr} 
 \alias{as.matrix.matrix.csc}      
 \alias{as.matrix.matrix.ssc}     
 \alias{as.matrix.matrix.ssr}      
+\alias{as.matrix.matrix.coo}      
 \alias{matrix.ssc}            
 \alias{as.matrix.ssc.matrix.csc} 
 \alias{as.matrix.ssc.matrix.csr}  

@@ -22,6 +22,7 @@
 \alias{t.matrix.csr} 
 \alias{t.matrix.csc} 
 \alias{diag.matrix.csr} 
+\alias{diff.matrix.csr} 
 \alias{diag.assign.matrix.csr} 
 \alias{ncol.matrix.csr} 
 \alias{nrow.matrix.csr} 
@@ -29,16 +30,19 @@
 \alias{dim.matrix.csc} 
 \alias{dim.matrix.ssr} 
 \alias{dim.matrix.ssc} 
+\alias{dim.matrix.coo} 
 \alias{rbind.matrix.csr} 
 \alias{cbind.matrix.csr} 
 \alias{[.matrix.csr}
 \alias{[<-.matrix.csr}
+\alias{[.matrix.coo}
+\alias{[<-.matrix.coo}
 \title{Basic Linear Algebra for Sparse Matrices}
 \description{Basic linear algebra operations for sparse matrices
 of class \code{matrix.csr}.  
 }
 \usage{
-t(x); diag(x, nrow); diag(x) <- value; ncol(x); nrow(x); dim(x);rbind(...);
+t(x); diff(x, lag, differences,...); diag(x, nrow); diag(x) <- value; ncol(x); nrow(x); dim(x);rbind(...);
 cbind(...);x[i,j]; x \%*\% y; x \%\% y; x \%/\% y; x + y; x - y; x * y;
 x / y; x ^ y; x > y; x >= y; x < y; x <= y; x == y; x != y; x & y; x | y
 }
@@ -48,6 +52,8 @@ x / y; x ^ y; x > y; x >= y; x < y; x <= y; x == y; x != y; x & y; x | y
 \item{value}{replacement values.}
 \item{i,j}{vectors of elements to extract or replace.}
 \item{nrow}{optional number of rows for the result.}
+\item{lag}{an integer indicating which lag to use.}
+\item{differences}{an integer indicating the order of the difference.}
 }
 \details{Linear algebra operations for matrices of class 
 \code{matrix.csr} are designed to behave exactly as for 

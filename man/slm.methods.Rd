@@ -1,7 +1,9 @@
 \name{slm.methods}
 \alias{slm.methods}
 \alias{summary.slm}
+\alias{summary.mslm}
 \alias{print.summary.slm}
+\alias{print.slm}
 \alias{fitted.slm}
 \alias{residuals.slm}
 \alias{coef.slm}
@@ -11,6 +13,7 @@
 }
 \usage{
 \method{summary}{slm}(object, correlation = FALSE, \dots)
+\method{summary}{mslm}(object, \dots)
 \method{print}{summary.slm}(x, digits = max(3, getOption("digits") - 3), 
 	symbolic.cor = p > 4, signif.stars = getOption("show.signif.stars"), 
 	\dots)

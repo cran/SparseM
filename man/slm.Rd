@@ -5,8 +5,13 @@
 This is a function to illustrate the use of sparse linear algebra
 to solve a linear least squares problem using Cholesky decomposition.
 The syntax and output attempt to emulate \code{lm()} but may
-fails to do so fully satisfactorily.  Ideally, this would eventually
-become a method for \code{lm}.
+fail to do so fully satisfactorily.  Ideally, this would eventually
+become a method for \code{lm}.  The main obstacle to this step is
+that it would be necessary to have a model.matrix function that
+returned an object in sparse csr form.  For the present, the objects
+represented in the formula must be in dense form.  If the user wishes
+to specify fitting with a design matrix that is already in sparse form,
+then the lower level function \code{slm.fit()} should be used. 
 }
 \usage{
 slm(formula, data, weights, na.action, method = "csr", contrasts = NULL, ...)
@@ -14,7 +19,8 @@ slm(formula, data, weights, na.action, method = "csr", contrasts = NULL, ...)
 \arguments{
 \item{formula}{
     a formula object, with the response on the left of a \code{~} operator,
-    and the terms, separated by \code{+} operators, on the right.
+    and the terms, separated by \code{+} operators, on the right.  As in
+    \code{lm()}, the response variable in the formula can be matrix valued.
   }
   \item{data}{
     a data.frame in which to interpret the variables
