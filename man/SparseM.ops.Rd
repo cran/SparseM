@@ -1,5 +1,6 @@
 \name{SparseM.ops}
 \alias{%*%}
+\alias{%x%}
 \alias{%*%.default}
 \alias{Ops.matrix.csr}
 \alias{SparseM.ops}
@@ -43,12 +44,12 @@ of class \code{matrix.csr}.
 }
 \usage{
 t(x); diff(x, lag, differences,...); diag(x, nrow); diag(x) <- value; ncol(x); nrow(x); dim(x);rbind(...);
-cbind(...);x[i,j]; x \%*\% y; x \%\% y; x \%/\% y; x + y; x - y; x * y;
+cbind(...);x[i,j]; x \%*\% y; x \%x\% y;x \%\% y; x \%/\% y; x + y; x - y; x * y;
 x / y; x ^ y; x > y; x >= y; x < y; x <= y; x == y; x != y; x & y; x | y
 }
 \arguments{
 \item{x}{matrix of class \code{matrix.csr}.}
-\item{y}{matrix of class \code{matrix.csr} or a dense vector.}
+\item{y}{matrix of class \code{matrix.csr} or a dense matrix or vector.}
 \item{value}{replacement values.}
 \item{i,j}{vectors of elements to extract or replace.}
 \item{nrow}{optional number of rows for the result.}
@@ -57,7 +58,8 @@ x / y; x ^ y; x > y; x >= y; x < y; x <= y; x == y; x != y; x & y; x | y
 }
 \details{Linear algebra operations for matrices of class 
 \code{matrix.csr} are designed to behave exactly as for 
-regular matrices.  In particular, matrix multiplication, addition, 
+regular matrices.  In particular, matrix multiplication, kronecker
+product, addition, 
 subtraction and various logical operations work as with the conventional
 dense form of matrix storage, as does indexing, rbind, cbind, and diagonal
 assignment and extraction.
@@ -88,6 +90,9 @@ B.csr <- as.matrix.csr(B)
 
 # matrix transposition and multiplication
 A.csr\%*\%t(B.csr)
+
+# kronecker product
+A.csr \%x\% matrix(1:4,2,2)
 
 }
 
