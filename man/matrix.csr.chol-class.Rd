@@ -23,6 +23,7 @@ entries, including the diagonal entries, of the Cholesky factor stored in lnz}
     \item{\code{invp}:}{Object of class \code{integer}, vector of integer of inverse permutation vector}
     \item{\code{perm}:}{Object of class \code{integer}, vector of integer of permutation vector }
     \item{\code{xsuper}:}{Object of class \code{integer}, array containing the supernode partioning}
+    \item{\code{det}:}{Object of class \code{numeric}, determinant of the Cholesky factor}
     \item{\code{ierr}:}{Object of class \code{integer}, error flag }
     \item{\code{time}:}{Object of class \code{numeric} execution time }
   }

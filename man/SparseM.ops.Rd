@@ -30,6 +30,13 @@
 \alias{!=,matrix.csr-method}
 \alias{&,matrix.csr-method}
 \alias{|,matrix.csr-method}
+\alias{norm} 
+\alias{norm,ANY-method} 
+\alias{norm,matrix.csr-method} 
+\alias{det,ANY-method} 
+\alias{det,matrix-method} 
+\alias{det,matrix.csr-method} 
+\alias{det,matrix.csr.chol-method} 
 \alias{t,ANY-method} 
 \alias{t,matrix.csr-method} 
 \alias{t,matrix.csc-method} 
@@ -81,6 +88,17 @@ dense form of matrix storage, as does indexing, rbind, cbind, and diagonal
 assignment and extraction.  The method diag may be used to extract the
 diagonal of a \code{matrix.csr} object, to create a sparse diagonal see
 \code{SparseM.ontology}.
+
+The function \code{det} computes the determinant of the argument
+matrix.  If the matrix is of class \code{matrix.csr} then it must
+be symmetric, or an error will be returned.  If the matrix is of
+class \code{matrix.csr.chol} then the determinant of the Cholesky
+factor is returned, ie the product of the diagonal elements.
+
+The function \code{norm} is used to check for symmetry by 
+computing the maximum of the elements of the difference between
+the matrix and its transpose.  Optionally, this sup norm can
+be replaced by the Hilbert-Schmidt norm, or the l1 norm.
 }
 \references{ 
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr

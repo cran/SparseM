@@ -1495,7 +1495,7 @@ setMethod("initialize", "matrix.coo",
 setClass("matrix.csr.chol",representation(nrow="numeric",nnzlindx="numeric",
 	nsuper="numeric",lindx="numeric",xlindx="numeric",nnzl="numeric",
 	lnz="numeric",xlnz="numeric",invp="numeric",perm="numeric",
-	xsuper="numeric",ierr="numeric",time="numeric"))
+	xsuper="numeric",det="numeric",ierr="numeric",time="numeric"))
 if(version$major >= 1 && version$minor >= 8.0){
 	setClassUnion("numeric or NULL",c("numeric","NULL"))
 	setClassUnion("character or NULL",c("character","NULL"))
@@ -1716,13 +1716,29 @@ setMethod("diag<-","matrix.diag.csr",function(x,value) {
 	diag(y) <- value
 	as(y,"matrix.diag.csr")
 	})
+setGeneric("det")
+setMethod("det","matrix",get("det", pos=NULL, mode= "function"))
+setMethod("det","matrix.csr", function(x, ...) det(chol(x))^2)
+setMethod("det","matrix.csr.chol", function(x, ...) x@det)
+setGeneric("norm",function(x, ...)standardGeneric("norm"))
+setMethod("norm","matrix.csr", function(x, type = "sup", ...){
+  switch(type,
+                sup = max(abs(x@ra)),
+                HS = sqrt(sum(x@ra^2)),
+                l1 = sum(abs(x@ra))
+                )
+        }
+)
 setGeneric("chol")
 setMethod("chol","matrix",get("chol", pos=NULL, mode= "function"))
-setMethod("chol","matrix.csr", function(x, pivot = FALSE, nsubmax, nnzlmax, tmpmax, ...){
+setMethod("chol","matrix.csr", function(x, pivot = FALSE, 
+	nsubmax, nnzlmax, tmpmax, eps = .Machine$double.eps, ...){
 # Interface for a sparse least squares solver via Ng-Peyton's Cholesky
 # factorization
 #       x -- csr structure returned from call to function "as.matrix.csr"
 #       cachsz -- size of the cache memory -- machine dependent.
+# Check that input matrix is symmetric
+	if(norm(t(x)-x) > eps) stop("Input matrix to chol() not symmetric")
         cachsz <- 64
         nrow <- x@dimension[1]
         ncol <- x@dimension[2]
@@ -1755,10 +1771,13 @@ if (z$ierr != 0){
                 }
         nnzl <- z$xlnz[length(z$xlnz)]-1
         nnzlindx <- z$nsub
+	k <- z$xlnz
+	R <- z$lnz
+	det <- prod(R[k[-length(k)]])
         new("matrix.csr.chol",nrow=z$nrow,nnzlindx=nnzlindx,
                 nsuper=z$nsuper,lindx=z$lindx[1:nnzlindx],xlindx=z$xlindx,
                 nnzl=as.integer(nnzl),lnz=z$lnz[1:nnzl],xlnz=z$xlnz,invp=z$invp,
-                perm=z$perm,xsuper=z$xsuper,ierr=z$ierr,time=z$time)
+                perm=z$perm,xsuper=z$xsuper,det=det,ierr=z$ierr,time=z$time)
 	})
 setMethod("chol","matrix.csc",function(x,pivot = FALSE, ...)chol(as.matrix.csr(x)))
 setMethod("backsolve","matrix.csr.chol", 
