@@ -1843,6 +1843,11 @@ setMethod("model.matrix","matrix.ssc.hb", function(object, ...){
 
 setGeneric("model.response", function(data, type) # /*RSB*/ changed definition
 	standardGeneric("model.response")) # /*RSB*/
+setMethod("model.response","ANY", # /*RSB*/
+function(data,type="any"){ # /*RSB*/
+	stats:::model.response(data, type="any") # /*RSB*/
+	}) # /*RSB*/
+
 
 setMethod("model.response","matrix.csc.hb",
 function(data,type="any"){  

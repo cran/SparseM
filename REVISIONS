@@ -278,3 +278,13 @@ The version 0.55
 		empty string "" assignment.  I've also updated the help file
 		SparseM.hb.Rd to include an example of write.matrix.hb.  
 
+The version 0.56
+
+	o  the example added in 0.55  caused the windows version to segfault
+		Uwe Ligges kindly determined that adding ZipData: No to the
+		Description file was enough to fix this.
+The version 0.57
+
+	o  NAMESPACE and getMethod added to acommodate an asymmetry in the
+		way that the stats package handles model.matrix and model.response
+		fix kindly provided by Roger Bivand.

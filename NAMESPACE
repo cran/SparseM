@@ -1,7 +1,7 @@
 useDynLib(SparseM)
 
 importFrom(graphics, image, image.default)
-importFrom(stats, model.matrix)
+importFrom(stats, model.matrix,model.response)
 
 export(is.matrix.csr, is.matrix.csc, is.matrix.ssr, is.matrix.ssc, is.matrix.coo, as.matrix.csr, as.matrix.csc, as.matrix.ssr, as.matrix.ssc, as.matrix.coo, rbind.matrix.csr, cbind.matrix.csr, read.matrix.hb, write.matrix.hb, Ops.matrix.csr, Ops.matrix.diag.csr, "[.matrix.csr", "[<-.matrix.csr", "[.matrix.diag.csr", slm, slm.fit, slm.wfit, slm.fit.csr, coef.slm, fitted.slm, residuals.slm, summary.mslm, summary.slm, print.summary.slm, print.slm, "[<-.matrix.coo")
 
