@@ -515,6 +515,8 @@ function (filename)
 ".matrix.csr.addsub" <-
 function(A,B,s){
 #matrix addition/subtraction of two sparse csr matrices 
+if(is.matrix(A)) A <- as.matrix.csr(A)
+if(is.matrix(B)) B <- as.matrix.csr(B)
 nrow <- A@dimension[1]
 ncol <- A@dimension[2]
 Bcol <- B@dimension[2]
@@ -622,7 +624,7 @@ return(z)
 if(is.numeric(A) && length(A) == 1)
         z <- new("matrix.csr",ra=A/B@ra,ja=B@ja,ia=B@ia,dimension=B@dimension)
 else if(is.numeric(B) && length(B) == 1)
-        z <- new("matrix.csr",ra=B/A@ra,ja=A@ja,ia=A@ia,dimension=A@dimension)
+        z <- new("matrix.csr",ra=A@ra/B,ja=A@ja,ia=A@ia,dimension=A@dimension)
 else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
         if(is.matrix(A)) A <- as.matrix.csr(A)
         if(is.matrix(B)) B <- as.matrix.csr(B)

@@ -194,3 +194,7 @@ The version 0.31 was completed August 25 2003
 The version 0.32 was completed December 20 2003
 
 	o  Fixed a defunct call to print.coefmat
+
+The version 0.33 was completed January 20 2004
+
+	o  fixed bug in scalar division...identified by Renald Buter

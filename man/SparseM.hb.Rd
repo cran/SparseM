@@ -20,7 +20,7 @@ sparse matrix format.
 read.matrix.hb(filename)
 write.matrix.hb(filename = "hb.out", X, title, key, mxtype, rhs = NULL, 
 guess = FALSE,  xsol = FALSE, ptrfmt = "(16I5)", indfmt = "(16I5)",
-valfmt = "(5D16.9)", rhsfmt = "(5D16.9)")
+valfmt = "(1P,5D16.9)", rhsfmt = "(1P,5D16.9)")
 model.matrix(object, \dots)
 model.response(data,type)
 }
