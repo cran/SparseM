@@ -37,12 +37,6 @@
        closepath clip newpath } def
 /rgb { setrgbcolor } def
 /s   { scalefont setfont } def
-/R   { /Font1 findfont } def
-/B   { /Font2 findfont } def
-/I   { /Font3 findfont } def
-/BI  { /Font4 findfont } def
-/S   { /Font5 findfont } def
-1 setlinecap 1 setlinejoin
 % end   .ps.prolog
 %%IncludeResource: font Helvetica
 /Helvetica findfont
@@ -87,7 +81,7 @@ dup length dict begin
 %%Page: 1 1
 bp
 18.00 18.00 420.94 577.28 cl
-/ps 12 def R 12 s
+/ps 12 def /Font1 findfont 12 s
 0 0 0 rgb
 233.87 36.72 (column) .5 0 0 t
 30.96 304.84 (row) .5 0 90 t
@@ -38887,6 +38881,9 @@ bp
 0 0 0 rgb
 0.75 setlinewidth
 [] 0 setdash
+1 setlinecap
+1 setlinejoin
+10.00 setmiterlimit
 np
 77.04 91.44 m
 312.10 0 l
@@ -38911,7 +38908,7 @@ np
 389.14 91.44 m
 0 -7.20 l
 o
-/ps 12 def R 12 s
+/ps 12 def /Font1 findfont 12 s
 138.20 65.52 (20) .5 0 0 t
 200.94 65.52 (40) .5 0 0 t
 263.67 65.52 (60) .5 0 0 t
@@ -38944,12 +38941,12 @@ np
 0 -426.80 l
 o
 18.00 18.00 420.94 577.28 cl
-/ps 14 def B 14 s
+/ps 14 def /Font2 findfont 14 s
 0 0 0 rgb
 233.87 542.73 (X) .5 0 0 t
 479.98 91.44 793.65 518.24 cl
 420.94 18.00 823.89 577.28 cl
-/ps 12 def R 12 s
+/ps 12 def /Font1 findfont 12 s
 0 0 0 rgb
 636.82 36.72 (column) .5 0 0 t
 433.90 304.84 (row) .5 0 90 t
@@ -50949,6 +50946,9 @@ o
 0 0 0 rgb
 0.75 setlinewidth
 [] 0 setdash
+1 setlinecap
+1 setlinejoin
+10.00 setmiterlimit
 np
 479.98 91.44 m
 312.10 0 l
@@ -50973,7 +50973,7 @@ np
 792.08 91.44 m
 0 -7.20 l
 o
-/ps 12 def R 12 s
+/ps 12 def /Font1 findfont 12 s
 541.15 65.52 (20) .5 0 0 t
 603.88 65.52 (40) .5 0 0 t
 666.62 65.52 (60) .5 0 0 t
@@ -51016,7 +51016,7 @@ np
 0 -426.80 l
 o
 420.94 18.00 823.89 577.28 cl
-/ps 14 def B 14 s
+/ps 14 def /Font2 findfont 14 s
 0 0 0 rgb
 636.82 542.73 (X'X) .5 0 0 t
 ep

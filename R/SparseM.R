@@ -1447,7 +1447,7 @@ setClass("matrix.csr",representation(ra="numeric",
 			return("last element of ia doesn't conform")
 		if(length(object@ia) != nrow+1)
 			return("ia has wrong number of elments")
-        	if(length(object@ra) < 1 || length(object@ra) > nrow*ncol)
+        	if(length(object@ra) < 1 || length(object@ra) > prod(object@dimension))
                 	return("ra has too few, or too many elements")
 		TRUE})
 setMethod("initialize", "matrix.csr", 
@@ -1478,7 +1478,7 @@ setClass("matrix.coo",representation(ra="numeric",
                 	return("ja exceeds dim bounds")
         	if(any(object@ia < 1) || any(object@ia > nrow))
                 	return("ia exceeds dim bounds")
-        	if(length(object@ra) < 1 || length(object@ra) > nrow*ncol)
+        	if(length(object@ra) < 1 || length(object@ra) > prod(object@dimension))
                 	return("ra has too few, or too many elements")
 		TRUE})
 setMethod("initialize", "matrix.coo", 
@@ -1496,7 +1496,7 @@ setClass("matrix.csr.chol",representation(nrow="numeric",nnzlindx="numeric",
 	nsuper="numeric",lindx="numeric",xlindx="numeric",nnzl="numeric",
 	lnz="numeric",xlnz="numeric",invp="numeric",perm="numeric",
 	xsuper="numeric",det="numeric",ierr="numeric",time="numeric"))
-if(version$major >= 1 && version$minor >= 8.0){
+if(version$major >= 1 && version$minor >= 8.0 || version$major >= 2){
 	setClassUnion("numeric or NULL",c("numeric","NULL"))
 	setClassUnion("character or NULL",c("character","NULL"))
 	}
@@ -1864,7 +1864,7 @@ if(version$major == 1 && version$minor >= 8.0 || version$major >= 2){
 	setMethod("%x%",signature(X="matrix.csr",Y="matrix"),
 		function(X,Y) .kron.matrix.csr(X,Y))
         }
-if(version$major == 1 && version$minor < 8.0){
+if(version$major == 1 && version$minor < 8.0 ){
 	setMethod("%x%",signature(X="matrix.csr",Y="matrix.csr",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
 	setMethod("%x%",signature(X="matrix.csr",Y="numeric",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
 	setMethod("%x%",signature(X="numeric",Y="matrix.csr",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)

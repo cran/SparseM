@@ -226,3 +226,16 @@ The version 0.50  was completed July 17, 2004
 		data(lsq) ...
 	o  a comment was added to the solve documentation indicating
 		the existence of the det object in chol structures.
+
+The version 0.52  
+
+	o  An example of Steven Farber revealed that when the
+		dimensions of matrix.csr and matrix.coo objects
+		are very large the validity checking in setClass
+		failed due to integer overflow.  The product
+		nrow*ncol was replaced by prod(object@dimensions)
+		which apparently coerces the result to real.
+	o  A misplaced } was fixed in slm.Rd found by Kurt's
+		pre 2.0.0 new documentation checking was fixed.
+	o  version checking was modified to eliminate a last.warning
+		in 2.0.0.  

@@ -75,14 +75,12 @@ Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R, \cr
 }
 \author{ Roger Koenker }
 
-\seealso{  
+\seealso{
 \code{slm.methods} for methods \code{summary}, \code{print}, \code{fitted},
 \code{residuals} and \code{coef} associated with class \code{slm},
-and \code{slm.fit} for lower level fitting functions}.  The latter functions
+and \code{slm.fit} for lower level fitting functions.  The latter functions
 are of special interest if you would like to pass a sparse form of the
-design matrix directly to the fitting process.
-}
-
+design matrix directly to the fitting process.}
 \examples{
 data(lsq)
 X <- model.matrix(lsq) #extract the design matrix
