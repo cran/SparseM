@@ -303,3 +303,14 @@ The version 0.59
 		since this routine (in sparskit) was never called it was
 		simply removed from sparskit.f.  Jan reports that this allows
 		SparseM to build on his configuration.
+
+The version 0.60
+
+	o  Jeffrey Chang pointed out that indexing failed to work properly
+		when there were repeated indices.  This has now been fixed,
+		but the resulting code is very slow due to looping on an
+		rbind/cbind operation.  This would be a useful feature to
+		speed up, if one were really into resampling.
+
+	o  In the process of making the changes mentioned above, it was
+		noted that [.matrix.coo should be exported via NAMESPACE.

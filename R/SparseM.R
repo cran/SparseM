@@ -1330,16 +1330,56 @@ function (x, digits = max(3, getOption("digits") - 3),
 				stop("Only 0's may mix with negative subscripts")
 			else cl <- setdiff(1:ncol, abs(cl))
 		}
-		s <- ((x@ja %in% cl) & (x@ia %in% rw))
-		ja <- match(x@ja[s],cl)
-		ia <- match(x@ia[s],rw)
-		dim <- c(length(rw),length(cl))
-		ra <- x@ra[s]
-		if (length(ra) == 0 && length(ja) == 0){ #trap all zeros returned matrix
-			ra = 0
-			ja = ia = as.integer(1)
-			}
-		A <- new("matrix.coo",ra=ra,ja=ja,ia=ia,dimension=dim)
+        	if(any(duplicated(rw)) || any(duplicated(cl))){
+               		s <- ((x@ja %in% cl) & (x@ia %in% rw))
+                	urw <- as.integer(names(table(rw)))
+                	ucl <- as.integer(names(table(cl)))
+                	ja <- match(x@ja[s],ucl)
+                	ia <- match(x@ia[s],urw)
+                	dim <- c(length(urw),length(ucl))
+                	ra <- x@ra[s]
+                	A <- new("matrix.coo",ra=ra,ja=ja,ia=ia,dimension=dim)
+			A <- as.matrix.csr(A)
+
+                	#obviously this looping is horrible but is there a better way?
+                	#could be fortranized I suppose.
+	
+                	rn <- table(rw)
+                	ri <- as.integer(names(rn))
+                	B <- NULL
+                	for(i in 1:length(rw)){
+				j <- match(rw[i],urw)
+				if(is.null(B))
+					B <- A[j,]
+				else
+                               		B <- rbind(B,A[j,])
+                        	}
+                	A <- B
+                	B <- NULL
+                	cn <- table(cl)
+                	ci <- as.integer(names(cn))
+                	for(i in 1:length(cl)){
+				j <- match(cl[i],ucl)
+				if(is.null(B))
+					B <- A[,j]
+				else
+                               		B <- cbind(B,A[,j])
+                        	}
+                	A <- as.matrix.coo(B)
+                	}
+        	else{
+                	s <- ((x@ja %in% cl) & (x@ia %in% rw))
+                	ja <- match(x@ja[s],cl)
+                	ia <- match(x@ia[s],rw)
+                	dim <- c(length(rw),length(cl))
+                	ra <- x@ra[s]
+			if (length(ra) == 0 && length(ja) == 0){ 
+				ra = 0
+				ja = ia = as.integer(1)
+				}
+                	A <- new("matrix.coo",ra=ra,ja=ja,ia=ia,dimension=dim)
+                	}
+	
 	}
 	return(A)
 }
@@ -1452,7 +1492,7 @@ setClass("matrix.csr",representation(ra="numeric",
 		if(object@ia[length(object@ia)] != length(object@ra)+1)
 			return("last element of ia doesn't conform")
 		if(length(object@ia) != nrow+1)
-			return("ia has wrong number of elments")
+			return("ia has wrong number of elements")
         	if(length(object@ra) < 1 || length(object@ra) > prod(object@dimension))
                 	return("ra has too few, or too many elements")
 		TRUE})
