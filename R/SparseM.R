@@ -1860,9 +1860,9 @@ function(x,col=c("white","gray"),xlab="column",ylab="row", ...){
 	column <- x@ja
 	row <- rep(n:1,diff(x@ia))
 	z[cbind(row,column)] <- 1
-	image(x=1:p,y=-(n:1),t(z),axes=FALSE, col=col,xlab=xlab,ylab=ylab)
-	axis(1,pretty(1:p))
-	axis(2,pretty(-(n:1)),labels=rev(pretty(1:n)))
+	image(x=1:p,y=-(n:1),t(z),axes=FALSE, col=col,xlab=xlab,ylab=ylab, ...)
+	axis(1,pretty(1:p), ...)
+	axis(2,pretty(-(n:1)),labels=rev(pretty(1:n)), ...)
 	box()
 	})
 #setMethod("summary","slm",summary.slm)
