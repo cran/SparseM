@@ -226,7 +226,7 @@ c ix	= input vector
 c
 c on return:
 c---------- 
-c ix	= vector x permuted according (perm(*)) :=  ix(*)
+c ix	= vector x permuted according to ix(perm(*)) :=  ix(*)
 c
 c----------------------------------------------------------------------c
 c           Y. Saad, Sep. 21 1989                                      c
@@ -2891,9 +2891,9 @@ c--------------
       nperli = 80/len
       ptrcrd = ncol/nperli + 1
       if (len .gt. 9) then
-         ix = 101 
+         assign 101 to ix
       else
-         ix = 100 
+         assign 100 to ix
       endif
       write (ptrfmt,ix) nperli,len
  100  format(1h(,i2,1HI,i1,1h) )
@@ -2920,11 +2920,11 @@ c
          nperli = 80/len
 c     
          if (len .le. 9 ) then
-            ix = 102 
+            assign 102 to ix
          elseif (ifmt .le. 9) then
-            ix = 103 
+            assign 103 to ix
          else 
-            ix = 104 
+            assign 104 to ix
          endif
 c     
          write(valfmt,ix) nperli,len,ifmt
@@ -2938,19 +2938,19 @@ C
 c     try to minimize the blanks in the format strings.
          if (nperli .le. 9) then
 	    if (len .le. 9 ) then
-	       ix = 105 
+	       assign 105 to ix
 	    elseif (ifmt .le. 9) then
-	       ix = 106 
+	       assign 106 to ix
 	    else 
-	       ix = 107 
+	       assign 107 to ix
 	    endif
 	 else 
 	    if (len .le. 9 ) then
-	       ix = 108 
+	       assign 108 to ix
 	    elseif (ifmt .le. 9) then
-	       ix = 109 
+	       assign 109 to ix
 	    else 
-               ix = 110 
+               assign 110 to ix
             endif
          endif
 c-----------

@@ -288,3 +288,10 @@ The version 0.57
 	o  NAMESPACE and getMethod added to acommodate an asymmetry in the
 		way that the stats package handles model.matrix and model.response
 		fix kindly provided by Roger Bivand.
+
+The version 0.58
+
+	o  several "assign num to lab"  statements in sparskit.f were updated
+		to anticipate gnu fortran compilers that have apparently
+		decided that such syntax is obsolete.  Thanks to Jan de Leeuw
+		for pointing this out based on gfortran-4.0 on osx 10.34.
