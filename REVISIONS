@@ -295,3 +295,11 @@ The version 0.58
 		to anticipate gnu fortran compilers that have apparently
 		decided that such syntax is obsolete.  Thanks to Jan de Leeuw
 		for pointing this out based on gfortran-4.0 on osx 10.34.
+
+The version 0.59
+
+	o  the subroutine prtmt intended to print matrices in Harwell Boeing
+		format also caused problems for the new gfortran-4.0 compiler
+		since this routine (in sparskit) was never called it was
+		simply removed from sparskit.f.  Jan reports that this allows
+		SparseM to build on his configuration.
