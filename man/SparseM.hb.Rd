@@ -16,7 +16,7 @@ write.matrix.hb(filename = "hb.out", X, title, key, mxtype, rhs = NULL,
 guess = FALSE,  xsol = FALSE, ptrfmt = "(16I5)", indfmt = "(16I5)",
 valfmt = "(5D16.9)", rhsfmt = "(5D16.9)")
 \method{model.matrix}{matrix.csc.hb}(object, \dots)
-\method{model.response}{matrix.csc.hb}(data)
+\method{model.response}{matrix.csc.hb}(data,type)
 }
 \arguments{
   \item{filename}{file name to read from or write to }
@@ -24,7 +24,7 @@ valfmt = "(5D16.9)", rhsfmt = "(5D16.9)")
 class}
   \item{type}{One of `"any"', `"numeric"', `"double"'. Using the either of
           latter two coerces the result to have storage mode
-          `"double"'.}
+          `"double"'}
   \item{X}{coefficient matrix stored in csc (for unsymmetric and rectangular
         matrix) or ssc (for symmetric matrix) format}
   \item{title}{72-character title for the matrix}

@@ -1,26 +1,26 @@
 require(methods)
 setClass("matrix.csr",representation(ra="numeric",
 	ja="integer",ia="integer", dimension="integer"),
-	validity = function(x) {
- 		if(!length(x@dimension) == 2 )
+	validity = function(object) {
+ 		if(!length(object@dimension) == 2 )
                 	return("invalid dimension attribute")
         	else{
-               		nrow <- x@dimension[1]
-               		ncol <- x@dimension[2]
+               		nrow <- object@dimension[1]
+               		ncol <- object@dimension[2]
                	 	}
-        	if(!(length(x@ra) ==length(x@ja)))
+        	if(!(length(object@ra) ==length(object@ja)))
                 	return("ra and ja don't have equal lengths")
-        	if(any(x@ja < 1) || any(x@ja > ncol)) 
+        	if(any(object@ja < 1) || any(object@ja > ncol)) 
                 	return("ja exceeds dim bounds")
-        	if(any(x@ia < 1))
+        	if(any(object@ia < 1))
                 	return("some elements of ia are <= 0")
-		if(any(diff(x@ia)<0))
+		if(any(diff(object@ia)<0))
 			return("ia vector not monotone increasing") 
-		if(x@ia[length(x@ia)] != length(x@ra)+1)
+		if(object@ia[length(object@ia)] != length(object@ra)+1)
 			return("last element of ia doesn't conform")
-		if(length(x@ia) != nrow+1)
+		if(length(object@ia) != nrow+1)
 			return("ia has wrong number of elments")
-        	if(length(x@ra) < 1 || length(x@ra) > nrow*ncol)
+        	if(length(object@ra) < 1 || length(object@ra) > nrow*ncol)
                 	return("ra has too few, or too many elements")
 		TRUE})
 setMethod("initialize", "matrix.csr", 
@@ -38,20 +38,20 @@ setClass("matrix.ssr",representation(ra="numeric",ja="integer",ia="integer", dim
 setClass("matrix.ssc",representation(ra="numeric",ja="integer",ia="integer", dimension="integer"))
 setClass("matrix.coo",representation(ra="numeric",
 	ja="integer",ia="integer", dimension="integer"),
-	validity = function(x) {
- 		if(!length(x@dimension) == 2 )
+	validity = function(object) {
+ 		if(!length(object@dimension) == 2 )
                 	return("invalid dimension attribute")
         	else{
-               		nrow <- x@dimension[1]
-               		ncol <- x@dimension[2]
+               		nrow <- object@dimension[1]
+               		ncol <- object@dimension[2]
                	 	}
-        	if(!(length(x@ra) ==length(x@ja) && length(x@ra) ==length(x@ia)))
+        	if(!(length(object@ra) ==length(object@ja) && length(object@ra) ==length(object@ia)))
                 	return("ra,ja,ia don't have equal lengths")
-        	if(any(x@ja < 1) || any(x@ja > ncol)) 
+        	if(any(object@ja < 1) || any(object@ja > ncol)) 
                 	return("ja exceeds dim bounds")
-        	if(any(x@ia < 1) || any(x@ia > nrow))
+        	if(any(object@ia < 1) || any(object@ia > nrow))
                 	return("ia exceeds dim bounds")
-        	if(length(x@ra) < 1 || length(x@ra) > nrow*ncol)
+        	if(length(object@ra) < 1 || length(object@ra) > nrow*ncol)
                 	return("ra has too few, or too many elements")
 		TRUE})
 setMethod("initialize", "matrix.coo", 
@@ -128,8 +128,8 @@ setMethod("backsolve","matrix.csr.chol",backsolve.matrix.csr.chol)
 setMethod("solve","matrix.csr",solve.matrix.csr)
 setMethod("model.matrix","matrix.csc.hb",model.matrix.matrix.csc.hb)
 setMethod("model.matrix","matrix.ssc.hb",model.matrix.matrix.ssc.hb)
-setMethod("model.response","matrix.csc.hb",model.response.matrix.csc.hb)
-setMethod("model.response","matrix.ssc.hb",model.response.matrix.csc.hb)
+setMethod("model.response",signature(data="matrix.csc.hb",type="ANY"),model.response.matrix.csc.hb)
+setMethod("model.response",signature(data="matrix.ssc.hb",type="ANY"),model.response.matrix.csc.hb)
 setMethod("%*%",signature(x="matrix.csr",y="matrix.csr"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="matrix.csr",y="matrix"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="matrix.csr",y="numeric"),.matmul.matrix.csr)

@@ -1,7 +1,7 @@
-      subroutine chol(m,nnzdmax,d,jd,id,nnzdsm,dsub,jdsub,nsubmax,lindx,
-     &                xlindx,nsuper,nnzlmax,lnz,xlnz,invp,perm,iwmax,
-     &                iwork,colcnt,snode,xsuper,split,tmpmax,tmpvec,
-     &                cachsz,level,ierr,timed)
+      subroutine chol(m,nnzdmax,d,jd,id,nnzdsm,dsub,jdsub,nsub,nsubmax,
+     &                lindx,xlindx,nsuper,nnzlmax,lnz,xlnz,invp,perm,
+     &                iwmax,iwork,colcnt,snode,xsuper,split,tmpmax,
+     &                tmpvec,cachsz,level,ierr,timed)
 c        1         2         3         4         5         6         7
 c23456789012345678901234567890123456789012345678901234567890123456789012
 c Sparse least squares solver via Ng-Peyton's sparse Cholesky 
@@ -63,6 +63,7 @@ c       11 -- insufficient work storage in iwork when calling
 c            blkfct
 c OUTPUT:
 c     y -- an m-vector of least squares solution
+c     nsub -- number of subscripts in lindx
 c WORK ARRAYS:
 c     iwmax -- upper bound of the general purpose integer
 c              working storage iwork; set at 7*m+3
@@ -90,6 +91,7 @@ c   are stored rowwise in dsub(m+2:nnzd+1), their column indices are stored
 c   in jsub(m+2:nnzd+1), the pointers to the nondiagonal entries in 
 c   dsub(m+2:nnzd+1) and jsub(m+2:nnzd+1) are stored in jsub(1:m+1) 
 c
+      nsub = 0
       nnzd = id(m+1) - 1
       nnzdsub = nnzd - m
       call extract(d,jd,id,dsub,jdsub,m,nnzdmax,nnzdsm,ierr)

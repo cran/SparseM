@@ -309,7 +309,7 @@ function (x)
 	object
 }
 #--------------------------------------------------------------------
-"model.response.matrix.csc.hb" <- function(data){
+"model.response.matrix.csc.hb" <- function(data,type="any"){
 	if(is.null(data@rhs.mode)) stop("Right-hand side doesn't exist")
 	if (data@rhs.mode == "F")
 		z <- data@rhs.ra
@@ -813,6 +813,10 @@ else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
 		PACKAGE = "SparseM")
 	if(z$ierr != 0) stop("insufficient space for element-wise sparse matrix multiplication")
 	nnz <- z$ia[nrow+1]-1
+	if(length(z$ra)==1 & z$ra==0){#trap zero matrix
+		z$ja <- as.integer(1)
+		z$ia <- as.integer(c(1,rep(2,nrow)))
+		}
 	z <- new("matrix.csr",ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dimension=c(nrow,ncol))
 	}
 else stop("Arguments have to be class \"matrix.csr\" or numeric")
@@ -1139,6 +1143,11 @@ if(is.matrix.csr(x)){
 			PACKAGE = "SparseM")
 		nnz <- z$ia[nrow+1]-1
 		if(z$ierr != 0) stop("insufficient space for sparse matrix multiplication")
+		if(length(z$ra)==0){#trap zero matrix
+			z$ra <- 0
+			z$ja <- as.integer(1)
+			z$ia <- as.integer(c(1,rep(2,nrow)))
+			}
 		z <- new("matrix.csr",ra=z$ra[1:nnz],ja=z$ja[1:nnz],
 			ia=z$ia,dimension=as.integer(c(nrow,ncol)))
 	   	}
@@ -1223,6 +1232,7 @@ function(x, pivot = FALSE, nsubmax, nnzlmax, tmpmax, ...){
 		nnzdsm = as.integer(nnzdsm),
 		dsub = double(nnzdsm),
 		jdsub = integer(nnzdsm),
+		nsub = integer(1),
 		nsubmax = as.integer(nsubmax),
 		lindx = integer(nsubmax),	
 		xlindx = integer(nrow+1),
@@ -1254,7 +1264,7 @@ function(x, pivot = FALSE, nsubmax, nnzlmax, tmpmax, ...){
 		if(z$ierr == 9) warning(mess) else stop(mess)
 	        }
 	nnzl <- z$xlnz[length(z$xlnz)]-1
-        nnzlindx <- z$xlindx[nrow+1]-1
+	nnzlindx <- z$nsub
 	z <- new("matrix.csr.chol",nrow=z$nrow,nnzlindx=nnzlindx,
 		nsuper=z$nsuper,lindx=z$lindx[1:nnzlindx],xlindx=z$xlindx,
 		nnzl=as.integer(nnzl),lnz=z$lnz[1:nnzl],xlnz=z$xlnz,invp=z$invp,
@@ -1355,14 +1365,14 @@ function (x = 1, nrow, ncol=n)
 #--------------------------------------------------------------------
 "diag.assign.matrix.csr" <- function(x,value)
 {
-    dx <- dim(x)
-    if (length(dx) != 2 || prod(dx) != length(x))
-        stop("only matrix diagonals can be replaced")
-    i <- seq(length = min(dx))
-    if (length(value) != 1 && length(value) != length(i))
-        stop("replacement diagonal has wrong length")
-    x[cbind(i, i)] <- value
-    x
+     dx <- dim(x)
+     if (length(dx) != 2 || prod(dx) != length(x))
+         stop("only matrix diagonals can be replaced")
+     i <- seq(length = min(dx))
+     if (length(value) != 1 && length(value) != length(i))
+         stop("replacement diagonal has wrong length")
+     x[cbind(i, i)] <- value
+     x
 }
 #--------------------------------------------------------------------
 "solve.matrix.csr" <-
