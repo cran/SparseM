@@ -1495,11 +1495,11 @@ setClass("matrix.csr.chol",representation(nrow="numeric",nnzlindx="numeric",
 	nsuper="numeric",lindx="numeric",xlindx="numeric",nnzl="numeric",
 	lnz="numeric",xlnz="numeric",invp="numeric",perm="numeric",
 	xsuper="numeric",ierr="numeric",time="numeric"))
-if(R.version$major >= 1 && R.version$minor >= 8.0){
+if(version$major >= 1 && version$minor >= 8.0){
 	setClassUnion("numeric or NULL",c("numeric","NULL"))
 	setClassUnion("character or NULL",c("character","NULL"))
 	}
-if(R.version$major >= 1 && R.version$minor < 8.0){
+if(version$major == 1 && version$minor < 8.0){
 	setClass("numeric or NULL")
 	setIs("numeric","numeric or NULL")
 	setIs("NULL","numeric or NULL")
@@ -1832,7 +1832,7 @@ setMethod("%*%",signature(x="matrix.csr",y="matrix"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="matrix.csr",y="numeric"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="matrix",y="matrix.csr"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="numeric",y="matrix.csr"),.matmul.matrix.csr)
-if(R.version$major >= 1 && R.version$minor >= 8.0){
+if(version$major == 1 && version$minor >= 8.0 || version$major >= 2){
 	setMethod("%x%",signature(X="matrix.csr",Y="matrix.csr"),
 		function(X,Y) .kron.matrix.csr(X,Y))
 	setMethod("%x%",signature(X="matrix.csr",Y="numeric"),
@@ -1844,7 +1844,7 @@ if(R.version$major >= 1 && R.version$minor >= 8.0){
 	setMethod("%x%",signature(X="matrix.csr",Y="matrix"),
 		function(X,Y) .kron.matrix.csr(X,Y))
         }
-if(R.version$major >= 1 && R.version$minor < 8.0){
+if(version$major == 1 && version$minor < 8.0){
 	setMethod("%x%",signature(X="matrix.csr",Y="matrix.csr",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
 	setMethod("%x%",signature(X="matrix.csr",Y="numeric",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
 	setMethod("%x%",signature(X="numeric",Y="matrix.csr",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
