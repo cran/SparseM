@@ -1,0 +1,18 @@
+useDynLib(SparseM)
+
+importFrom(graphics, image, image.default)
+importFrom(stats, model.matrix)
+
+export(is.matrix.csr, is.matrix.csc, is.matrix.ssr, is.matrix.ssc, is.matrix.coo, as.matrix.csr, as.matrix.csc, as.matrix.ssr, as.matrix.ssc, as.matrix.coo, rbind.matrix.csr, cbind.matrix.csr, read.matrix.hb, write.matrix.hb, Ops.matrix.csr, Ops.matrix.diag.csr, "[.matrix.csr", "[<-.matrix.csr", "[.matrix.diag.csr", slm, slm.fit, slm.wfit, slm.fit.csr, coef.slm, fitted.slm, residuals.slm, summary.mslm, summary.slm, print.summary.slm, print.slm, "[<-.matrix.coo")
+
+exportClasses(matrix.csr, matrix.csc, matrix.ssr, matrix.ssc, matrix.coo, matrix.csr.chol, matrix.csc.hb, matrix.ssc.hb, slm, mslm, summary.slm, matrix.diag.csr)
+exportMethods(as.matrix.csr, as.matrix.csc, as.matrix.ssr, as.matrix.ssc, as.matrix.coo, as.matrix, t, coerce, dim, diff, diag, "diag<-", det, norm, chol, backsolve, solve, model.matrix, model.response, "%*%", "%x%", image)
+
+S3method(coef, slm)
+S3method(fitted, slm)
+S3method(residuals, slm)
+S3method(summary, mslm)
+S3method(summary, slm)
+S3method(print, summary.slm)
+S3method(print, slm)
+

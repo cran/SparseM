@@ -6,7 +6,7 @@ c INPUT:
 c     a(m,n) -- an (m x n) sparse matrix
 c     m -- number of rows in `a'
 c     n -- number of columns in `a'
-c     eps  -- the smallest postivie floating-point number
+c     eps  -- the smallest postive floating-point number
 c OUTPUT:
 c     ra(nnz) -- values of `a' stored in CSR format
 c     ja(nnz) -- column indices of the elements a(i,j) as stored in ra

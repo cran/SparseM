@@ -236,6 +236,33 @@ The version 0.52
 		nrow*ncol was replaced by prod(object@dimensions)
 		which apparently coerces the result to real.
 	o  A misplaced } was fixed in slm.Rd found by Kurt's
-		pre 2.0.0 new documentation checking was fixed.
+		pre 2.0.0 new documentation checking. 
 	o  version checking was modified to eliminate a last.warning
 		in 2.0.0.  
+
+The version 0.53
+
+	o  elementwise multiplication failed for A*B with both A and B
+		of class matrix.csr, as noted by Suzzane Heim --
+
+	o added a [<-.matrix.diag.csr function, inadvertently omitted from
+		the prior revision of this class.  (Produced a mysterious
+		"Error: incorrect number of subscripts on matrix" message.
+		This also fixed a subsetting-assignments-to-zero problem for
+		this class.
+
+The version 0.54
+
+	o  After an extended discussion in (and off) R-devel,  Roger Bivand very 
+		kindly provided a NAMESPACE file and some associated modifications
+		of the SparseM.R file.  These changes allow among other
+		things S4 method dispatch to find functions in SparseM
+		that were hidden from view  when it didn't have a NAMESPACE.
+		The original problem child was det() which SparseM declared
+		generic, but this wasn't visible to Bivand spatial package.
+		Use requires various import directives in the NAMESPACE
+		of the importing package, however quantreg  which uses SparseM
+		for certain nonparametric regression problems worked without
+		modification with the new version of SparseM.  Bivand's
+		modifications of the R code are indicated with comments "#RSB"
+		in the SparseM.R file.

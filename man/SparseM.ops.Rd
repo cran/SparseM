@@ -63,6 +63,7 @@
 \alias{[.matrix.csr}
 \alias{[.matrix.diag.csr}
 \alias{[<-.matrix.csr}
+\alias{[<-.matrix.diag.csr}
 \alias{[.matrix.coo}
 \alias{[<-.matrix.coo}
 \title{Basic Linear Algebra for Sparse Matrices}

@@ -1,9 +1,14 @@
 #--------------------------------------------------------------------
-".First.lib" <- function(lib, pkg) {
-   require(methods)
-   library.dynam("SparseM", pkg, lib)
-   print("SparseM library loaded")
+#".First.lib" <- function(lib, pkg) {
+#   require(methods)
+#   library.dynam("SparseM", pkg, lib)
+#   print("SparseM library loaded")
+#}
+.onLoad <- function(lib, pkg) {
+	require(methods)
+	print("SparseM library loaded")
 }
+# /*RSB*/ .onLoad needed instead of .First.lib, no library.dynam()
 #--------------------------------------------------------------------
 "is.matrix.csr" <- function(x, ...) is(x,"matrix.csr")
 #--------------------------------------------------------------------
@@ -1022,7 +1027,8 @@ function(X,Y){
 	ia = as.integer(rep(Y@ia,la)+rep((X@ia-1)*dim(Y)[1],each=lb))
 	dim = as.integer(dim(X)*dim(Y))
 
-	as.matrix.csr(new("matrix.coo",ra=ra,ia=ia,ja =ja,dim=dim))
+	as.matrix.csr(new("matrix.coo",ra=ra,ia=ia,ja=ja, dimension=dim))
+	# /*RSB*/ dim= changed to dimension=
 }
 
 #--------------------------------------------------------------------
@@ -1425,7 +1431,7 @@ function (x, rw = 1:x@dimension[1], cl = 1:x@dimension[2], value)
 return(x)
 }
 # All the S4 Methods stuff is collected below this point
-require(methods)
+#require(methods) /*RSB*/ commented out
 setClass("matrix.csr",representation(ra="numeric",
 	ja="integer",ia="integer", dimension="integer"),
 	validity = function(object) {
@@ -1665,9 +1671,11 @@ setMethod("diff","matrix.csr", function(x, lag = 1, differences = 1, ...) {
         for (i in 1:differences) r <- r[i1,] - r[-nrow(r):-(nrow(r) - lag + 1),]
     r
    })
+#setClass("matrix.diag.csr")
 setClass("matrix.diag.csr","matrix.csr")
-setAs("vector","matrix.diag.csr",function(from){
-	if(!is.numeric(from))stop("non-numeric entries in sparse matrices not allowed")
+#setIs("matrix.csr","matrix.diag.csr")
+setAs("numeric","matrix.diag.csr",function(from){
+	#if(!is.numeric(from))stop("non-numeric entries in sparse matrices not allowed")
 	if(length(from)==1){
 		n <- as.integer(from)
 		if(n>0) from  <-  rep(1,n)
@@ -1819,6 +1827,9 @@ setMethod("solve","matrix.csr", function (a, b, ...) {
         z <- as.matrix.csr(z)
     z
    })
+setGeneric("model.matrix", function(object, ...) # /*RSB*/ changed definition
+	standardGeneric("model.matrix")) # /*RSB*/
+	
 setMethod("model.matrix","matrix.csc.hb", function(object,...){
         object <- new("matrix.csc",ra=object@ra,ja=object@ja,
                 ia=object@ia,dimension=object@dimension)
@@ -1829,6 +1840,10 @@ setMethod("model.matrix","matrix.ssc.hb", function(object, ...){
 		dimension=object@dimension)
         as.matrix.csr(object)
 	})
+
+setGeneric("model.response", function(data, type) # /*RSB*/ changed definition
+	standardGeneric("model.response")) # /*RSB*/
+
 setMethod("model.response","matrix.csc.hb",
 function(data,type="any"){  
         if(is.null(data@rhs.mode)) stop("Right-hand side doesn't exist")
@@ -1871,6 +1886,10 @@ if(version$major == 1 && version$minor < 8.0 ){
 	setMethod("%x%",signature(X="matrix",Y="matrix.csr",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
 	setMethod("%x%",signature(X="matrix.csr",Y="matrix",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
         }
+
+setGeneric("image", function(x, ...) standardGeneric("image")) 
+	# /*RSB*/  changed definition
+
 setMethod("image","matrix.csr",
 function(x,col=c("white","gray"),xlab="column",ylab="row", ...){
 	n <- x@dimension[1]
@@ -1879,7 +1898,7 @@ function(x,col=c("white","gray"),xlab="column",ylab="row", ...){
 	column <- x@ja
 	row <- rep(n:1,diff(x@ia))
 	z[cbind(row,column)] <- 1
-	image(x=1:p,y=-(n:1),t(z),axes=FALSE, col=col,xlab=xlab,ylab=ylab, ...)
+	image.default(x=1:p,y=-(n:1),t(z),axes=FALSE, col=col,xlab=xlab,ylab=ylab, ...) # /*RSB*/ changed call to make sure
 	axis(1,pretty(1:p), ...)
 	axis(2,pretty(-(n:1)),labels=rev(pretty(1:n)), ...)
 	box()

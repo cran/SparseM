@@ -8,6 +8,7 @@
 \alias{coerce,vector,matrix.diag.csr-method}
 \alias{coerce,matrix.csr,matrix.diag.csr-method}
 \alias{coerce,vector,matrix.csr-method}
+\alias{coerce,numeric,matrix.diag.csr-method}
 \alias{as.matrix,ANY-method}
 \alias{as.matrix,matrix.csr-method}
 \alias{as.matrix,csr-method}
@@ -161,5 +162,6 @@ as.matrix(A.csc)
 as.matrix(B.ssr)
 as.matrix(B.ssc)
 as.matrix.csr(rep(0,9),3,3) #sparse matrix of all zeros
+as(4,"matrix.diag.csr") #identity matrix of dimension 4
 }
 \keyword{algebra}
