@@ -266,3 +266,15 @@ The version 0.54
 		modification with the new version of SparseM.  Bivand's
 		modifications of the R code are indicated with comments "#RSB"
 		in the SparseM.R file.
+
+The version 0.55
+
+	o  Added lazyloading to description file at the request of BDR.
+
+	o  Jon Stearley (Sandia) noted that R segfaulted on his attempts
+		to use write.matrix.hb.  The segmentation fault was caused 
+		by the "NULL" value of "guesol" that was being passed into 
+		readwrite.c.   Pin  replaced the NULL assignment with an 
+		empty string "" assignment.  I've also updated the help file
+		SparseM.hb.Rd to include an example of write.matrix.hb.  
+

@@ -372,7 +372,7 @@ function (filename)
 	N <- X@dimension[2]
 	nnz <- length(X@ra)
 	nrhs <- 0
-	guesol <- NULL
+	guesol <- ""
 	Rhs <- Guess <- Exact <- rep(0,M)
         if(!missing(rhs)){
 		guesol <- paste(guesol,"F",sep="")

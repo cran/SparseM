@@ -144,12 +144,12 @@ The following commands illustrate typical coercion operations.
 > A
 \end{Sinput}
 \begin{Soutput}
-          [,1]      [,2]       [,3]       [,4]
-[1,]  0.000000  0.000000 -1.0010876  0.0000000
-[2,]  0.000000  0.000000 -1.2884326  0.0000000
-[3,]  0.000000 -0.986093  0.0000000  0.0000000
-[4,] -1.017901  0.000000  1.1885184  1.9133157
-[5,]  0.000000  0.000000 -0.7989674 -0.9164383
+     [,1]       [,2]      [,3]       [,4]
+[1,]    0 -1.2520927 0.0000000  0.0000000
+[2,]    0  0.8256068 0.0000000  1.0553557
+[3,]    0  2.7278160 0.0000000 -0.9552583
+[4,]    0 -1.1450069 0.7368707 -0.9915961
+[5,]    0  0.0000000 0.0000000  1.9204870
 \end{Soutput}
 \begin{Sinput}
 > A.csr <- as.matrix.csr(A)
@@ -158,14 +158,14 @@ The following commands illustrate typical coercion operations.
 \begin{Soutput}
 An object of class "matrix.csr"
 Slot "ra":
-[1] -1.0010876 -1.2884326 -0.9860929 -1.0179006  1.1885184  1.9133157 -0.7989674
-[8] -0.9164383
+[1] -1.2520927  0.8256068  1.0553557  2.7278160 -0.9552583 -1.1450069  0.7368707
+[8] -0.9915961  1.9204870
 
 Slot "ja":
-[1] 3 3 2 1 3 4 3 4
+[1] 2 2 4 2 4 2 3 4 4
 
 Slot "ia":
-[1] 1 2 3 4 7 9
+[1]  1  2  4  6  9 10
 
 Slot "dimension":
 [1] 5 4
@@ -174,12 +174,12 @@ Slot "dimension":
 > as.matrix(A.csr)
 \end{Sinput}
 \begin{Soutput}
-          [,1]      [,2]       [,3]       [,4]
-[1,]  0.000000  0.000000 -1.0010876  0.0000000
-[2,]  0.000000  0.000000 -1.2884326  0.0000000
-[3,]  0.000000 -0.986093  0.0000000  0.0000000
-[4,] -1.017901  0.000000  1.1885184  1.9133157
-[5,]  0.000000  0.000000 -0.7989674 -0.9164383
+     [,1]       [,2]      [,3]       [,4]
+[1,]    0 -1.2520927 0.0000000  0.0000000
+[2,]    0  0.8256068 0.0000000  1.0553557
+[3,]    0  2.7278160 0.0000000 -0.9552583
+[4,]    0 -1.1450069 0.7368707 -0.9915961
+[5,]    0  0.0000000 0.0000000  1.9204870
 \end{Soutput}
 \end{Schunk}
 To facilitate testing we have included \texttt{read.matrix.hb} 
@@ -305,25 +305,25 @@ and related image processing contexts.
 > cat("slm time =", slm.time, "\n")
 \end{Sinput}
 \begin{Soutput}
-slm time = 1.7 0.97 2.69 0 0 
+slm time = 1.63 0.94 2.57 0 0 
 \end{Soutput}
 \begin{Sinput}
 > cat("lm time =", lm.time, "\n")
 \end{Sinput}
 \begin{Soutput}
-lm time = 3.44 1.01 4.46 0 0 
+lm time = 3.39 1.06 4.44 0 0 
 \end{Soutput}
 \begin{Sinput}
 > cat("slm.fit time =", slm.fit.time, "\n")
 \end{Sinput}
 \begin{Soutput}
-slm.fit time = 0.17 0.05 0.22 0 0 
+slm.fit time = 0.17 0.05 0.21 0 0 
 \end{Soutput}
 \begin{Sinput}
 > cat("lm.fit time =", lm.fit.time, "\n")
 \end{Sinput}
 \begin{Soutput}
-lm.fit time = 2.51 0.26 2.75 0 0 
+lm.fit time = 2.42 0.27 2.7 0 0 
 \end{Soutput}
 \begin{Sinput}
 > cat("slm Results: Reported Coefficients Truncated to 5  ", "\n")
