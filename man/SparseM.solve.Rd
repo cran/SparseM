@@ -53,6 +53,9 @@ can be reused.
 \code{solve} 
 combines \code{chol} and \code{backsolve}, and will
 compute the inverse of a matrix if the right-hand-side is missing.
+The determinant of the Cholesky factor is returned providing a
+means to efficiently compute the determinant of sparse positive
+definite symmetric matrices.
 }
 \references{ 
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr

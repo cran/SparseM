@@ -216,3 +216,13 @@ The version 0.40  was completed July 17, 2004
 	o  added a norm() function to do the symmetry checking
 	o  added a det() function to compute the determinant of both
 		matrix.csr and matrix.csr.chol objects.
+
+The version 0.50  was completed July 17, 2004
+
+	o  the vignette was uncompressed so that it was accessible
+		via vignette().
+	o  the call to read.matrix.hb was commented out and replaced
+		as in the other documentation calls with calls to
+		data(lsq) ...
+	o  a comment was added to the solve documentation indicating
+		the existence of the det object in chol structures.
