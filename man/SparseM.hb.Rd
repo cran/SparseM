@@ -92,7 +92,7 @@ User's Guide for Harwell-Boeing Sparse Matrix Collection at
 }
 
 \examples{
-read.matrix.hb(paste(.find.package("SparseM"),"/data/lsq.rra",sep="")) -> hb.o
+read.matrix.hb(system.file("HBdata","lsq.rra",package = "SparseM"))-> hb.o
 class(hb.o) # -> [1] "matrix.csc.hb"
 model.matrix.hb(hb.o)->X
 class(X) # -> "matrix.csr"

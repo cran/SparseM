@@ -151,16 +151,13 @@ function(x){
 #--------------------------------------------------------------------
 "matrix.csr" <-
 function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
-	if(!is.matrix(x)){
-        	if(length(x)==nrow*ncol)
-               		x <- matrix(x,nrow,ncol)
-        	else
-               		stop("length of x doesn't match nrow*ncol")
-        	}
+         if (!is.matrix(x)) {
+		x <-return(as.matrix.csr(matrix(x,nrow,ncol)))
+		}
 	dimx <- dim(x)
 	nnz <- sum(abs(x)>eps)
 	if(nnz==0){
-	        z<-list(ra=0,ja=1,ia=c(1,rep(2,dimx[1]-1),2),dim=dimx)
+	        z<-list(ra=0,ja=1,ia=c(1,rep(2,dimx[1])),dim=dimx)
 		class(z) <- "matrix.csr"
 		return(z)
         }

@@ -757,7 +757,6 @@ int writeHB_mat_double(const char* filename, int M, int N,
     int Valperline, Valwidth, Valprec;
     int Valflag;           /* Indicates 'E','D', or 'F' float format */
     char pformat[16],iformat[16],vformat[19],rformat[19];
-    int ii;
 
     if ( Type[0] == 'C' ) {
          nvalentries = 2*nz;

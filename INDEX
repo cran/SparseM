@@ -3,6 +3,7 @@ SparseM.image           Image Plot for Sparse Matrices
 SparseM.ontology        Sparse Matrix Class
 SparseM.ops             Basic Linear Algebra for Sparse Matrices
 SparseM.solve           Linear Equation Solving for Sparse Matrices
+lsq                     Least Squares Problems in Surveying
 slm                     Fit a linear regression model using sparse
                         matrix algebra
 slm.fit                 Internal slm fitting functions

@@ -79,7 +79,7 @@ design matrix directly to the fitting process.
 
 \examples{
 # lsq.rra is real rectangular matrix stored in compressed sparse column format
-read.matrix.hb(paste(.find.package("SparseM"),"/data/lsq.rra",sep="")) -> hb.o
+read.matrix.hb(system.file("HBdata","lsq.rra",package = "SparseM"))-> hb.o
 X <- model.matrix.hb(hb.o) #extract the design matrix
 y <- model.response.hb(hb.o) # extract the rhs
 X1 <- as.matrix(X)

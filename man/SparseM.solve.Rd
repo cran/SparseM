@@ -62,7 +62,7 @@ pp. 1034-1056.
 }
 \examples{
 # lsq.rra is real rectangular stored in csc (compressed sparse column) format
-read.matrix.hb(paste(.find.package("SparseM"),"/data/lsq.rra",sep="")) -> hb.o
+read.matrix.hb(system.file("HBdata","lsq.rra",package = "SparseM"))-> hb.o
 class(hb.o) # -> [1] "matrix.csc.hb"
 model.matrix.hb(hb.o)->design.o
 class(design.o) # -> "matrix.csr"

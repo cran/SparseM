@@ -1,3 +1,5 @@
+c  SparseM package
+c  Author:  Pin Ng
       subroutine csr (a,ra,ja,ia,m,n,nnz,eps)
 c        1         2         3         4         5         6         7
 c23456789012345678901234567890123456789012345678901234567890123456789012

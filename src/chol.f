@@ -1,3 +1,5 @@
+c SparseM
+c Author Pin Ng
       subroutine chol(m,nnzdmax,d,jd,id,nnzdsm,dsub,jdsub,nsubmax,lindx,
      &                xlindx,nsuper,nnzlmax,lnz,xlnz,invp,perm,iwmax,
      &                iwork,colcnt,snode,xsuper,split,tmpmax,tmpvec,

@@ -1,3 +1,5 @@
+/* SparseM Package --   Author:  Pin Ng */
+
 #include<stdlib.h>
 #include<stdio.h>
 #include "iohb.h"
@@ -20,7 +22,7 @@ char **mxtype, char **Rhstype)
    readHB_info(*filename, M, N, nonzeros, &Type, Nrhs);
    *mxtype = Type;
     if ( (in_file = fopen( *filename, "r")) == NULL ) {
-       fprintf(stderr,"Error: Cannot open file: %s\n",filename);
+       fprintf(stderr,"Error: Cannot open file: %s\n",*filename);
     }
 
    readHB_header(in_file, Title, Key, mat_type, &Nrow, &Ncol, &Nnzero, Nrhs,
@@ -34,8 +36,6 @@ char **mxtype, char **Rhstype)
 void read_HB2(char **filename, int* M, int* N, int* nonzeros, int *colptr, 
 	int *rowind, double *val, int *colptr1, int *rowind1, double *val1)
 {
-   char *Type;
-   double *rhs;
    int i;
    readHB_newmat_double(*filename, M, N, nonzeros, &colptr, &rowind, &val);
    for(i = 0; i < *N+1; i++)
