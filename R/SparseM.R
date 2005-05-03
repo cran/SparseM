@@ -360,60 +360,62 @@ function (filename)
    return(rd.o)
 }
 #--------------------------------------------------------------------
-"write.matrix.hb" <- function(filename="hb.out",X,title,key,mxtype,rhs=NULL,
-		guess=FALSE,xsol=FALSE,ptrfmt="(16I5)",indfmt="(16I5)",
-		valfmt="(1P,5D16.9)", rhsfmt="(1P,5D16.9)"){
-        if(!substr(mxtype,1,1)%in%c("r","R")) stop("The first character of `mxtype' can only be 'R'")
-        if(!substr(mxtype,2,2)%in%c("s","S","u","U","r","R")) stop("The second character of `mxtype' can only be `S',`U' or 'R'")
-        if(!substr(mxtype,3,3)%in%c("a","A")) stop("The third character of `mxtype' can only be `A'")
-        if(substr(mxtype,2,2)%in%c("s","S") && !is.matrix.ssc(X)) stop("Matrix X has to be in in ssc format")
-        if(substr(mxtype,2,2)%in%c("u","U","r","R") && !is.matrix.csc(X)) stop("Matrix X has to be in in csc format")
-	M <- X@dimension[1]
-	N <- X@dimension[2]
-	nnz <- length(X@ra)
-	nrhs <- 0
-	guesol <- ""
-	Rhs <- Guess <- Exact <- rep(0,M)
-        if(!missing(rhs)){
-		guesol <- paste(guesol,"F",sep="")
-                idiv <- 1
-		Rhs <- rhs[1:(M*idiv)]
-                if(guess){
-                        idiv <- idiv + 1
-                        guesol <- paste(guesol,"G",sep="")
-			Guess <- rhs[(M*(idiv-1)+1):(M*idiv)]
-                        }
-                if(xsol){
-                        idiv <- idiv+1
-                        guesol <- paste(guesol,"X",sep="")
-			Exact <- rhs[(M*(idiv-1)+1):(M*idiv)]
-                        }
-                nrhs <- length(rhs)/M/idiv
-                if(length(rhs)%%(M*idiv) != 0) stop("The length of `rhs' is not a multiple of the number of equations")
-                }
-	.C("write_HB1",
-		as.character(filename),
-		as.integer(M),
-		as.integer(N),
-		as.integer(nnz),
-		as.integer(X@ia),
-		as.integer(X@ja),
-		as.double(X@ra),
-		as.integer(nrhs),
-		as.double(Rhs),
-		as.double(Guess),
-		as.double(Exact),
-		as.character(title),
-		as.character(key),
-		as.character(mxtype),
-		as.character(guesol),
-		as.character(ptrfmt),
-		as.character(indfmt),
-		as.character(valfmt),
-		as.character(rhsfmt),
-		PACKAGE = "SparseM"
-		)
-	invisible(X)
+"write.matrix.hb" <-
+function (filename = "hb.out", X, title, key, mxtype, rhs = NULL, 
+    guess = FALSE, xsol = FALSE, ptrfmt, indfmt,
+    valfmt = "(1P,5D16.9)", rhsfmt = "(1P,5D16.9)") 
+{
+    if (!substr(mxtype, 1, 1) %in% c("r", "R")) 
+        stop("The first character of `mxtype' can only be 'R'")
+    if (!substr(mxtype, 2, 2) %in% c("s", "S", "u", "U", "r", 
+        "R")) 
+        stop("The second character of `mxtype' can only be `S',`U' or 'R'")
+    if (!substr(mxtype, 3, 3) %in% c("a", "A")) 
+        stop("The third character of `mxtype' can only be `A'")
+    if (substr(mxtype, 2, 2) %in% c("s", "S") && !is.matrix.ssc(X)) 
+        stop("Matrix X has to be in in ssc format")
+    if (substr(mxtype, 2, 2) %in% c("u", "U", "r", "R") && !is.matrix.csc(X)) 
+        stop("Matrix X has to be in in csc format")
+    nch <- nchar(as.integer(max(X@ia)))+1
+    if(missing(ptrfmt)) ptrfmt <- paste("(",floor(80/nch),"I",nch,")",sep="")
+    nch.msg <- strsplit(ptrfmt,"I")[[1]][2]
+    if(substr(nch.msg,1,nchar(nch.msg)-1) < nch-1) stop("Bad format specification")
+    nch <- nchar(as.integer(max(X@ja)))+1
+    if(missing(indfmt)) indfmt <- paste("(",floor(80/nch),"I",nch,")",sep="")
+    nch.msg <- strsplit(indfmt,"I")[[1]][2]
+    if(substr(nch.msg,1,nchar(nch.msg)-1) < nch-1) stop("Bad format specification")
+    M <- X@dimension[1]
+    N <- X@dimension[2]
+    nnz <- length(X@ra)
+    nrhs <- 0
+    guesol <- ""
+    Rhs <- Guess <- Exact <- rep(0, M)
+    if (!missing(rhs)) {
+        guesol <- paste(guesol, "F", sep = "")
+        idiv <- 1
+        Rhs <- rhs[1:(M * idiv)]
+        if (guess) {
+            idiv <- idiv + 1
+            guesol <- paste(guesol, "G", sep = "")
+            Guess <- rhs[(M * (idiv - 1) + 1):(M * idiv)]
+        }
+        if (xsol) {
+            idiv <- idiv + 1
+            guesol <- paste(guesol, "X", sep = "")
+            Exact <- rhs[(M * (idiv - 1) + 1):(M * idiv)]
+        }
+        nrhs <- length(rhs)/M/idiv
+        if (length(rhs)%%(M * idiv) != 0) 
+            stop("The length of `rhs' is not a multiple of the number of equations")
+    }
+    .C("write_HB1", as.character(filename), as.integer(M), as.integer(N), 
+        as.integer(nnz), as.integer(X@ia), as.integer(X@ja), 
+        as.double(X@ra), as.integer(nrhs), as.double(Rhs), as.double(Guess), 
+        as.double(Exact), as.character(title), as.character(key), 
+        as.character(mxtype), as.character(guesol), as.character(ptrfmt), 
+        as.character(indfmt), as.character(valfmt), as.character(rhsfmt), 
+        PACKAGE = "SparseM")
+    invisible(X)
 }
 #--------------------------------------------------------------------
 "Ops.matrix.csr" <- function(e1,e2){

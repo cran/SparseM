@@ -1,10 +1,9 @@
 This directory contains the development version of the sparse matrix
 package SparseM.  This is an informal revision history.
 
-The initial version 0.01 was sent to David Meyer in Vienna June 10.
+The initial version 0.01 was sent to David Meyer in Vienna June 10, 2002.
 
 The new version is in SparseM and incorporates the Harwell Boeing stuff.
-It needs some tweaking however to pass R CMD check.
 
 The version 0.05 was completed Oct 11 and was sent to CRAN for Kurt Hornik's
 blessing prior to submission to JSS.  There were several problems the most
@@ -314,3 +313,14 @@ The version 0.60
 
 	o  In the process of making the changes mentioned above, it was
 		noted that [.matrix.coo should be exported via NAMESPACE.
+
+The version 0.61
+
+	 o  Jon Stearley (Sandia) noted that R segfaulted on some attempts
+                to use write.matrix.hb.  The segmentation fault was caused
+                by inappropriate use of default format statements that led
+		to incorrectly written indices.  Pin  modified the default
+		formats to reduce the probability of such occurances. 
+
+	o  A Makefile was added to the vignette directory to rationalize
+		things a bit.
