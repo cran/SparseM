@@ -266,6 +266,10 @@ return(z)
 "read.matrix.hb" <-
 function (filename) 
 {
+	if(TRUE){
+		cat("This function is undergoing therapy.\n")
+		return()
+		}
 	hb1.o <- .C("read_HB1", 
 		infile = as.character(filename),
 		M = integer(1),
@@ -365,6 +369,10 @@ function (filename = "hb.out", X, title, key, mxtype, rhs = NULL,
     guess = FALSE, xsol = FALSE, ptrfmt, indfmt,
     valfmt = "(1P,5D16.9)", rhsfmt = "(1P,5D16.9)") 
 {
+     if(TRUE){
+           cat("This function is undergoing therapy.\n")
+           return()
+           }
     if (!substr(mxtype, 1, 1) %in% c("r", "R")) 
         stop("The first character of `mxtype' can only be 'R'")
     if (!substr(mxtype, 2, 2) %in% c("s", "S", "u", "U", "r", 
@@ -583,12 +591,13 @@ else if(is.vector(B)) {
         else
                 stop("A and B not conformable for element-by-element multiplication")
         }
-else if(is.matrix(A))
+if(is.matrix(A))
         A <- as.matrix.csr(A)
 else if(is.matrix(B))
         B <- as.matrix.csr(B)
-else
+if(!(is.matrix.csr(A) && is.matrix.csr(B)))
         stop("Arguments must be of class:  vector, matrix or matrix.csr")
+else
 	Arow <- nrow(A)
         Acol <- ncol(A)
         Brow <- nrow(B)

@@ -18,8 +18,8 @@ sparse matrix format.
 }
 \usage{
 read.matrix.hb(filename)
-write.matrix.hb(filename = "hb.out", X, title, key, mxtype, rhs = NULL, 
-guess = FALSE,  xsol = FALSE, ptrfmt, indfmt,
+write.matrix.hb(filename = "hb.out", X, title, key, mxtype, 
+rhs = NULL, guess = FALSE, xsol = FALSE, ptrfmt, indfmt,
 valfmt = "(1P,5D16.9)", rhsfmt = "(1P,5D16.9)")
 model.matrix(object, \dots)
 model.response(data,type)
@@ -63,6 +63,9 @@ data for the right-hand-side of the linear system of equations,
 initial guess of the solution and the exact solutions if they exist.
 The function \code{model.matrix} extracts the X matrix component.
 The function \code{model.response} extracts the y vector (or matrix).
+NOTE:  The HB read and write functions have been temporarily purged
+due to a memory bug in iohb.c.  We hope to restore this functionality
+in the near future.
 }
 \value{
 The function \code{read.matrix.hb} returns a list of class \code{matrix.csc.hb} or \code{matrix.ssc.hb} depending
@@ -101,14 +104,5 @@ User's Guide for Harwell-Boeing Sparse Matrix Collection at
 
 }
 
-\examples{
-read.matrix.hb(system.file("data","lsq.rra",package = "SparseM"))-> hb.o
-class(hb.o) # -> [1] "matrix.csc.hb"
-model.matrix(hb.o)->X
-class(X) # -> "matrix.csr"
-dim(X) # -> [1] 1850  712
-y <- model.response(hb.o) # extract the rhs
-length(y) # [1] 1850
-write.matrix.hb("lsq.out",as.matrix.csc(X),title="lsq.rra",key="WELL1850",mxtype="RRA",rhs=hb.o@rhs.ra)
-}
+\examples{ }
 \keyword{IO}

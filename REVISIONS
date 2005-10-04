@@ -324,3 +324,20 @@ The version 0.61
 
 	o  A Makefile was added to the vignette directory to rationalize
 		things a bit.
+The version 0.62
+
+	o  Brian Ripley pointed out a bug in iohb.c which caused a segfault
+		in some linux systems with gcc4 and was idenntified more
+		precisely using valgrind.  Some googling found a corrected
+		version at:  
+		   http://www.cs.utk.edu/~eijkhout/salsa-salsa-docs/iohb_8c.html#a6
+
+	o Tom Blackwell (UMich) pointed out a problem with elemult which 
+		turned out to be an unfortunate sequence of if/else's that
+		omitted to treat the default case properly.
+The version 0.63
+	o  The functionality of reading and writing Harwell-Boeing files
+		has been temporarily suspended pending reevaluation of
+		replacing iohb.c with code that doesn't cause memory
+		faults.  See Doug Bates Matrix package for a limited
+		alternative approach.
