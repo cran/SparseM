@@ -33,6 +33,6 @@ Objects can be created by calls of the form \code{new("matrix.csc.hb", ...)}.
   }
 }
 \seealso{\code{\link{model.matrix}}, \code{\link{model.response}}, 
-\code{\link{read.matrix.hb}}, \code{\link{write.matrix.hb}}, \code{\link{matrix.ssc.hb-class}}}
+\code{\link{read.matrix.hb}},  \code{\link{matrix.ssc.hb-class}}}
 \keyword{classes}
 

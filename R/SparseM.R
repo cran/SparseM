@@ -263,168 +263,114 @@ z <- t(z)
 return(z)
 }
 #--------------------------------------------------------------------
-"read.matrix.hb" <-
-function (filename) 
+"read.matrix.hb" <- function(file)
 {
-	if(TRUE){
-		cat("This function is undergoing therapy.\n")
-		return()
-		}
-	hb1.o <- .C("read_HB1", 
-		infile = as.character(filename),
-		M = integer(1),
-		N = integer(1),
-		nnz = integer(1),
-		Nrhs = integer(1),
-		mxtype = character(1),
-		Rhstype = character(1),
-		errflg = integer(1),
-		PACKAGE = "SparseM"
-		)
-	if(hb1.o$errflg == -1) stop(paste("Can't find",filename,sep = " "))
-	mxtype = hb1.o$mxtype
-        if(substr(mxtype,1,1)!="R") stop("Doesn't handle non-real matrices")
-        if(substr(mxtype,2,2) == "S")
-                format <- "ssc"
-        else if(substr(mxtype,2,2) == "R" | substr(mxtype,2,2) == "U")
-                format <- "csc"
-        else
-                stop("Doesn't handle matrices other than symmetric or rectangular!")
-        if(substr(mxtype,3,3)!="A") stop("Doesn't handle elemental matrices!")
-	hb2.o <- .C("read_HB2",
-		infile = as.character(filename),
-		M = integer(1),
-		N = integer(1),
-		nnz = integer(1),
-		integer(1),
-		integer(1),
-		double(1),
-		colptr = integer(hb1.o$N+1),
-		rowind = integer(hb1.o$nnz),
-		val = double(hb1.o$nnz),
-		PACKAGE = "SparseM"
-		)
-	rhs.mode <- NULL
-	if(hb1.o$Nrhs > 0){
-		rhs.mode <- "F"
-		Gflag <- "No"
-		Xflag <- "No"
-		Rhstype <- hb1.o$Rhstype
-		if(substr(Rhstype,1,1) != "F") 
-			stop("Right-hand side has to be in full storage mode.")
-		hb3.o <- .C("read_HB3",
-			infile = as.character(filename),
-			M = as.integer(hb1.o$M),
-			Nrhs = as.integer(hb1.o$Nrhs),
-			rhs = double(hb1.o$Nrhs*hb1.o$M),
-			rhsflag = as.character("F"),
-			PACKAGE = "SparseM"
-			)
-		if(substr(Rhstype,2,2) == "G"){
-			hb4.o <- .C("read_HB3",
-				infile = as.character(filename),
-				M = as.integer(hb1.o$M),
-				Nrhs = as.integer(hb1.o$Nrhs),
-				rhs = double(hb1.o$Nrhs*hb1.o$M),
-				rhsflag = as.character("G"),
-				PACKAGE = "SparseM"
-				)
-			Gflag <- "Yes"
-			}
-		if(substr(Rhstype,3,3) == "X"){
-			hb5.o <- .C("read_HB3",
-				infile = as.character(filename),
-				M = as.integer(hb1.o$M),
-				Nrhs = as.integer(hb1.o$Nrhs),
-				rhs = double(hb1.o$Nrhs*hb1.o$M),
-				rhsflag = as.character("X"),
-				PACKAGE = "SparseM"
-				)
-			Xflag <- "Yes"
-			}
-		if(format == "csc")
-			rd.o <- new("matrix.csc.hb", ra = hb2.o$val, ja = hb2.o$rowind, ia = hb2.o$colptr, 
-			rhs.ra = hb3.o$rhs, guess = switch(Gflag, Yes = hb4.o$rhs, No = NULL), 
-			xexact = switch(Xflag, Yes = hb5.o$rhs, No = NULL), dimension = c(hb1.o$M, hb1.o$N),
-			rhs.dim = c(hb1.o$M, hb1.o$Nrhs), rhs.mode=rhs.mode)
-		else
-			rd.o <- new("matrix.ssc.hb", ra = hb2.o$val, ja = hb2.o$rowind, ia = hb2.o$colptr, 
-			rhs.ra = hb3.o$rhs, guess = switch(Gflag, Yes = hb4.o$rhs, No = NULL), 
-			xexact = switch(Xflag, Yes = hb5.o$rhs, No = NULL), dimension = c(hb1.o$M, hb1.o$N),
-			rhs.dim = c(hb1.o$M, hb1.o$Nrhs), rhs.mode=rhs.mode)
-		}
-	else
-        	if(format=="csc")
-			rd.o <- new("matrix.csc.hb",ra = hb2.o$val, ja = hb2.o$rowind, ia = hb2.o$colptr,
-			dimension=c(hb1.o$M,hb1.o$N),rhs.mode=rhs.mode)
-        	else
-			rd.o <- new("matrix.ssc.hb",ra = hb2.o$val, ja = hb2.o$rowind, ia = hb2.o$colptr,
-			dimension=c(hb1.o$M,hb1.o$N),rhs.mode=rhs.mode)
-
+#   Adapted from readHB() in Bates's Matrix package by P. Ng  7 Oct, 2005 
+	if (is.character(file)) 
+        if (file == "") 
+            file <- stdin()
+        else 
+            file <- file(file)
+    if (!inherits(file, "connection")) 
+        stop("'file' must be a character string or connection")
+    if (!isOpen(file)) {
+        open(file)
+        on.exit(close(file))
+    }
+	readone <- function (ln, iwd, nper, conv) 
+	{
+    	ln <- gsub("D", "E", ln)
+    	inds <- seq(0, by = iwd, length = nper + 1)
+    	(conv)(substring(ln, 1 + inds[-length(inds)], inds[-1]))
+	}
+	readmany <- function (conn, nlines, nvals, fmt, conv) 
+	{
+    	if (!grep("[[:digit:]]+[DEFGI][[:digit:]]+", fmt)) 
+        	stop("Not a valid format")
+    	Iind <- regexpr("[DEFGI]", fmt)
+    	nper <- as.integer(substr(fmt, regexpr("[[:digit:]]+[DEFGI]", fmt), Iind - 1))
+    	iwd <- as.integer(substr(fmt, Iind + 1, regexpr("[\\.\\)]", fmt) - 1))
+    	rem <- nvals%%nper
+    	full <- nvals%/%nper
+    	ans <- vector("list", nvals%/%nper)
+    	for (i in seq(len = full)) 
+		ans[[i]] <- readone(readLines(conn, 1, ok = FALSE), iwd, nper, conv)
+    	if (!rem) 
+        	return(unlist(ans))
+    	c(unlist(ans), readone(readLines(conn, 1, ok = FALSE), iwd, rem, conv))
+	}
+    hdr <- readLines(file, 4, ok = FALSE)
+    Title <- sub('[[:space:]]+$', '', substr(hdr[1], 1, 72))
+    Key <- sub('[[:space:]]+$', '', substr(hdr[1], 73, 80))
+    totln <- as.integer(substr(hdr[2], 1, 14))
+    ptrln <- as.integer(substr(hdr[2], 15, 28))
+    indln <- as.integer(substr(hdr[2], 29, 42))
+    valln <- as.integer(substr(hdr[2], 43, 56))
+    rhsln <- as.integer(substr(hdr[2], 57, 70))
+    if (!(t1 <- substr(hdr[3], 1, 1)) %in% c('C', 'R', 'P'))
+        stop(paste("Invalid storage type:", t1))
+    if (t1 != 'R') stop("Doesn't handle non-real matrices")
+    ## _FIXME: Patterns should also be allowed
+    if (!(t2 <- substr(hdr[3], 2, 2)) %in% c('H', 'R', 'S', 'U', 'Z'))
+        stop(paste("Invalid storage format:", t2))
+    if(t2 == 'S')
+	format <- "ssc"
+    else if(t2 == "R" | t2 == "U")
+	format <- "csc"
+    else
+	stop("Doesn't handle matrices other than symmetric or rectangular!")
+    if (!(t3 <- substr(hdr[3], 3, 3)) %in% c('A', 'E'))
+        stop(paste("Invalid assembled indicator:", t3))
+    if (t3 != 'A') stop("Doesn't handle elemental matrices!")
+    nr <- as.integer(substr(hdr[3], 15, 28))
+    nc <- as.integer(substr(hdr[3], 29, 42))
+    nz <- as.integer(substr(hdr[3], 43, 56))
+    nel <- as.integer(substr(hdr[3], 57, 70))
+    ptrfmt <- toupper(sub('[[:space:]]+$', '', substr(hdr[4], 1, 16)))
+    indfmt <- toupper(sub('[[:space:]]+$', '', substr(hdr[4], 17, 32)))
+    valfmt <- toupper(sub('[[:space:]]+$', '', substr(hdr[4], 33, 52)))
+    rhsfmt <- toupper(sub('[[:space:]]+$', '', substr(hdr[4], 53, 72)))
+    rhs <- NULL
+    rhs.mode <- NULL
+    guess <- NULL
+    xexact <- NULL
+    if (!is.na(rhsln) && rhsln > 0) {
+        h5 <- readLines(file, 1, ok = FALSE)
+	rhs.mode <- substr(h5[1],1,1)
+	g.mode <- substr(h5[1],2,2)
+	e.mode <- substr(h5[1],3,3)
+	if (rhs.mode != 'F')  stop("Right-hand side has to be in full storage mode.")
+	if (g.mode != " " & g.mode != 'G')  
+		stop("Incorrect indicator for the starting vector in the rhs.")
+	if (e.mode != " " & e.mode != 'X')  
+		stop("Incorrect indicator for the exact solution vector in the rhs.")
+        }
+    ptr <- readmany(file, ptrln, nc + 1, ptrfmt, as.integer)
+    ind <- readmany(file, indln, nz, indfmt, as.integer)
+    vals <- readmany(file, valln, nz, valfmt, as.numeric)
+    if (!is.na(rhsln) && rhsln > 0) {
+        nrhs <- as.integer(substr(h5,15,28))
+        nrhsix <- as.integer(substr(h5,29,42))
+        nrhstot <- nrhside <- nr*nrhs
+        rhs <- readmany(file,rhsln,nrhside,rhsfmt,as.numeric)
+        if (substr(h5,2,2) %in% c("G")){
+        	guess <- readmany(file,rhsln,nrhside,rhsfmt,as.numeric)
+        	}
+        if (substr(h5,3,3) %in% c("X")){
+        	xexact <- readmany(file,rhsln,nrhside,rhsfmt,as.numeric)
+        	}
+        }
+    if (format == 'csc')
+	rd.o <- new("matrix.csc.hb", ra = vals, ja = ind, ia = ptr, 
+		rhs.ra = rhs, guess = guess, xexact = xexact, 
+		dimension = c(nr, nc), rhs.dim = c(nr, nrhs), rhs.mode = "F")
+    else
+	rd.o <- new("matrix.ssc.hb", ra = vals, ja = ptr, ia = ind, 
+		rhs.ra = rhs, guess = guess, xexact = xexact, 
+		dimension = c(nr, nc), rhs.dim = c(nr, nrhs), rhs.mode = "F")
    return(rd.o)
 }
-#--------------------------------------------------------------------
-"write.matrix.hb" <-
-function (filename = "hb.out", X, title, key, mxtype, rhs = NULL, 
-    guess = FALSE, xsol = FALSE, ptrfmt, indfmt,
-    valfmt = "(1P,5D16.9)", rhsfmt = "(1P,5D16.9)") 
-{
-     if(TRUE){
-           cat("This function is undergoing therapy.\n")
-           return()
-           }
-    if (!substr(mxtype, 1, 1) %in% c("r", "R")) 
-        stop("The first character of `mxtype' can only be 'R'")
-    if (!substr(mxtype, 2, 2) %in% c("s", "S", "u", "U", "r", 
-        "R")) 
-        stop("The second character of `mxtype' can only be `S',`U' or 'R'")
-    if (!substr(mxtype, 3, 3) %in% c("a", "A")) 
-        stop("The third character of `mxtype' can only be `A'")
-    if (substr(mxtype, 2, 2) %in% c("s", "S") && !is.matrix.ssc(X)) 
-        stop("Matrix X has to be in in ssc format")
-    if (substr(mxtype, 2, 2) %in% c("u", "U", "r", "R") && !is.matrix.csc(X)) 
-        stop("Matrix X has to be in in csc format")
-    nch <- nchar(as.integer(max(X@ia)))+1
-    if(missing(ptrfmt)) ptrfmt <- paste("(",floor(80/nch),"I",nch,")",sep="")
-    nch.msg <- strsplit(ptrfmt,"I")[[1]][2]
-    if(substr(nch.msg,1,nchar(nch.msg)-1) < nch-1) stop("Bad format specification")
-    nch <- nchar(as.integer(max(X@ja)))+1
-    if(missing(indfmt)) indfmt <- paste("(",floor(80/nch),"I",nch,")",sep="")
-    nch.msg <- strsplit(indfmt,"I")[[1]][2]
-    if(substr(nch.msg,1,nchar(nch.msg)-1) < nch-1) stop("Bad format specification")
-    M <- X@dimension[1]
-    N <- X@dimension[2]
-    nnz <- length(X@ra)
-    nrhs <- 0
-    guesol <- ""
-    Rhs <- Guess <- Exact <- rep(0, M)
-    if (!missing(rhs)) {
-        guesol <- paste(guesol, "F", sep = "")
-        idiv <- 1
-        Rhs <- rhs[1:(M * idiv)]
-        if (guess) {
-            idiv <- idiv + 1
-            guesol <- paste(guesol, "G", sep = "")
-            Guess <- rhs[(M * (idiv - 1) + 1):(M * idiv)]
-        }
-        if (xsol) {
-            idiv <- idiv + 1
-            guesol <- paste(guesol, "X", sep = "")
-            Exact <- rhs[(M * (idiv - 1) + 1):(M * idiv)]
-        }
-        nrhs <- length(rhs)/M/idiv
-        if (length(rhs)%%(M * idiv) != 0) 
-            stop("The length of `rhs' is not a multiple of the number of equations")
-    }
-    .C("write_HB1", as.character(filename), as.integer(M), as.integer(N), 
-        as.integer(nnz), as.integer(X@ia), as.integer(X@ja), 
-        as.double(X@ra), as.integer(nrhs), as.double(Rhs), as.double(Guess), 
-        as.double(Exact), as.character(title), as.character(key), 
-        as.character(mxtype), as.character(guesol), as.character(ptrfmt), 
-        as.character(indfmt), as.character(valfmt), as.character(rhsfmt), 
-        PACKAGE = "SparseM")
-    invisible(X)
-}
+
 #--------------------------------------------------------------------
 "Ops.matrix.csr" <- function(e1,e2){
 	if(missing(e2)){
@@ -1904,20 +1850,38 @@ setMethod("model.response","matrix.csc.hb",
 function(data,type="any"){  
         if(is.null(data@rhs.mode)) stop("Right-hand side doesn't exist")
         if (data@rhs.mode == "F")
-                z <- data@rhs.ra
-        else{
-                z <- new("matrix.csc",ra=data@rhs.ra,ja=data@rhs.ja,ia=data@rhs.ia,
-			dimension=data@rhs.dim)
-                z <-  as.matrix.csr(z)
-                }
+                z <- matrix(data@rhs.ra,nrow=data@rhs.dim[1],
+			ncol=data@rhs.dim[2])
+        else
+		stop("Invalid storage mode for rhs")
         z
 	})
 setMethod("model.response","matrix.ssc.hb",
-function(data,type="any"){
-        data <- new("matrix.ssc",ra=data@ra,ja=data@ja,ia=data@ia,
-		dimension=data@dimension)
-        as.matrix.csr(data)
+function(data,type="any"){  
+        if(is.null(data@rhs.mode)) stop("Right-hand side doesn't exist")
+        if (data@rhs.mode == "F")
+                z <- matrix(data@rhs.ra,nrow=data@rhs.dim[1],
+			ncol=data@rhs.dim[2])
+        else
+		stop("Invalid storage mode for rhs")
+        z
 	})
+setGeneric("model.xexact",function(data)
+	standardGeneric("model.xexact")) 
+setMethod("model.xexact","matrix.ssc.hb",
+	function(data){ matrix(data@xexact,nrow=data@rhs.dim[1],
+		ncol=data@rhs.dim[2]) })
+setMethod("model.xexact","matrix.csc.hb",
+	function(data){ matrix(data@xexact,nrow=data@rhs.dim[1],
+		ncol=data@rhs.dim[2]) })
+setGeneric("model.guess",function(data)
+	standardGeneric("model.guess")) 
+setMethod("model.guess","matrix.ssc.hb",
+	function(data){ matrix(data@guess,nrow=data@rhs.dim[1],
+		ncol=data@rhs.dim[2]) })
+setMethod("model.guess","matrix.csc.hb",
+	function(data){ matrix(data@guess,nrow=data@rhs.dim[1],
+		ncol=data@rhs.dim[2]) })
 setMethod("%*%",signature(x="matrix.csr",y="matrix.csr"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="matrix.csr",y="matrix"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="matrix.csr",y="numeric"),.matmul.matrix.csr)

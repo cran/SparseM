@@ -341,3 +341,11 @@ The version 0.63
 		replacing iohb.c with code that doesn't cause memory
 		faults.  See Doug Bates Matrix package for a limited
 		alternative approach.
+The version 0.64
+	o  The function read.matrix.hb is replaced by a pure R function, purging
+		iohb.c to read Harwell-Boeing formatted files.  The new function
+		shamelessly plagarizes from Doug Bates's readHB function in the
+		Matrix package.  The main alterations were to add functionality for rhs's,
+		and adapt the function to SparseM matrix classes.  As of this moment 
+		we have no plans to produce a parallel function for writing 
+		Harwell-Boeing format.

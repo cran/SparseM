@@ -27,7 +27,7 @@ therwise.}  \item{guess}{vector of the initial guess of the solutions if they ex
         same format as the coefficient matrix.}
 }
 }
-\seealso{\code{read.matrix.hb}, \code{write.matrix.hb}}
+\seealso{\code{read.matrix.hb}}
 \examples{
 data(lsq)
 class(lsq) # -> [1] "matrix.csc.hb"

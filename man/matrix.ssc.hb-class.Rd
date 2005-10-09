@@ -36,6 +36,6 @@ Class \code{"matrix.csc.hb"}, directly.
   }
 }
 \seealso{\code{\link{model.matrix}}, \code{\link{model.response}}, 
-\code{\link{read.matrix.hb}}, \code{\link{write.matrix.hb}}, \code{\link{matrix.csc.hb-class}}}
+\code{\link{read.matrix.hb}}, \code{\link{matrix.csc.hb-class}}}
 \keyword{classes}
 
