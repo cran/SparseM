@@ -991,7 +991,7 @@ function(X,Y){
 #--------------------------------------------------------------------
 "chol" <- function(x, ...) UseMethod("chol")
 #--------------------------------------------------------------------
-"chol.default" <-get("chol", pos=NULL, mode= "function")
+"chol.default" <- base::chol
 #--------------------------------------------------------------------
 "slm" <-
 function (formula,  data, weights, na.action, method = "csr", 
@@ -1722,7 +1722,7 @@ setMethod("diag<-","matrix.diag.csr",function(x,value) {
 	as(y,"matrix.diag.csr")
 	})
 setGeneric("det")
-setMethod("det","matrix",get("det", pos=NULL, mode= "function"))
+setMethod("det","matrix",base::det)
 setMethod("det","matrix.csr", function(x, ...) det(chol(x))^2)
 setMethod("det","matrix.csr.chol", function(x, ...) x@det)
 setGeneric("norm",function(x, ...)standardGeneric("norm"))
@@ -1735,7 +1735,7 @@ setMethod("norm","matrix.csr", function(x, type = "sup", ...){
         }
 )
 setGeneric("chol")
-setMethod("chol","matrix",get("chol", pos=NULL, mode= "function"))
+setMethod("chol","matrix",base::chol)
 setMethod("chol","matrix.csr", function(x, pivot = FALSE, 
 	nsubmax, nnzlmax, tmpmax, eps = .Machine$double.eps, ...){
 # Interface for a sparse least squares solver via Ng-Peyton's Cholesky
