@@ -354,3 +354,7 @@ The version 0.65
 	o  The way that chol.default, and the setMethod calls for det and chol
 		for the class matrix were changed to conform to R 2.2, following
 		advice of Brian Ripley and Duncan Murdoch.
+The version 0.66
+	o  Bug found by Gregg Lind that made diag assigments fail when the
+		matrix was all zeros.  Modified [<-.matrix.coo to handle
+		NAs from the match() call.
