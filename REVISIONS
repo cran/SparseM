@@ -358,3 +358,5 @@ The version 0.66
 	o  Bug found by Gregg Lind that made diag assigments fail when the
 		matrix was all zeros.  Modified [<-.matrix.coo to handle
 		NAs from the match() call.
+The version 0.67
+	o  Typos in section headings of .Rd files noted by Kurt.

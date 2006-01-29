@@ -50,7 +50,7 @@ Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
 \author{ Roger Koenker }
 
 \seealso{  \code{\link{slm}} }
-\example{
+\examples{
 data(lsq)
 X <- model.matrix(lsq) #extract the design matrix
 y <- model.response(lsq) # extract the rhs
