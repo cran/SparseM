@@ -1039,7 +1039,7 @@ function (x, y, weights,  ...)
         stop("negative weights not allowed")
     contr <- attr(x, "contrasts")
     w <- sqrt(weights)
-    x <- x %*% as(w,"matrix.diag.csr")
+    x <- as(w,"matrix.diag.csr") %*% x
     y <- y * w
     fit <- slm.fit.csr(x, y,  ...)
     fit$contrasts <- attr(x, "contrasts")

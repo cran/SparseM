@@ -360,3 +360,6 @@ The version 0.66
 		NAs from the match() call.
 The version 0.67
 	o  Typos in section headings of .Rd files noted by Kurt.
+
+The version 0.68
+	o  Bug in slm.wfit fixed, thanks to i.m.s. white (edinburgh).
