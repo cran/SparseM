@@ -39,6 +39,7 @@ A list of class \code{slm} consisting of:
   \item{chol}{cholesky object from fitting}
   \item{residuals}{residuals}
   \item{fitted}{fitted values}
+  \item{df.residual}{degrees of freedom}
   \item{terms}{terms}
   \item{call}{call}
   ...

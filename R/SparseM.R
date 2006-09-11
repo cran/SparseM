@@ -1,12 +1,7 @@
-#--------------------------------------------------------------------
-#".First.lib" <- function(lib, pkg) {
-#   require(methods)
-#   library.dynam("SparseM", pkg, lib)
-#   print("SparseM library loaded")
-#}
 .onLoad <- function(lib, pkg) {
 	require(methods)
-	print("SparseM library loaded")
+	cat(sprintf("Package %s (%s) loaded.  To cite, see citation(\"%s\")\n",
+		pkg, packageDescription(pkg)$Version, pkg))
 }
 # /*RSB*/ .onLoad needed instead of .First.lib, no library.dynam()
 #--------------------------------------------------------------------
@@ -989,9 +984,9 @@ function(X,Y){
 }
 
 #--------------------------------------------------------------------
-"chol" <- function(x, ...) UseMethod("chol")
+#"chol" <- function(x, ...) UseMethod("chol")
 #--------------------------------------------------------------------
-"chol.default" <- base::chol
+#"chol.default" <- base::chol
 #--------------------------------------------------------------------
 "slm" <-
 function (formula,  data, weights, na.action, method = "csr", 
@@ -1057,13 +1052,15 @@ function (x, y, ...)
     p <- x@dimension[2]
     if (n != x@dimension[1]) 
         stop("x and y don't match n")
-    chol <- chol(t(x)%*%x)
+    chol <- chol(t(x)%*%x, ...)
     xy <- t(x) %*% y
     coef <- backsolve(chol,xy)
     fitted <-  as.matrix(x %*% coef)
     resid <- y - fitted
-    list(coefficients=coef, chol=chol, residuals=resid,  fitted=fitted)
-}
+    df <- n - p
+    list(coefficients=coef, chol=chol, residuals=resid,
+         fitted=fitted, df.residual = df)
+}   
 #--------------------------------------------------------------------
 "coef.slm" <-
 function (object, ...) 
@@ -1076,6 +1073,22 @@ object$fitted
 "residuals.slm" <- function (object, ...){
 r <- object$residuals
 r
+}
+# Suggested by jracine April 14, 2006
+extractAIC.slm <- function (fit, scale = 0, k = 2, ...)
+{
+    n <- length(fit$residuals)
+    edf <- n - fit$df.residual
+    RSS <- deviance.slm(fit)
+    dev <- if (scale > 0) {
+      RSS/scale - n
+    } else {
+      n * log(RSS/n)
+    }
+    c(edf, dev + k * edf)
+}
+deviance.slm <- function (object, ...) {
+    sum(weighted.residuals(object)^2, na.rm = TRUE)
 }
 #--------------------------------------------------------------------
 "summary.mslm" <- function (object, ...)
@@ -1627,6 +1640,7 @@ setMethod("as.matrix","matrix.csr", function(x){
 setMethod("as.matrix","matrix.ssr",function(x)as.matrix(as.matrix.csr(x)))
 setMethod("as.matrix","matrix.ssc",function(x)as.matrix(as.matrix.csr(x)))
 setMethod("as.matrix","matrix.coo",function(x)as.matrix(as.matrix.csr(x)))
+setMethod("as.matrix","matrix.csc",function(x)as.matrix(as.matrix.csr(x)))
 setMethod("t","matrix.csr",function(x){
 	nrow <- x@dimension[1]
         ncol <- x@dimension[2]
@@ -1733,8 +1747,9 @@ setMethod("norm","matrix.csr", function(x, type = "sup", ...){
                 )
         }
 )
-setGeneric("chol")
-setMethod("chol","matrix",base::chol)
+
+setGeneric("chol", def = function(x, pivot= FALSE,...) standardGeneric("chol"),
+	   useAsDefault= function(x, pivot= FALSE,...) base::chol(x, pivot, ...))
 setMethod("chol","matrix.csr", function(x, pivot = FALSE, 
 	nsubmax, nnzlmax, tmpmax, eps = .Machine$double.eps, ...){
 # Interface for a sparse least squares solver via Ng-Peyton's Cholesky

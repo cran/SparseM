@@ -5,7 +5,6 @@
 \alias{chol,matrix.csc-method}              
 \alias{chol,matrix-method}              
 \alias{chol}              
-\alias{chol.default}              
 \alias{backsolve-methods}
 \alias{backsolve,ANY-method}
 \alias{backsolve}
@@ -25,7 +24,7 @@ combines \code{chol} and \code{backsolve} and will
 compute the inverse of a matrix if the right-hand-side is missing.
 }
 \usage{
-chol(x, \dots)
+chol(x, pivot = FALSE, \dots)
 backsolve(r, x, k, upper.tri, transpose)
 solve(a, b, \dots)
 }
@@ -35,7 +34,7 @@ solve(a, b, \dots)
 \code{chol}.}
 \item{x,b}{vector(regular matrix) of right-hand-side(s) of a system of linear equations.}
 \item{k}{inherited from the generic; not used here.}
-#\item{pivot}{inherited from the generic; not used here.}
+\item{pivot}{inherited from the generic; not used here.}
 #\item{nsubmax,nnzlmax,tmpmax}{dimensions of work arrays, in normal operation these are determined inside the algorithm.}
 \item{upper.tri}{inherited from the generic; not used here.}
 \item{transpose}{inherited from the generic; not used here.}

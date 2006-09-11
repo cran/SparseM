@@ -363,3 +363,18 @@ The version 0.67
 
 The version 0.68
 	o  Bug in slm.wfit fixed, thanks to i.m.s. white (edinburgh).
+The version 0.69
+	o  Bug in slm.fit.csr -- calls to chol and backsolve failed to
+		pass along the ... arguments.  Thanks to Jeff Racine.
+	o  Added code for extractAIC.slm and deviance.slm to permit
+		use of step() on fitted slm objects, code contributed
+		by Jeff Racine.
+	o  added setMethod for as.matrix to convert matrix.csc objects
+		that had been overlooked for a long time.
+	o  changed the printing onLoad at the suggestion of Martin M.
+
+The version 0.70
+	o  The setGeneric for chol was changed in accordance with another
+		suggestion by Martin M.  This seems to fix a conflict
+		with Matrix as described in an R-devel message by David
+		Pleydell (20 Feb 2006).

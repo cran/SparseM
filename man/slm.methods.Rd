@@ -7,6 +7,8 @@
 \alias{fitted.slm}
 \alias{residuals.slm}
 \alias{coef.slm}
+\alias{extractAIC.slm}
+\alias{deviance.slm}
 \title{Methods for slm objects}
 \description{
   Summarize, print, and extract objects from  \code{\link{slm}} objects.
@@ -19,10 +21,19 @@ print.summary.slm(x, digits, symbolic.cor, signif.stars, \dots)
 fitted.slm(object, \dots)
 residuals.slm(object, \dots)
 coef.slm(object, \dots)
+extractAIC.slm(fit, scale = 0, k = 2, \dots)
+deviance.slm(object, \dots)
 }
 \arguments{
-\item{object,x}{ object of class \code{slm}.  }
+\item{object,x,fit}{ object of class \code{slm}.  }
 \item{digits}{minimum number of significant digits to be used for most numbers.}
+\item{scale}{optional numeric specifying the scale parameter of the model,
+          see 'scale' in 'step'.  Currently only used in the '"lm"'
+          method, where 'scale' specifies the estimate of the error
+          variance, and 'scale = 0' indicates that it is to be
+          estimated by maximum likelihood.} 
+\item{k}{ numeric specifying the "weight" of the equivalent degrees of
+          freedom ('edf') part in the AIC formula.}
 \item{symbolic.cor}{logical; if \code{TRUE}, the correlation of coefficients
       will be printed. The default is \code{FALSE}}
 \item{signif.stars}{logical; if \code{TRUE}, P-values are additionally encoded
@@ -37,6 +48,8 @@ coef.slm(object, \dots)
   \code{print.slm} and \code{print.summary.slm} return invisibly.
   \code{fitted.slm}, \code{residuals.slm}, and \code{coef.slm} 
   return the corresponding components of the \code{slm} object.
+  \code{extractAIC.slm} and \code{deviance.slm} return the AIC
+  and deviance values of the fitted object.
 }
 \references{
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
