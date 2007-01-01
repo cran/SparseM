@@ -378,3 +378,6 @@ The version 0.70
 		suggestion by Martin M.  This seems to fix a conflict
 		with Matrix as described in an R-devel message by David
 		Pleydell (20 Feb 2006).
+The version 0.72
+	o  A ... argument was added to the as.matrix.[foo] functions to
+		accomodate a change in base R.

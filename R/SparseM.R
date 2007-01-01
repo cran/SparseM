@@ -16,7 +16,7 @@
 "is.matrix.coo" <- function(x, ...) is(x,"matrix.coo")
 #--------------------------------------------------------------------
 "as.matrix.csr" <-
-function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps){
+function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 	 if(is.matrix.csr(x)) {x; return(x)}
          if (!is.matrix(x)) {
 		if (missing(nrow))
@@ -67,28 +67,28 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps){
 	return(z)
 }
 #--------------------------------------------------------------------
-"as.matrix.csc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+"as.matrix.csc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
 {
     if (is.matrix.csc(x)) x
     else as.matrix.csc(as.matrix.csr(x))
 #    else as.matrix.csc(as.matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps))
 }
 #--------------------------------------------------------------------
-"as.matrix.ssr" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+"as.matrix.ssr" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
 {
 	if (is.matrix.ssr(x)) x
 	else as.matrix.ssr(as.matrix.csr(x))
 #	else as.matrix.ssr(as.matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps))
 }
 #--------------------------------------------------------------------
-"as.matrix.ssc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+"as.matrix.ssc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
 {
 	if (is.matrix.ssc(x)) x
 	else as.matrix.ssc(as.matrix.csc(x))
 #	else as.matrix.ssc(as.matrix.csc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps))
 }
 #--------------------------------------------------------------------
-"as.matrix.coo" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+"as.matrix.coo" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
 {
 	if (is.matrix.coo(x) && missing(nrow) && missing(ncol)) x
 	else as.matrix.coo(as.matrix.csr(x))

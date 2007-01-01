@@ -77,10 +77,10 @@
 This group of functions evaluates and coerces changes in class structure.
 }
 \usage{
-as.matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
-as.matrix.csc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
-as.matrix.ssr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
-as.matrix.ssc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps)
+as.matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
+as.matrix.csc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
+as.matrix.ssr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
+as.matrix.ssc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
 is.matrix.csr(x, ...)
 is.matrix.csc(x, ...)
 is.matrix.ssr(x, ...)
