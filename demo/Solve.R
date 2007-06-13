@@ -13,6 +13,8 @@ class(chol.o)  # "matrix.csr.chol"
 backsolve(chol.o,Xpy)-> b1 # least squares solutions in two steps
 b1[1:10]
 solve(XpX,Xpy) -> b2 # least squares estimates in one step
+back.solve(chol.o, forward.solve(chol.o, Xpy)) -> b3 # least squares solutions
+                                                     # in 3 steps
 b2[1:10]
 solve(XpX) -> XpX.inv  # (X'X)^-1
 class(XpX) # -> "matrix.csr"

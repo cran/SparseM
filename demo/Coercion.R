@@ -21,3 +21,7 @@ B.ssr = as.matrix.ssr(B)
 B.ssr
 as.matrix(B.ssr)
 B
+D.csr<-as.matrix.csr(4*diag(5))
+C<-chol(D.csr)
+C<-as.matrix.csr(C, upper.tri=FALSE)
+C

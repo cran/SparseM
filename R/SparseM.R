@@ -1510,7 +1510,14 @@ setMethod("initialize", "matrix.coo",
 setClass("matrix.csr.chol",representation(nrow="numeric",nnzlindx="numeric",
 	nsuper="numeric",lindx="numeric",xlindx="numeric",nnzl="numeric",
 	lnz="numeric",xlnz="numeric",invp="numeric",perm="numeric",
-	xsuper="numeric",det="numeric",ierr="numeric",time="numeric"))
+	xsuper="numeric",det="numeric",
+########################################################################
+#  BEGIN BEN ADDED                                                     #
+  log.det="numeric",
+#  END BEN ADDED                                                       #
+########################################################################      
+  ierr="numeric",
+  time="numeric"))
 if(version$major >= 1 && version$minor >= 8.0 || version$major >= 2){
 	setClassUnion("numeric or NULL",c("numeric","NULL"))
 	setClassUnion("character or NULL",c("character","NULL"))
@@ -1564,6 +1571,53 @@ setMethod("as.matrix.csr","matrix.coo", function(x, nrow, ncol,eps){
         z <- new("matrix.csr",ra=z$ao,ja=z$jao,ia=z$iao,dimension=x@dimension)
         return(z)
 })
+
+#--------------------------------------------------------------------
+########################################################################
+#  BEGIN BEN ADDED                                                     #
+#                                                                      #
+#  Coercion from matrix.csr.chol                                       #
+#                                                                      #
+#                                                                      #
+setMethod("as.matrix.csr","matrix.csr.chol", function(x, nrow, ncol,
+                                                      eps,
+                                                      upper.tri=TRUE,
+                                                      ...)
+          {
+            returned.data <- .Fortran('chol2csr',
+                                      nrow=as.integer(x@nrow),
+                                      nnzlindx=as.integer(x@nnzlindx),
+                                      nsuper=as.integer(x@nsuper),
+                                      lindx=as.integer(x@lindx),
+                                      xlindx=as.integer(x@xlindx),
+                                      nnzl=as.integer(x@nnzl),
+                                      lnz=as.double(x@lnz),
+                                      xlnz=as.integer(x@xlnz),
+                                      dim=integer(2),
+                                      ra=double(x@nnzl),
+                                      ia=integer(x@nrow+1),
+                                      ja=integer(x@nnzl),
+                                      package="SparseM")
+
+            C0 <- new("matrix.csr",
+                      ra = returned.data$ra,
+                      ja = returned.data$ja,
+                      ia = returned.data$ia,
+                      dimension = returned.data$dim)
+            
+            if (upper.tri)
+              return(C0)
+            else
+              return(t(C0))
+          })
+#                                                                      #
+#  END BEN ADDED                                                       #
+########################################################################
+
+
+
+
+
 #--------------------------------------------------------------------
 setGeneric("as.matrix.csc")
 #--------------------------------------------------------------------
@@ -1736,8 +1790,45 @@ setMethod("diag<-","matrix.diag.csr",function(x,value) {
 	})
 setGeneric("det")
 setMethod("det","matrix",base::det)
-setMethod("det","matrix.csr", function(x, ...) det(chol(x))^2)
-setMethod("det","matrix.csr.chol", function(x, ...) x@det)
+########################################################################
+#  BEGIN BEN ADDED                                                     #
+#                                                                      #
+#  I'm changing the det method so it can return the log det if asked   #
+#                                                                      #
+#  it was formerly:                                                    #
+#  setMethod("det","matrix.csr", function(x, ...) det(chol(x))^2)      #
+#                                                                      #
+setMethod("det","matrix.csr", function(x, logarithm=FALSE, ...)
+          {
+            if (logarithm)
+              return(2*det(chol(x), logarithm=TRUE))
+            else
+              return(det(chol(x))^2)
+          })
+#                                                                      #
+#  END BEN ADDED                                                       #
+########################################################################
+
+########################################################################
+#  BEGIN BEN ADDED                                                     #
+#                                                                      #
+#  I'm changing the det method so it can return the log det if asked   #
+#                                                                      #
+#  it was formerly:                                                    #
+#  setMethod("det","matrix.csr.chol", function(x, ...) x@det)          #
+#                                                                      #
+setMethod("det","matrix.csr.chol", function(x, logarithm=FALSE, ...)
+          {
+            if (logarithm)
+              return(x@log.det)
+            else
+              return(x@det)
+          })
+#                                                                      #
+#  END BEN ADDED                                                       #
+########################################################################
+
+
 setGeneric("norm",function(x, ...)standardGeneric("norm"))
 setMethod("norm","matrix.csr", function(x, type = "sup", ...){
   switch(type,
@@ -1793,16 +1884,41 @@ if (z$ierr != 0){
 	k <- z$xlnz
 	R <- z$lnz
 	det <- prod(R[k[-length(k)]])
-        new("matrix.csr.chol",nrow=z$nrow,nnzlindx=nnzlindx,
-                nsuper=z$nsuper,lindx=z$lindx[1:nnzlindx],xlindx=z$xlindx,
-                nnzl=as.integer(nnzl),lnz=z$lnz[1:nnzl],xlnz=z$xlnz,invp=z$invp,
-                perm=z$perm,xsuper=z$xsuper,det=det,ierr=z$ierr,time=z$time)
+########################################################################
+#  BEGIN BEN ADDED                                                     #
+#                                                                      #
+#  computes the log determinant.                                       #
+#                                                                      #
+  log.det <- sum(log(R[k[-length(k)]]))
+
+#                                                                      #
+#  END BEN ADDED                                                       #
+########################################################################
+
+  new("matrix.csr.chol",nrow=z$nrow,nnzlindx=nnzlindx,
+      nsuper=z$nsuper,lindx=z$lindx[1:nnzlindx],xlindx=z$xlindx,
+      nnzl=as.integer(nnzl),lnz=z$lnz[1:nnzl],xlnz=z$xlnz,invp=z$invp,
+      perm=z$perm,xsuper=z$xsuper,det=det,
+########################################################################
+#  BEGIN BEN ADDED                                                     #
+      log.det=log.det,
+#  END BEN ADDED                                                       #
+########################################################################      
+      ierr=z$ierr,time=z$time)
 	})
 setMethod("chol","matrix.csc",function(x,pivot = FALSE, ...)chol(as.matrix.csr(x)))
+setGeneric("backsolve",
+	function(r, x, k = NULL, upper.tri = NULL, transpose = NULL,  twice = TRUE, ...) 
+		standardGeneric("backsolve"),
+	useAsDefault= function(r, x,  k = NULL, upper.tri = NULL, 
+		transpose = NULL, twice = TRUE, ...) 
+		base::backsolve(r, x, k = ncol(r), upper.tri = TRUE, 
+			transpose = FALSE, ...))
 setMethod("backsolve","matrix.csr.chol", 
-function(r, x, k = NULL, upper.tri = NULL, transpose = NULL){
+function(r, x, k = NULL, upper.tri = NULL, transpose = NULL, twice = TRUE, ...){
 # backsolve for Ng-Peyton's Cholesky factorization
-#       Solves linear system A b = x where r is chol(A)
+#       If twice = TRUE:  Solves linear system A b = x where r is chol(A)
+#       If twice = FALSE:  Solves linear system r b = x where r is chol(A)
 # Input:
 #       r -- structure returned by chol.matrix.csr
 #       x --  rhs  may be a matrix in dense form
@@ -1810,15 +1926,48 @@ function(r, x, k = NULL, upper.tri = NULL, transpose = NULL){
         if(!is.matrix(x)) x <- as.matrix(x)
         if(nrow(x)!=m)stop("chol not conformable with x")
         p <- ncol(x)
-        z <- .Fortran("bckslv", m = as.integer(m), nnzlindx = as.integer(r@nnzlindx),
+	if(twice)
+           z <- .Fortran("bckslv", m = as.integer(m), nnzlindx = as.integer(r@nnzlindx),
                 as.integer(r@nsuper), as.integer(p), as.integer(r@lindx),
                 as.integer(r@xlindx), as.integer(r@nnzl), as.double(r@lnz),
                 as.integer(r@xlnz), as.integer(r@invp), as.integer(r@perm),
                 as.integer(r@xsuper), double(m), sol = double(m*p), as.double(x),
                 time = double(1), PACKAGE = "SparseM")
+	else
+	   z <- .Fortran("bckslb", m = as.integer(m), nnzlindx = as.integer(r@nnzlindx),
+                as.integer(r@nsuper), as.integer(p), as.integer(r@lindx),
+                as.integer(r@xlindx), as.integer(r@nnzl), as.double(r@lnz),
+                as.integer(r@xlnz), as.integer(r@invp), as.integer(r@perm),
+                as.integer(r@xsuper), double(m), sol = double(m*p),
+                as.double(x), time = double(1), PACKAGE = "SparseM")
+
         z <- matrix(z$sol,nrow=nrow(x),ncol=ncol(x))
         drop(z)
 	})
+setMethod("forwardsolve","matrix.csr.chol",
+	function(l, x, k = NULL, upper.tri = NULL, transpose = NULL) {
+# forward-solve for Ng-Peyton's Cholesky factorization
+#       Solves triangular system r' b = x where r is chol(A)
+# Input:
+#       l -- structure returned by chol.matrix.csr
+#       x --  rhs  may be a matrix in dense form
+        m <- l@nrow
+        if(!is.matrix(x)) x <- as.matrix(x)
+        if(nrow(x)!=m)stop("chol not conformable with x")
+        p <- ncol(x)
+        z <- .Fortran("bckslf", m = as.integer(m),
+                      nnzlindx = as.integer(l@nnzlindx),
+                      as.integer(l@nsuper), as.integer(p), as.integer(l@lindx),
+                      as.integer(l@xlindx), as.integer(l@nnzl),
+                      as.double(l@lnz),
+                      as.integer(l@xlnz), as.integer(l@invp),
+                      as.integer(l@perm),
+                      as.integer(l@xsuper), double(m), sol = double(m*p),
+                      as.double(x),
+                      time = double(1),PACKAGE = "SparseM")
+        z <- matrix(z$sol,nrow=nrow(x),ncol=ncol(x))
+        drop(z)
+        })
 setMethod("solve","matrix.csr", function (a, b, ...) {
     missing.b <- FALSE
     if(!is.matrix.csr(a))stop("a not in csr format")

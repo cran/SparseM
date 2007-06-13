@@ -26,6 +26,7 @@
 \alias{as.matrix.csr,matrix.ssr-method}
 \alias{as.matrix.csr,matrix.ssc-method}
 \alias{as.matrix.csr,matrix.coo-method}
+\alias{as.matrix.csr,matrix.csr.chol-method}
 \alias{as.matrix.csc,ANY-method}
 \alias{as.matrix.csc,matrix.csr-method}
 \alias{as.matrix.csc,matrix.csc-method}
@@ -134,6 +135,15 @@ an analogous way, as are  the \code{matrix.ssr}, symmetric sparse row, and
 \note{
 \code{as.matrix.ssr} and \code{as.matrix.ssc} should ONLY be used with 
 symmetric matrices.
+
+\code{as.matrix.csr(x)}, when \code{x} is an object of class \code{matrix.csr.chol}
+(that is, an object returned by a call to \code{chol(a)} when \code{a} 
+is an object of class \code{matrix.csr} or \code{matric.csc}),
+by default returns an upper triangular matrix, which
+is \emph{not} consistent with the result of \code{chol} in the \pkg{base}
+package.  To get an lower triangular \code{matric.csr} matrix, use either
+\code{as.matrix.csr(x, upper.tri = FALSE)} or
+\code{t(as.matrix.csr(x))}.
 }
 \references{
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr

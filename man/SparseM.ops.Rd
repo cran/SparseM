@@ -94,7 +94,8 @@ The function \code{det} computes the determinant of the argument
 matrix.  If the matrix is of class \code{matrix.csr} then it must
 be symmetric, or an error will be returned.  If the matrix is of
 class \code{matrix.csr.chol} then the determinant of the Cholesky
-factor is returned, ie the product of the diagonal elements.
+factor is returned, ie the product of the diagonal elements.  For
+the log determinant, use \code{det(x, logarithm=TRUE)}.
 
 The function \code{norm} is used to check for symmetry by 
 computing the maximum of the elements of the difference between

@@ -381,3 +381,10 @@ The version 0.70
 The version 0.72
 	o  A ... argument was added to the as.matrix.[foo] functions to
 		accomodate a change in base R.
+The version 0.73
+	o  Thanks to contributions of Ben Shaby (Stat, Cornell) it is
+		now possible to coerce matrix.csr.chol objects back
+		to matrix.csr form, separate backsolve, and forwardsolve
+		functions are provided in addition to the original backsolve
+		that (still) does the double-backsolve, and it is now also
+		possible to get a log det value from chol instead of det.

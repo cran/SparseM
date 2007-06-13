@@ -8,8 +8,10 @@
 \alias{backsolve-methods}
 \alias{backsolve,ANY-method}
 \alias{backsolve}
+\alias{forwardsolve}
 \alias{solve}
 \alias{backsolve,matrix.csr.chol-method}
+\alias{forwardsolve,matrix.csr.chol-method}
 \alias{solve,ANY-method}
 \alias{solve,matrix.csr-method}
 \title{Linear Equation Solving for Sparse Matrices}
@@ -18,44 +20,69 @@
 decomposition of a symmetric positive definite sparse matrix \code{x} 
 of class \code{matrix.csr}. \cr
 \code{backsolve} performs a triangular back-fitting to compute
-the solutions of a system of linear equations.  \cr
-\code{solve} 
-combines \code{chol} and \code{backsolve} and will
+the solutions of a system of linear equations in one step. \cr
+\code{backsolve} and \code{forwardsolve} can also split the functionality of
+\code{backsolve} into two steps. \cr
+\code{solve} combines \code{chol} and \code{backsolve} and will
 compute the inverse of a matrix if the right-hand-side is missing.
 }
 \usage{
 chol(x, pivot = FALSE, \dots)
-backsolve(r, x, k, upper.tri, transpose)
+backsolve(r, x, k = NULL, upper.tri = NULL, transpose = NULL, twice = TRUE, ...)
+forwardsolve(l, x, k = ncol(l), upper.tri = FALSE, transpose = FALSE)
 solve(a, b, \dots)
 }
 \arguments{
 \item{a}{symmetric positive definite matrix of class \code{matrix.csr}.}
-\item{r}{object of class \code{matrix.csr.chol} returned by the function
-\code{chol}.}
+\item{r}{object of class \code{matrix.csr.chol} returned by the function \code{chol}.}
+\item{l}{object of class \code{matrix.csr.chol} returned by the function \code{chol}.}
 \item{x,b}{vector(regular matrix) of right-hand-side(s) of a system of linear equations.}
 \item{k}{inherited from the generic; not used here.}
 \item{pivot}{inherited from the generic; not used here.}
-#\item{nsubmax,nnzlmax,tmpmax}{dimensions of work arrays, in normal operation these are determined inside the algorithm.}
 \item{upper.tri}{inherited from the generic; not used here.}
 \item{transpose}{inherited from the generic; not used here.}
+\item{twice}{Logical flag:  If true backsolve solves twice, see below.}
 \item{\dots}{further arguments passed to or from other methods.}
 }
 \details{
 \code{chol} performs a Cholesky decomposition of
-a symmetric positive definite sparse matrix \code{x} of class 
+a symmetric positive definite sparse matrix \code{a} of class 
 \code{matrix.csr} using the block sparse Cholesky algorithm of Ng and 
-Peyton (1993).
+Peyton (1993).  The structure of the resulting \code{matrix.csr.chol}
+object is relatively complicated.  If necessary it can be coerced back
+to a \code{matrix.csr} object as usual with \code{as.matrix.csr}.
 \code{backsolve} does triangular back-fitting to compute
 the solutions of a system of linear equations.  For systems of linear equations
 that only vary on the right-hand-side, the result from \code{chol}
-can be reused.
-\code{solve} 
-combines \code{chol} and \code{backsolve}, and will
+can be reused.  Contrary to the behavior of \code{backsolve} in base R,
+the default behavior of  \code{backsolve(C,b)} when C is a \code{matrix.csr.chol} object 
+is to produce a solution to the system \eqn{Ax = b} where \code{C <- chol(A)}, see
+the example section.  When the flag \code{twice} is \code{FALSE} then backsolve 
+solves the system \eqn{Cx = b}, up to a permutation  -- see the comments below. 
+The command \code{solve} combines \code{chol} and \code{backsolve}, and will
 compute the inverse of a matrix if the right-hand-side is missing.
 The determinant of the Cholesky factor is returned providing a
 means to efficiently compute the determinant of sparse positive
 definite symmetric matrices.
 }
+
+\note{
+Because the sparse Cholesky algorithm re-orders the positive
+definite sparse matrix \code{A}, the value of
+\code{x <- backsolve(C, b)} does \emph{not} equal the solution to the 
+triangular system \eqn{Cx = b}, but is instead the solution to the
+system \eqn{CPx = Pb} for some permutation matrix \eqn{P} 
+(and analogously for \code{x <- forwardsolve(C, b)}).  However, a
+little algebra easily shows that
+\code{backsolve(C, forwardsolve(C, b), twice = FALSE)} \emph{is} the solution
+to the equation \eqn{Ax=b}.  Finally, if \code{C <- chol(A)}  for some
+sparse covariance matrix \code{A}, and z is a conformable standard normal vector,
+then the product  \code{y <- as.matrix.csr(C) \%*\% z} is normal with covariance
+matrix \code{A} irrespective of the permutation of the Cholesky factor. 
+}
+
+
+
 \references{ 
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
 \url{http://www.econ.uiuc.edu/~roger/research}
@@ -81,6 +108,7 @@ t(design.o)\%*\%y -> Xpy
 chol(XpX)->chol.o
 backsolve(chol.o,Xpy)-> b1 # least squares solutions in two steps
 solve(XpX,Xpy) -> b2 # least squares estimates in one step
+backsolve(chol.o, forwardsolve(chol.o, Xpy), twice = FALSE) -> b3 # in three steps
 }
 
 \keyword{algebra}
