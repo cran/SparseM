@@ -388,3 +388,5 @@ The version 0.73
 		functions are provided in addition to the original backsolve
 		that (still) does the double-backsolve, and it is now also
 		possible to get a log det value from chol instead of det.
+The version 0.74
+	o  Changes to read.matrix.hb to better accommodate hb files without rhs.

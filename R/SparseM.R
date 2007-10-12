@@ -258,112 +258,129 @@ z <- t(z)
 return(z)
 }
 #--------------------------------------------------------------------
-"read.matrix.hb" <- function(file)
+"read.matrix.hb" <-
+function (file) 
 {
-#   Adapted from readHB() in Bates's Matrix package by P. Ng  7 Oct, 2005 
-	if (is.character(file)) 
+    if (is.character(file)) 
         if (file == "") 
             file <- stdin()
-        else 
-            file <- file(file)
+        else file <- file(file)
     if (!inherits(file, "connection")) 
         stop("'file' must be a character string or connection")
     if (!isOpen(file)) {
         open(file)
         on.exit(close(file))
     }
-	readone <- function (ln, iwd, nper, conv) 
-	{
-    	ln <- gsub("D", "E", ln)
-    	inds <- seq(0, by = iwd, length = nper + 1)
-    	(conv)(substring(ln, 1 + inds[-length(inds)], inds[-1]))
-	}
-	readmany <- function (conn, nlines, nvals, fmt, conv) 
-	{
-    	if (!grep("[[:digit:]]+[DEFGI][[:digit:]]+", fmt)) 
-        	stop("Not a valid format")
-    	Iind <- regexpr("[DEFGI]", fmt)
-    	nper <- as.integer(substr(fmt, regexpr("[[:digit:]]+[DEFGI]", fmt), Iind - 1))
-    	iwd <- as.integer(substr(fmt, Iind + 1, regexpr("[\\.\\)]", fmt) - 1))
-    	rem <- nvals%%nper
-    	full <- nvals%/%nper
-    	ans <- vector("list", nvals%/%nper)
-    	for (i in seq(len = full)) 
-		ans[[i]] <- readone(readLines(conn, 1, ok = FALSE), iwd, nper, conv)
-    	if (!rem) 
-        	return(unlist(ans))
-    	c(unlist(ans), readone(readLines(conn, 1, ok = FALSE), iwd, rem, conv))
-	}
+    readone <- function(ln, iwd, nper, conv) {
+        ln <- gsub("D", "E", ln)
+        inds <- seq(0, by = iwd, length = nper + 1)
+        (conv)(substring(ln, 1 + inds[-length(inds)], inds[-1]))
+    }
+    readmany <- function(conn, nlines, nvals, fmt, conv) {
+        if (!grep("[[:digit:]]+[DEFGI][[:digit:]]+", fmt)) 
+            stop("Not a valid format")
+        Iind <- regexpr("[DEFGI]", fmt)
+        nper <- as.integer(substr(fmt, regexpr("[[:digit:]]+[DEFGI]", 
+            fmt), Iind - 1))
+        iwd <- as.integer(substr(fmt, Iind + 1, regexpr("[\\.\\)]", 
+            fmt) - 1))
+        rem <- nvals%%nper
+        full <- nvals%/%nper
+        ans <- vector("list", nvals%/%nper)
+        for (i in seq(len = full)) ans[[i]] <- readone(readLines(conn, 
+            1, ok = FALSE), iwd, nper, conv)
+        if (!rem) 
+            return(unlist(ans))
+        c(unlist(ans), readone(readLines(conn, 1, ok = FALSE), 
+            iwd, rem, conv))
+    }
     hdr <- readLines(file, 4, ok = FALSE)
-    Title <- sub('[[:space:]]+$', '', substr(hdr[1], 1, 72))
-    Key <- sub('[[:space:]]+$', '', substr(hdr[1], 73, 80))
+    Title <- sub("[[:space:]]+$", "", substr(hdr[1], 1, 72))
+    Key <- sub("[[:space:]]+$", "", substr(hdr[1], 73, 80))
     totln <- as.integer(substr(hdr[2], 1, 14))
     ptrln <- as.integer(substr(hdr[2], 15, 28))
     indln <- as.integer(substr(hdr[2], 29, 42))
     valln <- as.integer(substr(hdr[2], 43, 56))
     rhsln <- as.integer(substr(hdr[2], 57, 70))
-    if (!(t1 <- substr(hdr[3], 1, 1)) %in% c('C', 'R', 'P'))
+    if (!(t1 <- substr(hdr[3], 1, 1)) %in% c("C", "R", "P")) 
         stop(paste("Invalid storage type:", t1))
-    if (t1 != 'R') stop("Doesn't handle non-real matrices")
-    ## _FIXME: Patterns should also be allowed
-    if (!(t2 <- substr(hdr[3], 2, 2)) %in% c('H', 'R', 'S', 'U', 'Z'))
+    if (t1 != "R") 
+        stop("Doesn't handle non-real matrices")
+    if (!(t2 <- substr(hdr[3], 2, 2)) %in% c("H", "R", "S", "U", 
+        "Z")) 
         stop(paste("Invalid storage format:", t2))
-    if(t2 == 'S')
-	format <- "ssc"
-    else if(t2 == "R" | t2 == "U")
-	format <- "csc"
-    else
-	stop("Doesn't handle matrices other than symmetric or rectangular!")
-    if (!(t3 <- substr(hdr[3], 3, 3)) %in% c('A', 'E'))
+    if (t2 == "S") 
+        format <- "ssc"
+    else if (t2 == "R" | t2 == "U") 
+        format <- "csc"
+    else stop("Doesn't handle matrices other than symmetric or rectangular!")
+    if (!(t3 <- substr(hdr[3], 3, 3)) %in% c("A", "E")) 
         stop(paste("Invalid assembled indicator:", t3))
-    if (t3 != 'A') stop("Doesn't handle elemental matrices!")
+    if (t3 != "A") 
+        stop("Doesn't handle elemental matrices!")
     nr <- as.integer(substr(hdr[3], 15, 28))
     nc <- as.integer(substr(hdr[3], 29, 42))
     nz <- as.integer(substr(hdr[3], 43, 56))
     nel <- as.integer(substr(hdr[3], 57, 70))
-    ptrfmt <- toupper(sub('[[:space:]]+$', '', substr(hdr[4], 1, 16)))
-    indfmt <- toupper(sub('[[:space:]]+$', '', substr(hdr[4], 17, 32)))
-    valfmt <- toupper(sub('[[:space:]]+$', '', substr(hdr[4], 33, 52)))
-    rhsfmt <- toupper(sub('[[:space:]]+$', '', substr(hdr[4], 53, 72)))
+    ptrfmt <- toupper(sub("[[:space:]]+$", "", substr(hdr[4], 
+        1, 16)))
+    indfmt <- toupper(sub("[[:space:]]+$", "", substr(hdr[4], 
+        17, 32)))
+    valfmt <- toupper(sub("[[:space:]]+$", "", substr(hdr[4], 
+        33, 52)))
+    rhsfmt <- toupper(sub("[[:space:]]+$", "", substr(hdr[4], 
+        53, 72)))
+    h5 <- readLines(file, 1, ok = FALSE)
+    rhs.mode <- substr(h5[1], 1, 1)
     rhs <- NULL
-    rhs.mode <- NULL
     guess <- NULL
-    xexact <- NULL
+    xexact <- NULL 
     if (!is.na(rhsln) && rhsln > 0) {
-        h5 <- readLines(file, 1, ok = FALSE)
-	rhs.mode <- substr(h5[1],1,1)
-	g.mode <- substr(h5[1],2,2)
-	e.mode <- substr(h5[1],3,3)
-	if (rhs.mode != 'F')  stop("Right-hand side has to be in full storage mode.")
-	if (g.mode != " " & g.mode != 'G')  
-		stop("Incorrect indicator for the starting vector in the rhs.")
-	if (e.mode != " " & e.mode != 'X')  
-		stop("Incorrect indicator for the exact solution vector in the rhs.")
-        }
+        g.mode <- substr(h5[1], 2, 2)
+        e.mode <- substr(h5[1], 3, 3)
+        if (rhs.mode != "F") 
+            stop("Right-hand side has to be in full storage mode.")
+        if (g.mode != " " & g.mode != "G") 
+            stop("Incorrect indicator for the starting vector in the rhs.")
+        if (e.mode != " " & e.mode != "X") 
+            stop("Incorrect indicator for the exact solution vector in the rhs.")
+    } 
+    else {
+	if (is.character(rhs.mode))
+            stop("There shouldn't be a 5th line describing the right-hand-side when there is no right-hand-side.")
+    }
     ptr <- readmany(file, ptrln, nc + 1, ptrfmt, as.integer)
     ind <- readmany(file, indln, nz, indfmt, as.integer)
     vals <- readmany(file, valln, nz, valfmt, as.numeric)
     if (!is.na(rhsln) && rhsln > 0) {
-        nrhs <- as.integer(substr(h5,15,28))
-        nrhsix <- as.integer(substr(h5,29,42))
-        nrhstot <- nrhside <- nr*nrhs
-        rhs <- readmany(file,rhsln,nrhside,rhsfmt,as.numeric)
-        if (substr(h5,2,2) %in% c("G")){
-        	guess <- readmany(file,rhsln,nrhside,rhsfmt,as.numeric)
-        	}
-        if (substr(h5,3,3) %in% c("X")){
-        	xexact <- readmany(file,rhsln,nrhside,rhsfmt,as.numeric)
-        	}
+        nrhs <- as.integer(substr(h5, 15, 28))
+        nrhsix <- as.integer(substr(h5, 29, 42))
+        nrhstot <- nrhside <- nr * nrhs
+        rhs <- readmany(file, rhsln, nrhside, rhsfmt, as.numeric)
+        if (substr(h5, 2, 2) %in% c("G")) {
+            guess <- readmany(file, rhsln, nrhside, rhsfmt, as.numeric)
         }
-    if (format == 'csc')
-	rd.o <- new("matrix.csc.hb", ra = vals, ja = ind, ia = ptr, 
-		rhs.ra = rhs, guess = guess, xexact = xexact, 
-		dimension = c(nr, nc), rhs.dim = c(nr, nrhs), rhs.mode = "F")
-    else
-	rd.o <- new("matrix.ssc.hb", ra = vals, ja = ptr, ia = ind, 
-		rhs.ra = rhs, guess = guess, xexact = xexact, 
-		dimension = c(nr, nc), rhs.dim = c(nr, nrhs), rhs.mode = "F")
-   return(rd.o)
+        if (substr(h5, 3, 3) %in% c("X")) {
+            xexact <- readmany(file, rhsln, nrhside, rhsfmt, 
+                as.numeric)
+        }
+        if (format == "csc") 
+            rd.o <- new("matrix.csc.hb", ra = vals, ja = ind, ia = ptr, 
+                rhs.ra = rhs, guess = guess, xexact = xexact, dimension = c(nr, 
+                nc), rhs.dim = c(nr, nrhs), rhs.mode = "F")
+        else rd.o <- new("matrix.ssc.hb", ra = vals, ja = ptr, ia = ind, 
+                rhs.ra = rhs, guess = guess, xexact = xexact, dimension = c(nr, 
+                nc), rhs.dim = c(nr, nrhs), rhs.mode = "F")
+        return(rd.o)
+    }
+    else {
+       if (format == "csc") 
+           rd.o <- new("matrix.csc.hb", ra = vals, ja = ind, ia = ptr, 
+               dimension = c(nr, nc)) 
+       else rd.o <- new("matrix.ssc.hb", ra = vals, ja = ptr, ia = ind, 
+           dimension = c(nr, nc))
+       return(rd.o)
+    }
 }
 
 #--------------------------------------------------------------------
@@ -1000,8 +1017,8 @@ function (formula,  data, weights, na.action, method = "csr",
     if (method == "model.frame") 
         return(m)
     Terms <- attr(m, "terms")
-    weights <- model.extract(m, weights)
-    Y <- model.extract(m, response)
+    weights <- model.extract(m, "weights")
+    Y <- model.extract(m, "response")
     X <- as.matrix.csr(model.matrix(Terms, m, contrasts))
     fit <- {
         if (length(weights)) 
