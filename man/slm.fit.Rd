@@ -47,7 +47,6 @@ A list of class \code{slm} consisting of:
 \references{
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
 \url{http://www.econ.uiuc.edu/~roger/research}}
-}
 \author{ Roger Koenker }
 
 \seealso{  \code{\link{slm}} }

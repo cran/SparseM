@@ -87,7 +87,7 @@ product, addition,
 subtraction and various logical operations should work as with the conventional
 dense form of matrix storage, as does indexing, rbind, cbind, and diagonal
 assignment and extraction.  The method diag may be used to extract the
-diagonal of a \code{matrix.csr} object, or to create a sparse diagonal see
+diagonal of a \code{matrix.csr} object, to create a sparse diagonal see
 \code{SparseM.ontology}.
 
 The function \code{det} computes the determinant of the argument
@@ -125,13 +125,7 @@ b[abs(b)<1.0] <- 0
 B <- matrix(b,n2,p)
 B.csr <- as.matrix.csr(B)
 
-# Diagonal matrices
-as(1:3,"matrix.diag.csr")
-
-# Identity matrices
-as(3,"matrix.diag.csr")
-
-# Matrix transposition and multiplication
+# matrix transposition and multiplication
 A.csr\%*\%t(B.csr)
 
 # kronecker product

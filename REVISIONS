@@ -389,4 +389,7 @@ The version 0.73
 		that (still) does the double-backsolve, and it is now also
 		possible to get a log det value from chol instead of det.
 The version 0.74
-	o  Changes to read.matrix.hb to better accommodate hb files without rhs.
+	o  Changed warning in as.matrix.csr to error condition when nnz != z$nnz,
+		and changed defintion of nnz to by sum(abs(x) >= eps) from >
+		to agree with fortran "csr" function.  Bug report from Mark
+		Robinson (wehi.edu.au)

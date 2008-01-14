@@ -56,8 +56,6 @@ slm(formula, data, weights, na.action, method = "csr", contrasts = NULL, ...)
 \item{...}{
     additional arguments for the fitting routines
   }
-
-}
 }
 \value{
 A list of class \code{slm} consisting of:
