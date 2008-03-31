@@ -393,3 +393,9 @@ The version 0.74
 		and changed defintion of nnz to by sum(abs(x) >= eps) from >
 		to agree with fortran "csr" function.  Bug report from Mark
 		Robinson (wehi.edu.au)
+The version 0.76
+	o  Updated lsq.rda so that it was a proper s4 object as requested by BR
+		to conform  with the current R-devel.  Removed SaveImage line
+		from DESCRIPTION file.
+The version 0.77
+	o  Updated triogramX.R to triogramX.rda  similarly...
