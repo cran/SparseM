@@ -1400,9 +1400,11 @@ function (x, rw = 1:x@dimension[1], cl = 1:x@dimension[2], value)
 	if(length(value)==1) value <- rep(value,nrow(rw))
 	if(length(value)!=nrow(rw))
 		stop("assignment value has incompatible length")
-	ra <- c(x@ra[-s[!is.na(s)]],value)
-        ja <- as.integer(c(x@ja[-s[!is.na(s)]],rw[,2]))
-        ia <- as.integer(c(x@ia[-s[!is.na(s)]],rw[,1]))
+	as <- -s[!is.na(s)]
+        as <- ifelse(length(as),as,TRUE)
+        ra <- c(x@ra[as],value)
+        ja <- as.integer(c(x@ja[as],rw[,2]))
+        ia <- as.integer(c(x@ia[as],rw[,1]))
         dim <- x@dimension
         x <- new("matrix.coo",ra=ra,ja=ja,ia=ia,dimension=dim)
 	}

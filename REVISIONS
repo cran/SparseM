@@ -399,3 +399,7 @@ The version 0.76
 		from DESCRIPTION file.
 The version 0.77
 	o  Updated triogramX.R to triogramX.rda  similarly...
+The version 0.78
+	o  Fixed bug in [<-.matrix.coo".  When the rw was a two column matrix
+		there was an implicit assumption that x[-s] = x when s was empty
+		but this turned out to be wrong.
