@@ -403,3 +403,13 @@ The version 0.78
 	o  Fixed bug in [<-.matrix.coo".  When the rw was a two column matrix
 		there was an implicit assumption that x[-s] = x when s was empty
 		but this turned out to be wrong.
+The version 0.79
+        o I've redefine the class "matrix.csc.hb" in SparseM.R to include NULL
+                in the slots rhs.ra, rhs.dim and rhs.mode.
+        o read.matrix.hb will return NULL for rhs.ra, rhs.dim and rhs.mode if
+                the rhs is missing.
+	o bug in matrix.csr.elemul that returned an error when the result of
+		the multiplication was a matrix consisting entirely of zeros.
+		Thanks to Ian Erickson for this report.
+
+

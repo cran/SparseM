@@ -115,6 +115,7 @@ compressed sparse row \code{matrix.csr} class.
 An \emph{n} by \emph{m} matrix \emph{A} with real elements \eqn{a_{ij}}{a_{ij}}, 
 stored in \code{matrix.csr} format consists of three arrays:
  
+\itemize{
 \item \code{ra}: a real array of \emph{nnz} elements containing the non-zero
 elements of \emph{A}, stored in row order. Thus, if \emph{i<j}, all elements of row \emph{i}
 precede elements from row \emph{j}. The order of elements within the rows is immaterial.
@@ -127,6 +128,7 @@ the beginning of each row in the arrays \code{ra} and \code{ja}. Thus
 \code{ia[i]} indicates the position in the arrays \code{ra} and
 \code{ja} where the \emph{i}th row begins. The last, \emph{(n+1)}st, element of
 \code{ia} indicates where the \emph{n+1} row would start, if it existed.
+}
 
 The compressed sparse column class  \code{matrix.csc} is defined in
 an analogous way, as are  the \code{matrix.ssr}, symmetric sparse row, and

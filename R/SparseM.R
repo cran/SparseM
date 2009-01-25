@@ -571,7 +571,7 @@ else
         nnz <- z$ia[Arow+1]-1
         if(identical(z$ra,0)){#trap zero matrix
                 z$ja <- as.integer(1)
-                z$ia <- as.integer(c(1,rep(2,nrow)))
+                z$ia <- as.integer(c(1,rep(2,Arow)))
                 }
 z <- new("matrix.csr",ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dimension=c(Arow,Acol))
 return(z)
