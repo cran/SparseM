@@ -1,7 +1,7 @@
 .onLoad <- function(lib, pkg) {
 	require(methods)
-	cat(sprintf("Package %s (%s) loaded.  To cite, see citation(\"%s\")\n",
-		pkg, packageDescription(pkg)$Version, pkg))
+	packageStartupMessage(sprintf("Package %s (%s) loaded.  
+	   To cite, see citation(\"%s\")\n", pkg, packageDescription(pkg)$Version, pkg))
 }
 # /*RSB*/ .onLoad needed instead of .First.lib, no library.dynam()
 #--------------------------------------------------------------------

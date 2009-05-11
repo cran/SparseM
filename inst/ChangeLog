@@ -411,5 +411,8 @@ The version 0.79
 	o bug in matrix.csr.elemul that returned an error when the result of
 		the multiplication was a matrix consisting entirely of zeros.
 		Thanks to Ian Erickson for this report.
+The version 0.80
+	o  At the suggestion of BDR the onLoad message was changed from cat()
+		to packageStartMessage()
 
 
