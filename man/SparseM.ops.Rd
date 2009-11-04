@@ -68,9 +68,7 @@
 \alias{[<-.matrix.coo}
 \title{Basic Linear Algebra for Sparse Matrices}
 \description{Basic linear algebra operations for sparse matrices
-of class \code{matrix.csr}.  
-}
-\usage{ }
+of class \code{matrix.csr}.}
 \arguments{
 \item{x}{matrix of class \code{matrix.csr}.}
 \item{y}{matrix of class \code{matrix.csr} or a dense matrix or vector.}

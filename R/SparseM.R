@@ -1860,7 +1860,7 @@ setMethod("chol","matrix.csr", function(x, pivot = FALSE,
         iwmax <- 7*nrow+3
         if(missing(nsubmax)) nsubmax <- nnzdmax
         if(missing(nnzlmax)) nnzlmax <- max(4*nnzdmax,floor(.2*nnzdmax^1.3))
-        if(missing(tmpmax)) tmpmax <- 10*nrow
+        if(missing(tmpmax)) tmpmax <- 30*nrow
         level <- 8
         z <- .Fortran("chol", nrow = as.integer(nrow), nnzdmax = as.integer(nnzdmax),
                 d = as.double(x@ra), jd = as.integer(x@ja), id = as.integer(x@ia),
@@ -1912,10 +1912,10 @@ setMethod("chol","matrix.csc",function(x,pivot = FALSE, ...)chol(as.matrix.csr(x
 setGeneric("backsolve",
 	function(r, x, k = NULL, upper.tri = NULL, transpose = NULL,  twice = TRUE, ...) 
 		standardGeneric("backsolve"),
-	useAsDefault= function(r, x,  k = NULL, upper.tri = NULL, 
-		transpose = NULL, twice = TRUE, ...) 
-		base::backsolve(r, x, k = ncol(r), upper.tri = TRUE, 
-			transpose = FALSE, ...))
+	useAsDefault= function(r, x,  k = ncol(r), upper.tri = TRUE, 
+		transpose = FALSE, twice = TRUE, ...) 
+		base::backsolve(r, x, k = k, upper.tri = upper.tri, 
+			transpose = transpose, ...))
 setMethod("backsolve","matrix.csr.chol", 
 function(r, x, k = NULL, upper.tri = NULL, transpose = NULL, twice = TRUE, ...){
 # backsolve for Ng-Peyton's Cholesky factorization

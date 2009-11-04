@@ -415,4 +415,12 @@ The version 0.80
 	o  At the suggestion of BDR the onLoad message was changed from cat()
 		to packageStartMessage()
 
+The version 0.82
+	o  default tmpmax in chol was increased from 10 * nrows to 30 * nrows.
+
+The version 0.83
+	o  setGeneric code for backsolve fixed so that it passes arguments to
+	the default method in base::backsolve.  Thanks to Achim Zeileis for
+	the report of a problem encountered when using lars, and to John
+	Chambers for patiently explaining what was going wrong.
 
