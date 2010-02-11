@@ -1,6 +1,10 @@
 .onLoad <- function(lib, pkg) {
-	require(methods)
-	packageStartupMessage(sprintf("Package %s (%s) loaded.  
+    require(methods)
+    ## Lifted from Matrix/R/zzz.R -- to remain "bug-compatible":-)
+    require(utils) # -> assignInNamespace {but "anyway"}
+    assignInNamespace("%x%", function (X, Y) kronecker(X, Y), ns = "base")
+
+	packageStartupMessage(sprintf("Package %s (%s) loaded.
 	   To cite, see citation(\"%s\")\n", pkg, packageDescription(pkg)$Version, pkg))
 }
 # /*RSB*/ .onLoad needed instead of .First.lib, no library.dynam()
@@ -29,7 +33,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 			if(length(x)==1 && abs(x)<eps) {
 				dimx <- c(nrow,ncol)
 	        		z<-new("matrix.csr",ra=0,ja=as.integer(1),
-					ia=as.integer(c(1:1,rep(2,dimx[1]))), 
+					ia=as.integer(c(1:1,rep(2,dimx[1]))),
 					dimension=as.integer(dimx))
 				return(z)
 				}
@@ -119,7 +123,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 		iwk = integer(nrow+1),
 		ierr = integer(1),
 		PACKAGE = "SparseM")
-	if(z$ierr != 0) stop("Not enough space")		
+	if(z$ierr != 0) stop("Not enough space")
 	nnz <- z$iao[nrow+1]-1
 	z <- new("matrix.csr",ra=z$ao[1:nnz],ja=z$jao[1:nnz],ia=z$iao,dimension=x@dimension)
 	return(z)
@@ -128,7 +132,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 ".csr.ssr" <- function(x){
 	nrow <- x@dimension[1]
 	nnza <- ceiling((x@ia[nrow+1]-1)/2)+nrow
-	if(nrow!=x@dimension[2]) 
+	if(nrow!=x@dimension[2])
                 stop("Cannot convert an asymmetric matrix into `matrix.ssr' class")
 
         if(sum(abs((t(as.matrix.csr(x))-as.matrix.csr(x))@ra))!=0)
@@ -260,27 +264,27 @@ return(z)
 #--------------------------------------------------------------------
 "read.matrix.hb" <- function(file)
 {
-#   Adapted from readHB() in Bates's Matrix package by P. Ng  7 Oct, 2005 
-	if (is.character(file)) 
-        if (file == "") 
+#   Adapted from readHB() in Bates's Matrix package by P. Ng  7 Oct, 2005
+	if (is.character(file))
+        if (file == "")
             file <- stdin()
-        else 
+        else
             file <- file(file)
-    if (!inherits(file, "connection")) 
+    if (!inherits(file, "connection"))
         stop("'file' must be a character string or connection")
     if (!isOpen(file)) {
         open(file)
         on.exit(close(file))
     }
-	readone <- function (ln, iwd, nper, conv) 
+	readone <- function (ln, iwd, nper, conv)
 	{
     	ln <- gsub("D", "E", ln)
     	inds <- seq(0, by = iwd, length = nper + 1)
     	(conv)(substring(ln, 1 + inds[-length(inds)], inds[-1]))
 	}
-	readmany <- function (conn, nlines, nvals, fmt, conv) 
+	readmany <- function (conn, nlines, nvals, fmt, conv)
 	{
-    	if (!grep("[[:digit:]]+[DEFGI][[:digit:]]+", fmt)) 
+    	if (!grep("[[:digit:]]+[DEFGI][[:digit:]]+", fmt))
         	stop("Not a valid format")
     	Iind <- regexpr("[DEFGI]", fmt)
     	nper <- as.integer(substr(fmt, regexpr("[[:digit:]]+[DEFGI]", fmt), Iind - 1))
@@ -288,9 +292,9 @@ return(z)
     	rem <- nvals%%nper
     	full <- nvals%/%nper
     	ans <- vector("list", nvals%/%nper)
-    	for (i in seq(len = full)) 
+    	for (i in seq(len = full))
 		ans[[i]] <- readone(readLines(conn, 1, ok = FALSE), iwd, nper, conv)
-    	if (!rem) 
+    	if (!rem)
         	return(unlist(ans))
     	c(unlist(ans), readone(readLines(conn, 1, ok = FALSE), iwd, rem, conv))
 	}
@@ -335,9 +339,9 @@ return(z)
 	g.mode <- substr(h5[1],2,2)
 	e.mode <- substr(h5[1],3,3)
 	if (rhs.mode != 'F')  stop("Right-hand side has to be in full storage mode.")
-	if (g.mode != " " & g.mode != 'G')  
+	if (g.mode != " " & g.mode != 'G')
 		stop("Incorrect indicator for the starting vector in the rhs.")
-	if (e.mode != " " & e.mode != 'X')  
+	if (e.mode != " " & e.mode != 'X')
 		stop("Incorrect indicator for the exact solution vector in the rhs.")
         }
     ptr <- readmany(file, ptrln, nc + 1, ptrfmt, as.integer)
@@ -356,12 +360,12 @@ return(z)
         	}
         }
     if (format == 'csc')
-	rd.o <- new("matrix.csc.hb", ra = vals, ja = ind, ia = ptr, 
-		rhs.ra = rhs, guess = guess, xexact = xexact, 
+	rd.o <- new("matrix.csc.hb", ra = vals, ja = ind, ia = ptr,
+		rhs.ra = rhs, guess = guess, xexact = xexact,
 		dimension = c(nr, nc), rhs.dim = c(nr, nrhs), rhs.mode = "F")
     else
-	rd.o <- new("matrix.ssc.hb", ra = vals, ja = ptr, ia = ind, 
-		rhs.ra = rhs, guess = guess, xexact = xexact, 
+	rd.o <- new("matrix.ssc.hb", ra = vals, ja = ptr, ia = ind,
+		rhs.ra = rhs, guess = guess, xexact = xexact,
 		dimension = c(nr, nc), rhs.dim = c(nr, nrhs), rhs.mode = "F")
    return(rd.o)
 }
@@ -471,7 +475,7 @@ return(z)
 #--------------------------------------------------------------------
 ".matrix.csr.addsub" <-
 function(A,B,s){
-#matrix addition/subtraction of two sparse csr matrices 
+#matrix addition/subtraction of two sparse csr matrices
 if(is.matrix(A)) A <- as.matrix.csr(A)
 if(is.matrix(B)) B <- as.matrix.csr(B)
 nrow <- A@dimension[1]
@@ -578,7 +582,7 @@ return(z)
 }
 #--------------------------------------------------------------------
 ".matrix.csr.elediv" <- function(A,B){
-# Element-wise matrix division of two sparse csr matrices 
+# Element-wise matrix division of two sparse csr matrices
 if(is.numeric(A) && length(A) == 1)
         z <- new("matrix.csr",ra=A/B@ra,ja=B@ja,ia=B@ia,dimension=B@dimension)
 else if(is.numeric(B) && length(B) == 1)
@@ -868,7 +872,7 @@ return(z)
 ".matmul.matrix.csr" <- function(x,y){
 if(is.matrix.csr(x)){
 	if(is.matrix.csr(y)){
-		#matrix multiply two sparse csr matrices 
+		#matrix multiply two sparse csr matrices
 		nrow <- x@dimension[1]
 		ncol <- y@dimension[2]
 		Acol <- x@dimension[2]
@@ -989,22 +993,22 @@ function(X,Y){
 #"chol.default" <- base::chol
 #--------------------------------------------------------------------
 "slm" <-
-function (formula,  data, weights, na.action, method = "csr", 
-    contrasts = NULL, ...) 
+function (formula,  data, weights, na.action, method = "csr",
+    contrasts = NULL, ...)
 {
     call <- match.call()
     m <- match.call(expand.dots = FALSE)
     m$method <- m$model <- m$x <- m$y <- m$contrasts <-  m$... <- NULL
     m[[1]] <- as.name("model.frame")
     m <- eval(m, sys.frame(sys.parent()))
-    if (method == "model.frame") 
+    if (method == "model.frame")
         return(m)
     Terms <- attr(m, "terms")
     weights <- model.extract(m, weights)
     Y <- model.extract(m, "response")
     X <- as.matrix.csr(model.matrix(Terms, m, contrasts))
     fit <- {
-        if (length(weights)) 
+        if (length(weights))
             slm.wfit(X, Y,  weights, method, ...)
         else slm.fit(X, Y,  method, ...)
     }
@@ -1016,7 +1020,7 @@ function (formula,  data, weights, na.action, method = "csr",
 }
 #--------------------------------------------------------------------
 "slm.fit" <-
-function (x, y,  method = "csr", ...) 
+function (x, y,  method = "csr", ...)
 {
     fit <-  slm.fit.csr(x, y,  ...)
     fit$contrasts <- attr(x, "contrasts")
@@ -1024,13 +1028,13 @@ function (x, y,  method = "csr", ...)
 }
 #--------------------------------------------------------------------
 "slm.wfit" <-
-function (x, y, weights,  ...) 
+function (x, y, weights,  ...)
 {
-    if (!is.matrix.csr(x)) 
+    if (!is.matrix.csr(x))
         stop("model matrix must be in sparse csr mode")
-    if (!is.numeric(y)) 
+    if (!is.numeric(y))
         stop("response must be numeric")
-    if (any(weights < 0)) 
+    if (any(weights < 0))
         stop("negative weights not allowed")
     contr <- attr(x, "contrasts")
     w <- sqrt(weights)
@@ -1042,7 +1046,7 @@ function (x, y, weights,  ...)
 }
 #--------------------------------------------------------------------
 "slm.fit.csr" <-
-function (x, y, ...) 
+function (x, y, ...)
 {
 #    n <- length(y)
     if(is.matrix(y))
@@ -1050,7 +1054,7 @@ function (x, y, ...)
     else
         n <- length(y)
     p <- x@dimension[2]
-    if (n != x@dimension[1]) 
+    if (n != x@dimension[1])
         stop("x and y don't match n")
     chol <- chol(t(x)%*%x, ...)
     xy <- t(x) %*% y
@@ -1060,14 +1064,14 @@ function (x, y, ...)
     df <- n - p
     list(coefficients=coef, chol=chol, residuals=resid,
          fitted=fitted, df.residual = df)
-}   
+}
 #--------------------------------------------------------------------
 "coef.slm" <-
-function (object, ...) 
+function (object, ...)
 object$coefficients
 #--------------------------------------------------------------------
 "fitted.slm" <-
-function (object, ...) 
+function (object, ...)
 object$fitted
 #--------------------------------------------------------------------
 "residuals.slm" <- function (object, ...){
@@ -1185,8 +1189,8 @@ function (object, correlation = FALSE, ...)
 }
 #--------------------------------------------------------------------
 "print.summary.slm" <-
-function (x, digits = max(3, getOption("digits") - 3), 
-	symbolic.cor = p > 4, signif.stars = getOption("show.signif.stars"), 
+function (x, digits = max(3, getOption("digits") - 3),
+	symbolic.cor = p > 4, signif.stars = getOption("show.signif.stars"),
 	...)
 {
     cat("\nCall:\n")
@@ -1244,11 +1248,11 @@ function (x, digits = max(3, getOption("digits") - 3),
     invisible(x)
 }
 #--------------------------------------------------------------------
-"print.slm" <- function (x, digits = max(3, getOption("digits") - 3), ...) 
+"print.slm" <- function (x, digits = max(3, getOption("digits") - 3), ...)
 {
     cat("\nCall:\n", deparse(x$call), "\n\n", sep = "")
     cat("Coefficients:\n")
-    print.default(format(coef(x), digits = digits), print.gap = 2, 
+    print.default(format(coef(x), digits = digits), print.gap = 2,
         quote = FALSE)
     cat("\n")
     invisible(x)
@@ -1313,7 +1317,7 @@ function (x, digits = max(3, getOption("digits") - 3),
 
                 	#obviously this looping is horrible but is there a better way?
                 	#could be fortranized I suppose.
-	
+
                 	rn <- table(rw)
                 	ri <- as.integer(names(rn))
                 	B <- NULL
@@ -1343,22 +1347,22 @@ function (x, digits = max(3, getOption("digits") - 3),
                 	ia <- match(x@ia[s],rw)
                 	dim <- c(length(rw),length(cl))
                 	ra <- x@ra[s]
-			if (length(ra) == 0 && length(ja) == 0){ 
+			if (length(ra) == 0 && length(ja) == 0){
 				ra = 0
 				ja = ia = as.integer(1)
 				}
                 	A <- new("matrix.coo",ra=ra,ja=ja,ia=ia,dimension=dim)
                 	}
-	
+
 	}
 	return(A)
 }
 "[<-.matrix.coo" <-
-function (x, rw = 1:x@dimension[1], cl = 1:x@dimension[2], value) 
+function (x, rw = 1:x@dimension[1], cl = 1:x@dimension[2], value)
 {
     nrow <-  x@dimension[1]
     ncol <-  x@dimension[2]
-#    if (!is.matrix.coo(value)) 
+#    if (!is.matrix.coo(value))
 #	 stop("replacement matrix must be of matrix.coo class")
     if (is.matrix.coo(rw)) {
          stop("Indexing by 'matrix.coo' matrices not implemented")
@@ -1374,7 +1378,7 @@ function (x, rw = 1:x@dimension[1], cl = 1:x@dimension[2], value)
 	len.value <- length(value@ra)
 	value.ra <- value@ra
 	if (len.s != len.value){
-		if (len.value == 1) 
+		if (len.value == 1)
 			value.ra <- rep(value@ra,len.s)
 		else{
 			if (len.value >= len.s){
@@ -1454,12 +1458,12 @@ setClass("matrix.csr",representation(ra="numeric",
                	 	}
         	if(!(length(object@ra) ==length(object@ja)))
                 	return("ra and ja don't have equal lengths")
-        	if(any(object@ja < 1) || any(object@ja > ncol)) 
+        	if(any(object@ja < 1) || any(object@ja > ncol))
                 	return("ja exceeds dim bounds")
         	if(any(object@ia < 1))
                 	return("some elements of ia are <= 0")
 		if(any(diff(object@ia)<0))
-			return("ia vector not monotone increasing") 
+			return("ia vector not monotone increasing")
 		if(object@ia[length(object@ia)] != length(object@ra)+1)
 			return("last element of ia doesn't conform")
 		if(length(object@ia) != nrow+1)
@@ -1467,7 +1471,7 @@ setClass("matrix.csr",representation(ra="numeric",
         	if(length(object@ra) < 1 || length(object@ra) > prod(object@dimension))
                 	return("ra has too few, or too many elements")
 		TRUE})
-setMethod("initialize", "matrix.csr", 
+setMethod("initialize", "matrix.csr",
 	function(.Object, ra = 0,  ja = as.integer(1),
 		ia = as.integer(c(1,2)),dimension = as.integer(c(1,1))) {
         .Object@ra <- ra
@@ -1491,14 +1495,14 @@ setClass("matrix.coo",representation(ra="numeric",
                	 	}
         	if(!(length(object@ra) ==length(object@ja) && length(object@ra) ==length(object@ia)))
                 	return("ra,ja,ia don't have equal lengths")
-        	if(any(object@ja < 1) || any(object@ja > ncol)) 
+        	if(any(object@ja < 1) || any(object@ja > ncol))
                 	return("ja exceeds dim bounds")
         	if(any(object@ia < 1) || any(object@ia > nrow))
                 	return("ia exceeds dim bounds")
         	if(length(object@ra) < 1 || length(object@ra) > prod(object@dimension))
                 	return("ra has too few, or too many elements")
 		TRUE})
-setMethod("initialize", "matrix.coo", 
+setMethod("initialize", "matrix.coo",
 	function(.Object, ra = numeric(0),  ja = integer(0),
 		ia = integer(0),dimension = integer(0)) {
         .Object@ra <- ra
@@ -1517,22 +1521,14 @@ setClass("matrix.csr.chol",representation(nrow="numeric",nnzlindx="numeric",
 #  BEGIN BEN ADDED                                                     #
   log.det="numeric",
 #  END BEN ADDED                                                       #
-########################################################################      
+########################################################################
   ierr="numeric",
   time="numeric"))
-if(version$major >= 1 && version$minor >= 8.0 || version$major >= 2){
-	setClassUnion("numeric or NULL",c("numeric","NULL"))
-	setClassUnion("character or NULL",c("character","NULL"))
-	}
-if(version$major == 1 && version$minor < 8.0){
-	setClass("numeric or NULL")
-	setIs("numeric","numeric or NULL")
-	setIs("NULL","numeric or NULL")
-	setClass("character or NULL")
-	setIs("character","character or NULL")
-	setIs("NULL","character or NULL")
-	}
-setClass("matrix.csc.hb",representation(ra="numeric",ja="integer",ia="integer", 
+
+setClassUnion("numeric or NULL",c("numeric","NULL"))
+setClassUnion("character or NULL",c("character","NULL"))
+
+setClass("matrix.csc.hb",representation(ra="numeric",ja="integer",ia="integer",
 	rhs.ra="numeric",guess="numeric or NULL",xexact="numeric or NULL",dimension ="integer",
 	rhs.dim="numeric",rhs.mode="character or NULL"))
 setClass("matrix.ssc.hb","matrix.csc.hb")
@@ -1606,7 +1602,7 @@ setMethod("as.matrix.csr","matrix.csr.chol", function(x, nrow, ncol,
                       ja = returned.data$ja,
                       ia = returned.data$ia,
                       dimension = returned.data$dim)
-            
+
             if (upper.tri)
               return(C0)
             else
@@ -1745,10 +1741,10 @@ setAs("numeric","matrix.diag.csr",function(from){
 	if(length(from)==1){
 		n <- as.integer(from)
 		if(n>0) from  <-  rep(1,n)
-		else stop("Sparse identity matrices must have positive, integer dimension") 
+		else stop("Sparse identity matrices must have positive, integer dimension")
 		}
 	else n <- length(from)
-	return(new("matrix.diag.csr", ra = from ,ja = as.integer(1:n), 
+	return(new("matrix.diag.csr", ra = from ,ja = as.integer(1:n),
 		ia = as.integer(1:(n+1)), dimension = as.integer(c(n,n))))
 	})
 setAs("matrix.csr","matrix.diag.csr",function(from){
@@ -1790,7 +1786,17 @@ setMethod("diag<-","matrix.diag.csr",function(x,value) {
 	diag(y) <- value
 	as(y,"matrix.diag.csr")
 	})
-setGeneric("det")
+
+## <comment:MM>
+## Defining methods for det() is "wrong by design", as nowadays,
+## determinant() is preferred, and det() a wrapper around determinant().
+## ==> should rather define methods for determinant()
+##     and export a det() which is using the S4 generic determinant()
+## --> will define determinant() methods below, at least for now.
+## <comment/>
+##MM setGeneric("det")
+if(FALSE) ## possibly in the future
+setMethod("det","ANY",Matrix::det)
 setMethod("det","matrix",base::det)
 ########################################################################
 #  BEGIN BEN ADDED                                                     #
@@ -1807,13 +1813,7 @@ setMethod("det","matrix.csr", function(x, logarithm=FALSE, ...)
             else
               return(det(chol(x))^2)
           })
-#                                                                      #
-#  END BEN ADDED                                                       #
-########################################################################
 
-########################################################################
-#  BEGIN BEN ADDED                                                     #
-#                                                                      #
 #  I'm changing the det method so it can return the log det if asked   #
 #                                                                      #
 #  it was formerly:                                                    #
@@ -1829,21 +1829,49 @@ setMethod("det","matrix.csr.chol", function(x, logarithm=FALSE, ...)
 #                                                                      #
 #  END BEN ADDED                                                       #
 ########################################################################
+setMethod("determinant", signature(x = "matrix.csr", logarithm = "missing"),
+	  function(x, logarithm, ...) determinant(x, logarithm = TRUE, ...))
+setMethod("determinant", signature(x = "matrix.csr.chol", logarithm = "missing"),
+	  function(x, logarithm, ...) determinant(x, logarithm = TRUE, ...))
+setMethod("determinant", signature(x = "matrix.csr.chol", logarithm = "logical"),
+	  function(x, logarithm, ...) {
+	      modulus <- if (logarithm) x@log.det else x@det
+	      attr(modulus, "logarithm") <- logarithm
+	      val <- list(modulus = modulus, sign = sign(x@det))
+	      class(val) <- "det"
+	      val
+	  })
+setMethod("determinant", signature(x = "matrix.csr", logarithm = "logical"),
+	  function(x, logarithm, ...) {
+	      r <- determinant(chol(x), logarithm=logarithm)
+	      r$modulus <- if (logarithm) 2* r$modulus else r$modulus^2
+	      r
+	  })
 
 
-setGeneric("norm",function(x, ...)standardGeneric("norm"))
-setMethod("norm","matrix.csr", function(x, type = "sup", ...){
-  switch(type,
-                sup = max(abs(x@ra)),
-                HS = sqrt(sum(x@ra^2)),
-                l1 = sum(abs(x@ra))
-                )
-        }
-)
 
-setGeneric("chol", def = function(x, pivot= FALSE,...) standardGeneric("chol"),
-	   useAsDefault= function(x, pivot= FALSE,...) base::chol(x, pivot, ...))
-setMethod("chol","matrix.csr", function(x, pivot = FALSE, 
+
+.norm.csr <- function(x, type, ...) {
+    ## instead of default (above), need this [pre 2.11.0]:
+    if(missing(type)) type <- "sup"
+    switch(type,
+	   sup = max(abs(x@ra)),
+	   HS = sqrt(sum(x@ra^2)),
+	   l1 = sum(abs(x@ra)))
+}
+if(getRversion() < "2.11.0" || R.version$`svn rev` < 51018) {
+    setGeneric("norm", function(x, type, ...) standardGeneric("norm"))# as "Matrix"
+    setMethod("norm", "matrix.csr", .norm.csr)
+} else { ## 2.11.0 has	implicitGeneric	 norm() with signature	(x, type)
+    setMethod("norm", c(x = "matrix.csr", type = "missing"),
+	      function(x, type, ...) .norm.csr(x, type="sup"))
+    setMethod("norm", c(x = "matrix.csr", type = "character"), .norm.csr)
+}
+
+
+##MM setGeneric("chol", def = function(x, pivot= FALSE,...) standardGeneric("chol"),
+##MM 	   useAsDefault= function(x, pivot= FALSE,...) base::chol(x, pivot, ...))
+setMethod("chol","matrix.csr", function(x, pivot = FALSE,
 	nsubmax, nnzlmax, tmpmax, eps = .Machine$double.eps, ...){
 # Interface for a sparse least squares solver via Ng-Peyton's Cholesky
 # factorization
@@ -1860,7 +1888,7 @@ setMethod("chol","matrix.csr", function(x, pivot = FALSE,
         iwmax <- 7*nrow+3
         if(missing(nsubmax)) nsubmax <- nnzdmax
         if(missing(nnzlmax)) nnzlmax <- max(4*nnzdmax,floor(.2*nnzdmax^1.3))
-        if(missing(tmpmax)) tmpmax <- 30*nrow
+        if(missing(tmpmax)) tmpmax <- 50*nrow
         level <- 8
         z <- .Fortran("chol", nrow = as.integer(nrow), nnzdmax = as.integer(nnzdmax),
                 d = as.double(x@ra), jd = as.integer(x@ja), id = as.integer(x@ia),
@@ -1872,7 +1900,7 @@ setMethod("chol","matrix.csr", function(x, pivot = FALSE,
                 colcnt = integer(nrow), snode = integer(nrow), xsuper = integer(nrow+1),
                 split = integer(nrow), tmpmax = as.integer(tmpmax), tmpvec = double(tmpmax),
                 cachsz = as.integer(cachsz), level = as.integer(level), ierr = integer(1),
-                time = double(1), PACKAGE = "SparseM") 
+                time = double(1), PACKAGE = "SparseM")
 if (z$ierr != 0){
                 if(z$ierr == 9) mess <- "singularity problem"
                 else if(z$ierr == 4) mess <- "Increase nnzlmax"
@@ -1905,18 +1933,21 @@ if (z$ierr != 0){
 #  BEGIN BEN ADDED                                                     #
       log.det=log.det,
 #  END BEN ADDED                                                       #
-########################################################################      
+########################################################################
       ierr=z$ierr,time=z$time)
 	})
 setMethod("chol","matrix.csc",function(x,pivot = FALSE, ...)chol(as.matrix.csr(x)))
+
+## Need generic here, as we want to add argument 'twice':
 setGeneric("backsolve",
-	function(r, x, k = NULL, upper.tri = NULL, transpose = NULL,  twice = TRUE, ...) 
-		standardGeneric("backsolve"),
-	useAsDefault= function(r, x,  k = ncol(r), upper.tri = TRUE, 
-		transpose = FALSE, twice = TRUE, ...) 
-		base::backsolve(r, x, k = k, upper.tri = upper.tri, 
+	   function(r, x, k = NULL, upper.tri = NULL, transpose = NULL,
+		    twice = TRUE, ...)
+	   standardGeneric("backsolve"),
+	   useAsDefault= function(r, x,	 k = ncol(r), upper.tri = TRUE,
+		transpose = FALSE, twice = TRUE, ...)
+		base::backsolve(r, x, k = k, upper.tri = upper.tri,
 			transpose = transpose, ...))
-setMethod("backsolve","matrix.csr.chol", 
+setMethod("backsolve","matrix.csr.chol",
 function(r, x, k = NULL, upper.tri = NULL, transpose = NULL, twice = TRUE, ...){
 # backsolve for Ng-Peyton's Cholesky factorization
 #       If twice = TRUE:  Solves linear system A b = x where r is chol(A)
@@ -1926,7 +1957,7 @@ function(r, x, k = NULL, upper.tri = NULL, transpose = NULL, twice = TRUE, ...){
 #       x --  rhs  may be a matrix in dense form
         m <- r@nrow
         if(!is.matrix(x)) x <- as.matrix(x)
-        if(nrow(x)!=m)stop("chol not conformable with x")
+        if(nrow(x) != m) stop("chol structure 'r' is not conformable with x")
         p <- ncol(x)
 	if(twice)
            z <- .Fortran("bckslv", m = as.integer(m), nnzlindx = as.integer(r@nnzlindx),
@@ -1989,9 +2020,9 @@ setMethod("solve","matrix.csr", function (a, b, ...) {
         z <- as.matrix.csr(z)
     z
    })
-setGeneric("model.matrix", function(object, ...) # /*RSB*/ changed definition
-	standardGeneric("model.matrix")) # /*RSB*/
-	
+##MM setGeneric("model.matrix", function(object, ...) # /*RSB*/ changed definition
+##MM 	standardGeneric("model.matrix")) # /*RSB*/
+
 setMethod("model.matrix","matrix.csc.hb", function(object,...){
         object <- new("matrix.csc",ra=object@ra,ja=object@ja,
                 ia=object@ia,dimension=object@dimension)
@@ -2003,8 +2034,8 @@ setMethod("model.matrix","matrix.ssc.hb", function(object, ...){
         as.matrix.csr(object)
 	})
 
-setGeneric("model.response", function(data, type) # /*RSB*/ changed definition
-	standardGeneric("model.response")) # /*RSB*/
+##MM setGeneric("model.response", function(data, type) # /*RSB*/ changed definition
+##MM 	standardGeneric("model.response")) # /*RSB*/
 setMethod("model.response","ANY", # /*RSB*/
 function(data,type="any"){ # /*RSB*/
 	stats:::model.response(data, type="any") # /*RSB*/
@@ -2012,7 +2043,7 @@ function(data,type="any"){ # /*RSB*/
 
 
 setMethod("model.response","matrix.csc.hb",
-function(data,type="any"){  
+function(data,type="any"){
         if(is.null(data@rhs.mode)) stop("Right-hand side doesn't exist")
         if (data@rhs.mode == "F")
                 z <- matrix(data@rhs.ra,nrow=data@rhs.dim[1],
@@ -2022,7 +2053,7 @@ function(data,type="any"){
         z
 	})
 setMethod("model.response","matrix.ssc.hb",
-function(data,type="any"){  
+function(data,type="any"){
         if(is.null(data@rhs.mode)) stop("Right-hand side doesn't exist")
         if (data@rhs.mode == "F")
                 z <- matrix(data@rhs.ra,nrow=data@rhs.dim[1],
@@ -2032,7 +2063,7 @@ function(data,type="any"){
         z
 	})
 setGeneric("model.xexact",function(data)
-	standardGeneric("model.xexact")) 
+	standardGeneric("model.xexact"))
 setMethod("model.xexact","matrix.ssc.hb",
 	function(data){ matrix(data@xexact,nrow=data@rhs.dim[1],
 		ncol=data@rhs.dim[2]) })
@@ -2040,7 +2071,7 @@ setMethod("model.xexact","matrix.csc.hb",
 	function(data){ matrix(data@xexact,nrow=data@rhs.dim[1],
 		ncol=data@rhs.dim[2]) })
 setGeneric("model.guess",function(data)
-	standardGeneric("model.guess")) 
+	standardGeneric("model.guess"))
 setMethod("model.guess","matrix.ssc.hb",
 	function(data){ matrix(data@guess,nrow=data@rhs.dim[1],
 		ncol=data@rhs.dim[2]) })
@@ -2052,27 +2083,18 @@ setMethod("%*%",signature(x="matrix.csr",y="matrix"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="matrix.csr",y="numeric"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="matrix",y="matrix.csr"),.matmul.matrix.csr)
 setMethod("%*%",signature(x="numeric",y="matrix.csr"),.matmul.matrix.csr)
-if(version$major == 1 && version$minor >= 8.0 || version$major >= 2){
-	setMethod("%x%",signature(X="matrix.csr",Y="matrix.csr"),
-		function(X,Y) .kron.matrix.csr(X,Y))
-	setMethod("%x%",signature(X="matrix.csr",Y="numeric"),
-		function(X,Y) .kron.matrix.csr(X,Y))
-	setMethod("%x%",signature(X="numeric",Y="matrix.csr"),
-		function(X,Y) .kron.matrix.csr(X,Y))
-	setMethod("%x%",signature(X="matrix",Y="matrix.csr"),
-		function(X,Y) .kron.matrix.csr(X,Y))
-	setMethod("%x%",signature(X="matrix.csr",Y="matrix"),
-		function(X,Y) .kron.matrix.csr(X,Y))
-        }
-if(version$major == 1 && version$minor < 8.0 ){
-	setMethod("%x%",signature(X="matrix.csr",Y="matrix.csr",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
-	setMethod("%x%",signature(X="matrix.csr",Y="numeric",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
-	setMethod("%x%",signature(X="numeric",Y="matrix.csr",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
-	setMethod("%x%",signature(X="matrix",Y="matrix.csr",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
-	setMethod("%x%",signature(X="matrix.csr",Y="matrix",FUN = "missing",make.dimnames = "missing"), .kron.matrix.csr)
-        }
 
-setGeneric("image", function(x, ...) standardGeneric("image")) 
+## This used to define methods for "%x%", now "kronecker" instead
+## [see .onLoad above! ] -- for better co-habitation with 'Matrix':
+tmp <- function(X, Y, FUN = "*", make.dimnames = FALSE, ...) .kron.matrix.csr(X,Y)
+setMethod("kronecker",signature(X="matrix.csr",Y="matrix.csr"), tmp)
+setMethod("kronecker",signature(X="matrix.csr",Y="numeric"), tmp)
+setMethod("kronecker",signature(X="numeric",Y="matrix.csr"), tmp)
+setMethod("kronecker",signature(X="matrix",Y="matrix.csr"),  tmp)
+setMethod("kronecker",signature(X="matrix.csr",Y="matrix"),  tmp)
+rm(tmp)
+
+setGeneric("image", function(x, ...) standardGeneric("image"))
 	# /*RSB*/  changed definition
 
 setMethod("image","matrix.csr",

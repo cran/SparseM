@@ -1,3 +1,5 @@
+c SparseM Package
+c Author:  Pin Ng
 c
 c Extract: Subroutine to extract the non-diagonal structure and
 c   entries from A stored in CSR format
