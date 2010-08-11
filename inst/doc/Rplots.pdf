@@ -2,8 +2,8 @@
 %Å‚Å„ÅœÅ”\r
 1 0 obj
 <<
-/CreationDate (D:20100211151124)
-/ModDate (D:20100211151124)
+/CreationDate (D:20100811163636)
+/ModDate (D:20100811163636)
 /Title (R Graphics Output)
 /Producer (R 2.11.0)
 /Creator (R)
@@ -28,7 +28,7 @@ endobj
 /Length 7 0 R
 >>
 stream
-q
+1 J 1 j q
 Q q 0.00 0.00 252.00 504.00 re W n
 BT
 0.000 0.000 0.000 rg
@@ -38833,6 +38833,7 @@ Q q
 0.000 0.000 0.000 RG
 0.75 w
 [] 0 d
+1 J
 1 j
 10.00 M
 59.04 73.44 m 220.95 73.44 l S
@@ -50886,6 +50887,7 @@ Q q
 0.000 0.000 0.000 RG
 0.75 w
 [] 0 d
+1 J
 1 j
 10.00 M
 311.04 73.44 m 472.95 73.44 l S
@@ -50946,7 +50948,7 @@ Q
 endstream
 endobj
 7 0 obj
-1436051
+1436067
 endobj
 3 0 obj
 <<
@@ -50962,7 +50964,7 @@ endobj
 <<
 /ProcSet [/PDF /Text]
 /Font <</F2 9 0 R /F3 10 0 R >>
-/ExtGState << >>
+/ExtGState << /GSais 11 0 R >>
 >>
 endobj
 8 0 obj
@@ -50988,25 +50990,32 @@ endobj
 /BaseFont /Helvetica-Bold
 /Encoding 8 0 R
 >> endobj
+11 0 obj
+<<
+/Type /ExtGState
+/AIS false
+>>
+endobj
 xref
-0 11
+0 12
 0000000000 65535 f 
 0000000021 00000 n 
 0000000164 00000 n 
-0001436420 00000 n 
-0001436503 00000 n 
+0001436436 00000 n 
+0001436519 00000 n 
 0000000213 00000 n 
 0000000293 00000 n 
-0001436397 00000 n 
-0001436595 00000 n 
-0001436852 00000 n 
-0001436948 00000 n 
+0001436413 00000 n 
+0001436625 00000 n 
+0001436882 00000 n 
+0001436978 00000 n 
+0001437080 00000 n 
 trailer
 <<
-/Size 11
+/Size 12
 /Info 1 0 R
 /Root 2 0 R
 >>
 startxref
-1437050
+1437130
 %%EOF
