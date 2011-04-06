@@ -93,18 +93,18 @@ User's Guide for Harwell-Boeing Sparse Matrix Collection at
 }
 
 \examples{ 
-read.matrix.hb(system.file("data","lsq.rra",package = "SparseM"))-> hb.o
-class(hb.o) # -> [1] "matrix.csc.hb"
-model.matrix(hb.o)->X
+Xy <- read.matrix.hb(system.file("textdata","lsq.rra",package = "SparseM"))
+class(Xy) # -> [1] "matrix.csc.hb"
+X <- model.matrix(Xy)->X
 class(X) # -> "matrix.csr"
 dim(X) # -> [1] 1850  712
-y <- model.response(hb.o) # extract the rhs
+y <- model.response(Xy) # extract the rhs
 length(y) # [1] 1850
-read.matrix.hb(system.file("data","rua_32_ax.rua",package = "SparseM"))-> hb.o
-X <- model.matrix(hb.o)
-y <- model.response(hb.o) # extract the rhs
-g <- model.guess(hb.o) # extract the guess 
-a <- model.xexact(hb.o) # extract the xexact 
+Xy <- read.matrix.hb(system.file("textdata","rua_32_ax.rua",package = "SparseM"))
+X <- model.matrix(Xy)
+y <- model.response(Xy) # extract the rhs
+g <- model.guess(Xy) # extract the guess 
+a <- model.xexact(Xy) # extract the xexact 
 fit <- solve(t(X) \%*\% X, t(X) \%*\% y) # compare solution with xexact solution 
 }
 \keyword{IO}
