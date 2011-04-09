@@ -93,14 +93,14 @@ User's Guide for Harwell-Boeing Sparse Matrix Collection at
 }
 
 \examples{ 
-Xy <- read.matrix.hb(system.file("textdata","lsq.rra",package = "SparseM"))
+Xy <- read.matrix.hb(system.file("extdata","lsq.rra",package = "SparseM"))
 class(Xy) # -> [1] "matrix.csc.hb"
 X <- model.matrix(Xy)->X
 class(X) # -> "matrix.csr"
 dim(X) # -> [1] 1850  712
 y <- model.response(Xy) # extract the rhs
 length(y) # [1] 1850
-Xy <- read.matrix.hb(system.file("textdata","rua_32_ax.rua",package = "SparseM"))
+Xy <- read.matrix.hb(system.file("extdata","rua_32_ax.rua",package = "SparseM"))
 X <- model.matrix(Xy)
 y <- model.response(Xy) # extract the rhs
 g <- model.guess(Xy) # extract the guess 
