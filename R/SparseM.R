@@ -1736,6 +1736,7 @@ setMethod("diff","matrix.csr", function(x, lag = 1, differences = 1, ...) {
 #setClass("matrix.diag.csr")
 setClass("matrix.diag.csr","matrix.csr")
 #setIs("matrix.csr","matrix.diag.csr")
+setAs("matrix","matrix.csr",function(from){as.matrix.csr(from)})
 setAs("numeric","matrix.diag.csr",function(from){
 	#if(!is.numeric(from))stop("non-numeric entries in sparse matrices not allowed")
 	if(length(from)==1){

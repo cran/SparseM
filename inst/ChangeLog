@@ -439,3 +439,5 @@ The version 0.86
 	o  Changed License in DESCRIPTION to file License and added a somewhat
 	inflammatory comment to the Licence file that was sent to R-devel in
 	2009.
+The version 0.89
+	o  added a setAs for matrix to matrix.csr conversion
