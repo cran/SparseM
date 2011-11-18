@@ -79,14 +79,14 @@
 This group of functions evaluates and coerces changes in class structure.
 }
 \usage{
-as.matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
-as.matrix.csc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
-as.matrix.ssr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
-as.matrix.ssc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
-is.matrix.csr(x, ...)
-is.matrix.csc(x, ...)
-is.matrix.ssr(x, ...)
-is.matrix.ssc(x, ...)
+\method{as}{matrix.csr}(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
+\method{as}{matrix.csc}(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
+\method{as}{matrix.ssr}(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
+\method{as}{matrix.ssc}(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
+\method{is}{matrix.csr}(x, ...)
+\method{is}{matrix.csc}(x, ...)
+\method{is}{matrix.ssr}(x, ...)
+\method{is}{matrix.ssc}(x, ...)
 }
 \arguments{
 \item{x}{is a matrix, or vector object,  of either dense or sparse form}

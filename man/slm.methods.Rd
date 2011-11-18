@@ -14,15 +14,15 @@
   Summarize, print, and extract objects from  \code{\link{slm}} objects.
 }
 \usage{
-summary.slm(object, correlation, \dots)
-summary.mslm(object, \dots)
-print.slm(x, digits, \dots)
-print.summary.slm(x, digits, symbolic.cor, signif.stars, \dots)
-fitted.slm(object, \dots)
-residuals.slm(object, \dots)
-coef.slm(object, \dots)
-extractAIC.slm(fit, scale = 0, k = 2, \dots)
-deviance.slm(object, \dots)
+\method{summary}{slm}(object, correlation, \dots)
+\method{summary}{mslm}(object, \dots)
+\method{print}{slm}(x, digits, \dots)
+\method{print}{summary.slm}(x, digits, symbolic.cor, signif.stars, \dots)
+\method{fitted}{slm}(object, \dots)
+\method{residuals}{slm}(object, \dots)
+\method{coef}{slm}(object, \dots)
+\method{extractAIC}{slm}(fit, scale = 0, k = 2, \dots)
+\method{deviance}{slm}(object, \dots)
 }
 \arguments{
 \item{object,x,fit}{ object of class \code{slm}.  }

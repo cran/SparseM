@@ -1,13 +1,12 @@
 .onLoad <- function(lib, pkg) {
-    require(methods)
-    ## Lifted from Matrix/R/zzz.R -- to remain "bug-compatible":-)
-    require(utils) # -> assignInNamespace {but "anyway"}
-    assignInNamespace("%x%", function (X, Y) kronecker(X, Y), ns = "base")
-
-	packageStartupMessage(sprintf("Package %s (%s) loaded.
+    if(getRversion() < "2.15.0"){
+        require(methods)
+        require(utils) # -> assignInNamespace {but "anyway"}
+        assignInNamespace("%x%", function (X, Y) kronecker(X, Y), ns = "base")
+        }
+    packageStartupMessage(sprintf("Package %s (%s) loaded.
 	   To cite, see citation(\"%s\")\n", pkg, packageDescription(pkg)$Version, pkg))
 }
-# /*RSB*/ .onLoad needed instead of .First.lib, no library.dynam()
 #--------------------------------------------------------------------
 "is.matrix.csr" <- function(x, ...) is(x,"matrix.csr")
 #--------------------------------------------------------------------

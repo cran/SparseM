@@ -1,14 +1,12 @@
 Package: SparseM
-Version: 0.89
+Version: 0.91
 Author: Roger Koenker <rkoenker@uiuc.edu> and Pin Ng <Pin.Ng@NAU.EDU>
 Maintainer: Roger Koenker <rkoenker@uiuc.edu>
 Depends: R (>= 2.4.1), methods, stats, utils
-LazyLoad: Yes
-ZipData: No
 Description: Basic linear algebra for sparse matrices
 License: file LICENSE
 Title: Sparse Linear Algebra
 URL: http://www.econ.uiuc.edu/~roger/research/sparse/sparse.html
-Packaged: 2011-04-28 14:04:38 UTC; roger
+Packaged: 2011-11-18 16:14:44 UTC; roger
 Repository: CRAN
-Date/Publication: 2011-04-28 15:36:46
+Date/Publication: 2011-11-19 06:46:23

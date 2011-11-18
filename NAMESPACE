@@ -9,6 +9,9 @@ export(is.matrix.csr, is.matrix.csc, is.matrix.ssr, is.matrix.ssc, is.matrix.coo
 if(getRversion() < "2.11.0" || R.version$`svn rev` < 51018)
     export("norm")
 
+if(getRversion() >= "2.15.0")
+    importFrom("methods", kronecker)
+
 exportClasses(matrix.csr, matrix.csc, matrix.ssr, matrix.ssc, matrix.coo, matrix.csr.chol, matrix.csc.hb, matrix.ssc.hb, slm, mslm, summary.slm, matrix.diag.csr)
 
 exportMethods(as.matrix.csr, as.matrix.csc, as.matrix.ssr, as.matrix.ssc, as.matrix.coo, as.matrix,

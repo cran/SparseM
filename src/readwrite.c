@@ -57,13 +57,3 @@ void read_HB3(char **filename, int *M, int *Nrhs, double *Rhs, char **rhsflag)
    for(i = 0; i < *Nrhs * *M; i++)
 	Rhs[i] = rhs[i];
 }
-
-void write_HB1(char **filename, int *M, int *N, int *nonzeros, int *colptr,
-int *rowind, double *val, int *Nrhs, double *rhs, double *guess, double *exact,
-char **Title, char **Key, char **Type, char **Rhstype, char **Ptrfmt,
-char **Indfmt, char **Valfmt, char **Rhsfmt)
-{
-   writeHB_mat_double(*filename, *M, *N, *nonzeros, colptr, rowind, val, *Nrhs,
-rhs, guess, exact, *Title, *Key, *Type, *Ptrfmt, *Indfmt, *Valfmt, *Rhsfmt, *Rhstype);
-
-}
