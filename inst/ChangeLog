@@ -444,3 +444,20 @@ The version 0.89
 The version 0.90
 	o  Conditionally removed assigninNamespace()  in onLoad as suggested
 	by BDR see mail from Oct 28 2011.
+The version 0.96
+	1.  Removed the LICENSE file that had described some uncertainties with respect 
+	to the license status of the code in src/cholesky.f.  These uncertainties have
+	now been resolved by the original authors, Esmond Ng and Barry Peyton,
+	declaring their code to be open source, and thus the quantreg package can now
+	be considered fully  GPL.  See the README file for further details.
+	
+	2.  fixed some vestigial calls to fprintf IOHBTerminate etc that
+	contained un-R-like printing or exit calls.
+
+	3.  Added a .Rinstignore file to deal with the vignette Makefile
+	complaint from R CMD check.
+
+	4.  Modified the .onLoad call to include a call to assignInNamespace()
+	to deal with a problem with kronecker.  (This is provisional until
+	2.15 is released.)  Thanks to BDR for helpful advice on this and the
+	other items in  this revision.

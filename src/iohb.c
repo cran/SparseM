@@ -219,10 +219,10 @@ Fri Aug 15 16:29:47 EDT 1997
 #include<stdlib.h>
 #include<string.h>
 #include<math.h>
+#include<R.h>
 
 char* substr(const char* S, const int pos, const int len);
 void upcase(char* S);
-void IOHBTerminate(char* message);
 
 int readHB_info(const char* filename, int* M, int* N, int* nz, char** Type, 
                                                       int* Nrhs)
@@ -252,10 +252,10 @@ int readHB_info(const char* filename, int* M, int* N, int* nz, char** Type,
     char Ptrfmt[17], Indfmt[17], Valfmt[21], Rhsfmt[21];
 
     mat_type = (char *) malloc(4);
-    if ( mat_type == NULL ) IOHBTerminate("Insufficient memory for mat_typen");
+    if ( mat_type == NULL ) error("Insufficient memory for mat_typen");
     
     if ( (in_file = fopen( filename, "r")) == NULL ) {
-       fprintf(stderr,"Error: Cannot open file: %s\n",filename);
+       Rprintf("Error: Cannot open file: %s\n",filename);
        return 0;
     }
 
@@ -304,7 +304,7 @@ int readHB_header(FILE* in_file, char* Title, char* Key, char* Type,
 /*  First line:   */
     fgets(line, BUFSIZ, in_file);
     if ( sscanf(line,"%*s") < 0 ) 
-        IOHBTerminate("iohb.c: Null (or blank) first line of HB file.\n");
+        error("iohb.c: Null (or blank) first line of HB file.\n");
     (void) sscanf(line, "%72c%8[^\n]", Title, Key);
     *(Key+8) = (char) NULL;
     *(Title+72) = (char) NULL;
@@ -312,7 +312,7 @@ int readHB_header(FILE* in_file, char* Title, char* Key, char* Type,
 /*  Second line:  */
     fgets(line, BUFSIZ, in_file);
     if ( sscanf(line,"%*s") < 0 ) 
-        IOHBTerminate("iohb.c: Null (or blank) second line of HB file.\n");
+        error("iohb.c: Null (or blank) second line of HB file.\n");
     if ( sscanf(line,"%i",&Totcrd) != 1) Totcrd = 0;
     if ( sscanf(line,"%*i%i",Ptrcrd) != 1) *Ptrcrd = 0;
     if ( sscanf(line,"%*i%*i%i",Indcrd) != 1) *Indcrd = 0;
@@ -322,9 +322,9 @@ int readHB_header(FILE* in_file, char* Title, char* Key, char* Type,
 /*  Third line:   */
     fgets(line, BUFSIZ, in_file);
     if ( sscanf(line,"%*s") < 0 ) 
-        IOHBTerminate("iohb.c: Null (or blank) third line of HB file.\n");
+        error("iohb.c: Null (or blank) third line of HB file.\n");
     if ( sscanf(line, "%3c", Type) != 1) 
-        IOHBTerminate("iohb.c: Invalid Type info, line 3 of Harwell-Boeing file.\n");
+        error("iohb.c: Invalid Type info, line 3 of Harwell-Boeing file.\n");
     *(Type+3) = (char) NULL;
     upcase(Type);
     if ( sscanf(line,"%*3c%i",Nrow) != 1) *Nrow = 0 ;
@@ -335,13 +335,13 @@ int readHB_header(FILE* in_file, char* Title, char* Key, char* Type,
 /*  Fourth line:  */
     fgets(line, BUFSIZ, in_file);
     if ( sscanf(line,"%*s") < 0 ) 
-        IOHBTerminate("iohb.c: Null (or blank) fourth line of HB file.\n");
+        error("iohb.c: Null (or blank) fourth line of HB file.\n");
     if ( sscanf(line, "%16c",Ptrfmt) != 1)
-        IOHBTerminate("iohb.c: Invalid format info, line 4 of Harwell-Boeing file.\n"); 
+        error("iohb.c: Invalid format info, line 4 of Harwell-Boeing file.\n"); 
     if ( sscanf(line, "%*16c%16c",Indfmt) != 1)
-        IOHBTerminate("iohb.c: Invalid format info, line 4 of Harwell-Boeing file.\n"); 
+        error("iohb.c: Invalid format info, line 4 of Harwell-Boeing file.\n"); 
     if ( sscanf(line, "%*16c%*16c%20c",Valfmt) != 1) 
-        IOHBTerminate("iohb.c: Invalid format info, line 4 of Harwell-Boeing file.\n"); 
+        error("iohb.c: Invalid format info, line 4 of Harwell-Boeing file.\n"); 
     sscanf(line, "%*16c%*16c%*20c%20c",Rhsfmt);
     *(Ptrfmt+16) = (char) NULL;
     *(Indfmt+16) = (char) NULL;
@@ -353,9 +353,9 @@ int readHB_header(FILE* in_file, char* Title, char* Key, char* Type,
     { 
        fgets(line, BUFSIZ, in_file);
        if ( sscanf(line,"%*s") < 0 ) 
-           IOHBTerminate("iohb.c: Null (or blank) fifth line of HB file.\n");
+           error("iohb.c: Null (or blank) fifth line of HB file.\n");
        if ( sscanf(line, "%3c", Rhstype) != 1) 
-         IOHBTerminate("iohb.c: Invalid RHS type information, line 5 of Harwell-Boeing file.\n");
+         error("iohb.c: Invalid RHS type information, line 5 of Harwell-Boeing file.\n");
        if ( sscanf(line, "%*3c%i", Nrhs) != 1) *Nrhs = 0;
        if ( sscanf(line, "%*3c%*i%i", &Nrhsix) != 1) Nrhsix = 0;
     }
@@ -398,7 +398,7 @@ int readHB_mat_double(const char* filename, int colptr[], int rowind[],
     char line[BUFSIZ];
 
     if ( (in_file = fopen( filename, "r")) == NULL ) {
-       fprintf(stderr,"Error: Cannot open file: %s\n",filename);
+       Rprintf("Error: Cannot open file: %s\n",filename);
        return 0;
     }
 
@@ -419,14 +419,14 @@ int readHB_mat_double(const char* filename, int colptr[], int rowind[],
                           /* then storage entries are offset by 1                  */
 
     ThisElement = (char *) malloc(Ptrwidth+1);
-    if ( ThisElement == NULL ) IOHBTerminate("Insufficient memory for ThisElement.");
+    if ( ThisElement == NULL ) error("Insufficient memory for ThisElement.");
     *(ThisElement+Ptrwidth) = (char) NULL;
     count=0;
     for (i=0;i<Ptrcrd;i++)
     {
        fgets(line, BUFSIZ, in_file);
        if ( sscanf(line,"%*s") < 0 ) 
-         IOHBTerminate("iohb.c: Null (or blank) line in pointer data region of HB file.\n");
+         error("iohb.c: Null (or blank) line in pointer data region of HB file.\n");
        col =  0;
        for (ind = 0;ind<Ptrperline;ind++)
        {
@@ -442,14 +442,14 @@ int readHB_mat_double(const char* filename, int colptr[], int rowind[],
 /*  Read row index array:  */
 
     ThisElement = (char *) malloc(Indwidth+1);
-    if ( ThisElement == NULL ) IOHBTerminate("Insufficient memory for ThisElement.");
+    if ( ThisElement == NULL ) error("Insufficient memory for ThisElement.");
     *(ThisElement+Indwidth) = (char) NULL;
     count = 0;
     for (i=0;i<Indcrd;i++)
     {
        fgets(line, BUFSIZ, in_file);
        if ( sscanf(line,"%*s") < 0 ) 
-         IOHBTerminate("iohb.c: Null (or blank) line in index data region of HB file.\n");
+         error("iohb.c: Null (or blank) line in index data region of HB file.\n");
        col =  0;
        for (ind = 0;ind<Indperline;ind++)
        {
@@ -470,14 +470,14 @@ int readHB_mat_double(const char* filename, int colptr[], int rowind[],
            else Nentries = Nnzero;
 
     ThisElement = (char *) malloc(Valwidth+1);
-    if ( ThisElement == NULL ) IOHBTerminate("Insufficient memory for ThisElement.");
+    if ( ThisElement == NULL ) error("Insufficient memory for ThisElement.");
     *(ThisElement+Valwidth) = (char) NULL;
     count = 0;
     for (i=0;i<Valcrd;i++)
     {
        fgets(line, BUFSIZ, in_file);
        if ( sscanf(line,"%*s") < 0 ) 
-         IOHBTerminate("iohb.c: Null (or blank) line in value data region of HB file.\n");
+         error("iohb.c: Null (or blank) line in value data region of HB file.\n");
        if (Valflag == 'D')  {
           while( strchr(line,'D') ) *strchr(line,'D') = 'E';
 /*           *strchr(Valfmt,'D') = 'E'; */
@@ -519,22 +519,22 @@ int readHB_newmat_double(const char* filename, int* M, int* N, int* nonzeros,
 	readHB_info(filename, M, N, nonzeros, &Type, &Nrhs);
 
         *colptr = (int *)malloc((*N+1)*sizeof(int));
-        if ( *colptr == NULL ) IOHBTerminate("Insufficient memory for colptr.\n");
+        if ( *colptr == NULL ) error("Insufficient memory for colptr.\n");
         *rowind = (int *)malloc(*nonzeros*sizeof(int));
-        if ( *rowind == NULL ) IOHBTerminate("Insufficient memory for rowind.\n");
+        if ( *rowind == NULL ) error("Insufficient memory for rowind.\n");
         if ( Type[0] == 'C' ) {
 /*
-   fprintf(stderr, "Warning: Reading complex data from HB file %s.\n",filename);
-   fprintf(stderr, "         Real and imaginary parts will be interlaced in val[].\n");
+   Rprintf( "Warning: Reading complex data from HB file %s.\n",filename);
+   Rprintf( "         Real and imaginary parts will be interlaced in val[].\n");
 */
            /* Malloc enough space for real AND imaginary parts of val[] */
            *val = (double *)malloc(*nonzeros*sizeof(double)*2);
-           if ( *val == NULL ) IOHBTerminate("Insufficient memory for val.\n");
+           if ( *val == NULL ) error("Insufficient memory for val.\n");
         } else {
            if ( Type[0] != 'P' ) {   
              /* Malloc enough space for real array val[] */
              *val = (double *)malloc(*nonzeros*sizeof(double));
-             if ( *val == NULL ) IOHBTerminate("Insufficient memory for val.\n");
+             if ( *val == NULL ) error("Insufficient memory for val.\n");
            }
         }  /* No val[] space needed if pattern only */
 	return readHB_mat_double(filename, *colptr, *rowind, *val);
@@ -577,7 +577,7 @@ int readHB_aux_double(const char* filename, const char AuxType, double b[])
     char line[BUFSIZ];
 
     if ((in_file = fopen( filename, "r")) == NULL) {
-      fprintf(stderr,"Error: Cannot open file: %s\n",filename);
+      Rprintf("Error: Cannot open file: %s\n",filename);
       return 0;
      }
 
@@ -586,13 +586,13 @@ int readHB_aux_double(const char* filename, const char AuxType, double b[])
                   &Ptrcrd, &Indcrd, &Valcrd, &Rhscrd, Rhstype);
     if (Nrhs <= 0)
     {
-      fprintf(stderr, "Warn: Attempt to read auxillary vector(s) when none are present.\n");
+      Rprintf( "Warn: Attempt to read auxillary vector(s) when none are present.\n");
       return 0;
     }
     if (Rhstype[0] != 'F' )
     {
-      fprintf(stderr,"Warn: Attempt to read auxillary vector(s) which are not stored in Full form.\n");
-      fprintf(stderr,"       Rhs must be specified as full. \n");
+      Rprintf("Warn: Attempt to read auxillary vector(s) which are not stored in Full form.\n");
+      Rprintf("       Rhs must be specified as full. \n");
       return 0;
     }
 
@@ -609,11 +609,11 @@ int readHB_aux_double(const char* filename, const char AuxType, double b[])
     if ( Rhstype[2] == 'X' ) nvecs++;
 
     if ( AuxType == 'G' && Rhstype[1] != 'G' ) {
-      fprintf(stderr, "Warn: Attempt to read auxillary Guess vector(s) when none are present.\n");
+      Rprintf( "Warn: Attempt to read auxillary Guess vector(s) when none are present.\n");
       return 0;
     }
     if ( AuxType == 'X' && Rhstype[2] != 'X' ) {
-      fprintf(stderr, "Warn: Attempt to read auxillary eXact solution vector(s) when none are present.\n");
+      Rprintf( "Warn: Attempt to read auxillary eXact solution vector(s) when none are present.\n");
       return 0;
     }
 
@@ -656,7 +656,7 @@ int readHB_aux_double(const char* filename, const char AuxType, double b[])
 /*  repeating to fill Nrhs vectors                   */
 
   ThisElement = (char *) malloc(Rhswidth+1);
-  if ( ThisElement == NULL ) IOHBTerminate("Insufficient memory for ThisElement.");
+  if ( ThisElement == NULL ) error("Insufficient memory for ThisElement.");
   *(ThisElement+Rhswidth) = (char) NULL;
   for (rhsi=0;rhsi<Nrhs;rhsi++) {
 
@@ -712,18 +712,18 @@ int readHB_newaux_double(const char* filename, const char AuxType, double** b)
 
 	readHB_info(filename, &M, &N, &nonzeros, &Type, &Nrhs);
         if ( Nrhs <= 0 ) {
-          fprintf(stderr,"Warn: Requested read of aux vector(s) when none are present.\n");
+          Rprintf("Warn: Requested read of aux vector(s) when none are present.\n");
           return 0;
         } else { 
           if ( Type[0] == 'C' ) {
-            fprintf(stderr, "Warning: Reading complex aux vector(s) from HB file %s.",filename);
-            fprintf(stderr, "         Real and imaginary parts will be interlaced in b[].");
+            Rprintf( "Warning: Reading complex aux vector(s) from HB file %s.",filename);
+            Rprintf( "         Real and imaginary parts will be interlaced in b[].");
             *b = (double *)malloc(M*Nrhs*sizeof(double)*2);
-            if ( *b == NULL ) IOHBTerminate("Insufficient memory for rhs.\n");
+            if ( *b == NULL ) error("Insufficient memory for rhs.\n");
             return readHB_aux_double(filename, AuxType, *b);
           } else {
             *b = (double *)malloc(M*Nrhs*sizeof(double));
-            if ( *b == NULL ) IOHBTerminate("Insufficient memory for rhs.\n");
+            if ( *b == NULL ) error("Insufficient memory for rhs.\n");
 	    return readHB_aux_double(filename, AuxType, *b);
           }
         }
@@ -766,10 +766,10 @@ int writeHB_mat_double(const char* filename, int M, int N,
     }
     if ( filename != NULL ) {
        if ( (out_file = fopen( filename, "w")) == NULL ) {
-         fprintf(stderr,"Error: Cannot open file: %s\n",filename);
+         Rprintf("Error: Cannot open file: %s\n",filename);
          return 0;
        }
-    } else out_file = stdout;
+    } else Rprintf("Error: No file specified.\n");
 
     if ( Ptrfmt == NULL ) Ptrfmt = "(8I10)";
     ParseIfmt(Ptrfmt,&Ptrperline,&Ptrwidth);
@@ -907,7 +907,7 @@ int writeHB_mat_double(const char* filename, int M, int N,
     }
 
     if ( fclose(out_file) != 0){
-      fprintf(stderr,"Error closing file in writeHB_mat_double().\n");
+      Rprintf("Error closing file in writeHB_mat_double().\n");
       return 0;
     } else return 1;
     
@@ -947,7 +947,7 @@ int readHB_mat_char(const char* filename, int colptr[], int rowind[],
     char Ptrfmt[17], Indfmt[17], Rhsfmt[21];
 
     if ( (in_file = fopen( filename, "r")) == NULL ) {
-       fprintf(stderr,"Error: Cannot open file: %s\n",filename);
+       Rprintf("Error: Cannot open file: %s\n",filename);
        return 0;
     }
 
@@ -971,14 +971,14 @@ int readHB_mat_char(const char* filename, int colptr[], int rowind[],
                           /* then storage entries are offset by 1                  */
 
     ThisElement = (char *) malloc(Ptrwidth+1);
-    if ( ThisElement == NULL ) IOHBTerminate("Insufficient memory for ThisElement.");
+    if ( ThisElement == NULL ) error("Insufficient memory for ThisElement.");
     *(ThisElement+Ptrwidth) = (char) NULL;
     count=0; 
     for (i=0;i<Ptrcrd;i++)
     {
        fgets(line, BUFSIZ, in_file);
        if ( sscanf(line,"%*s") < 0 ) 
-         IOHBTerminate("iohb.c: Null (or blank) line in pointer data region of HB file.\n");
+         error("iohb.c: Null (or blank) line in pointer data region of HB file.\n");
        col =  0;
        for (ind = 0;ind<Ptrperline;ind++)
        {
@@ -994,14 +994,14 @@ int readHB_mat_char(const char* filename, int colptr[], int rowind[],
 /*  Read row index array:  */
 
     ThisElement = (char *) malloc(Indwidth+1);
-    if ( ThisElement == NULL ) IOHBTerminate("Insufficient memory for ThisElement.");
+    if ( ThisElement == NULL ) error("Insufficient memory for ThisElement.");
     *(ThisElement+Indwidth) = (char) NULL;
     count = 0;
     for (i=0;i<Indcrd;i++)
     {
        fgets(line, BUFSIZ, in_file);
        if ( sscanf(line,"%*s") < 0 ) 
-         IOHBTerminate("iohb.c: Null (or blank) line in index data region of HB file.\n");
+         error("iohb.c: Null (or blank) line in index data region of HB file.\n");
        col =  0;
        for (ind = 0;ind<Indperline;ind++)
        {
@@ -1022,14 +1022,14 @@ int readHB_mat_char(const char* filename, int colptr[], int rowind[],
            else Nentries = Nnzero;
 
     ThisElement = (char *) malloc(Valwidth+1);
-    if ( ThisElement == NULL ) IOHBTerminate("Insufficient memory for ThisElement.");
+    if ( ThisElement == NULL ) error("Insufficient memory for ThisElement.");
     *(ThisElement+Valwidth) = (char) NULL;
     count = 0;
     for (i=0;i<Valcrd;i++)
     {
        fgets(line, BUFSIZ, in_file);
        if ( sscanf(line,"%*s") < 0 ) 
-         IOHBTerminate("iohb.c: Null (or blank) line in value data region of HB file.\n");
+         error("iohb.c: Null (or blank) line in value data region of HB file.\n");
        if (Valflag == 'D') {
           while( strchr(line,'D') ) *strchr(line,'D') = 'E';
        }
@@ -1071,12 +1071,12 @@ int readHB_newmat_char(const char* filename, int* M, int* N, int* nonzeros, int*
     char Ptrfmt[17], Indfmt[17], Rhsfmt[21];
 
     if ((in_file = fopen( filename, "r")) == NULL) {
-      fprintf(stderr,"Error: Cannot open file: %s\n",filename);
+      Rprintf("Error: Cannot open file: %s\n",filename);
       return 0;
      }
     
     *Valfmt = (char *)malloc(21*sizeof(char));
-    if ( *Valfmt == NULL ) IOHBTerminate("Insufficient memory for Valfmt.");
+    if ( *Valfmt == NULL ) error("Insufficient memory for Valfmt.");
     readHB_header(in_file, Title, Key, Type, M, N, nonzeros, &Nrhs,
                   Ptrfmt, Indfmt, (*Valfmt), Rhsfmt,
                   &Ptrcrd, &Indcrd, &Valcrd, &Rhscrd, Rhstype);
@@ -1084,22 +1084,22 @@ int readHB_newmat_char(const char* filename, int* M, int* N, int* nonzeros, int*
     ParseRfmt(*Valfmt,&Valperline,&Valwidth,&Valprec,&Valflag);
 
         *colptr = (int *)malloc((*N+1)*sizeof(int));
-        if ( *colptr == NULL ) IOHBTerminate("Insufficient memory for colptr.\n");
+        if ( *colptr == NULL ) error("Insufficient memory for colptr.\n");
         *rowind = (int *)malloc(*nonzeros*sizeof(int));
-        if ( *rowind == NULL ) IOHBTerminate("Insufficient memory for rowind.\n");
+        if ( *rowind == NULL ) error("Insufficient memory for rowind.\n");
         if ( Type[0] == 'C' ) {
 /*
-   fprintf(stderr, "Warning: Reading complex data from HB file %s.\n",filename);
-   fprintf(stderr, "         Real and imaginary parts will be interlaced in val[].\n");
+   Rprintf( "Warning: Reading complex data from HB file %s.\n",filename);
+   Rprintf( "         Real and imaginary parts will be interlaced in val[].\n");
 */
            /* Malloc enough space for real AND imaginary parts of val[] */
            *val = (char *)malloc(*nonzeros*Valwidth*sizeof(char)*2);
-           if ( *val == NULL ) IOHBTerminate("Insufficient memory for val.\n");
+           if ( *val == NULL ) error("Insufficient memory for val.\n");
         } else {
            if ( Type[0] != 'P' ) {   
              /* Malloc enough space for real array val[] */
              *val = (char *)malloc(*nonzeros*Valwidth*sizeof(char));
-             if ( *val == NULL ) IOHBTerminate("Insufficient memory for val.\n");
+             if ( *val == NULL ) error("Insufficient memory for val.\n");
            }
         }  /* No val[] space needed if pattern only */
 	return readHB_mat_char(filename, *colptr, *rowind, *val, *Valfmt);
@@ -1141,7 +1141,7 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
     char *ThisElement;
 
     if ((in_file = fopen( filename, "r")) == NULL) {
-      fprintf(stderr,"Error: Cannot open file: %s\n",filename);
+      Rprintf("Error: Cannot open file: %s\n",filename);
       return 0;
      }
 
@@ -1151,13 +1151,13 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
 
     if (Nrhs <= 0)
     {
-      fprintf(stderr, "Warn: Attempt to read auxillary vector(s) when none are present.\n");
+      Rprintf( "Warn: Attempt to read auxillary vector(s) when none are present.\n");
       return 0;
     }
     if (Rhstype[0] != 'F' )
     {
-      fprintf(stderr,"Warn: Attempt to read auxillary vector(s) which are not stored in Full form.\n");
-      fprintf(stderr,"       Rhs must be specified as full. \n");
+      Rprintf("Warn: Attempt to read auxillary vector(s) which are not stored in Full form.\n");
+      Rprintf("       Rhs must be specified as full. \n");
       return 0;
     }
 
@@ -1174,11 +1174,11 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
     if ( Rhstype[2] == 'X' ) nvecs++;
 
     if ( AuxType == 'G' && Rhstype[1] != 'G' ) {
-      fprintf(stderr, "Warn: Attempt to read auxillary Guess vector(s) when none are present.\n");
+      Rprintf( "Warn: Attempt to read auxillary Guess vector(s) when none are present.\n");
       return 0;
     }
     if ( AuxType == 'X' && Rhstype[2] != 'X' ) {
-      fprintf(stderr, "Warn: Attempt to read auxillary eXact solution vector(s) when none are present.\n");
+      Rprintf( "Warn: Attempt to read auxillary eXact solution vector(s) when none are present.\n");
       return 0;
     }
 
@@ -1203,7 +1203,7 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
     fgets(line, BUFSIZ, in_file);
     linel= strchr(line,'\n')-line;
     if ( sscanf(line,"%*s") < 0 ) 
-       IOHBTerminate("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
+       error("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
     col = 0;
 /*  Skip to initial offset */
 
@@ -1213,7 +1213,7 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
            fgets(line, BUFSIZ, in_file);
            linel= strchr(line,'\n')-line;
        if ( sscanf(line,"%*s") < 0 ) 
-       IOHBTerminate("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
+       error("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
            col = 0;
        }
     }
@@ -1231,7 +1231,7 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
            fgets(line, BUFSIZ, in_file);
            linel= strchr(line,'\n')-line;
        if ( sscanf(line,"%*s") < 0 ) 
-       IOHBTerminate("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
+       error("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
            if (Rhsflag == 'D')  {
               while( strchr(line,'D') ) *strchr(line,'D') = 'E';
            }
@@ -1262,7 +1262,7 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
            fgets(line, BUFSIZ, in_file);
            linel= strchr(line,'\n')-line;
        if ( sscanf(line,"%*s") < 0 ) 
-       IOHBTerminate("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
+       error("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
            col = 0;
        }
     }
@@ -1285,30 +1285,30 @@ int readHB_newaux_char(const char* filename, const char AuxType, char** b, char*
     char Ptrfmt[17], Indfmt[17], Valfmt[21];
 
     if ((in_file = fopen( filename, "r")) == NULL) {
-      fprintf(stderr,"Error: Cannot open file: %s\n",filename);
+      Rprintf("Error: Cannot open file: %s\n",filename);
       return 0;
      }
 
     *Rhsfmt = (char *)malloc(21*sizeof(char));
-    if ( *Rhsfmt == NULL ) IOHBTerminate("Insufficient memory for Rhsfmt.");
+    if ( *Rhsfmt == NULL ) error("Insufficient memory for Rhsfmt.");
     readHB_header(in_file, Title, Key, Type, &Nrow, &Ncol, &Nnzero, &Nrhs,
                   Ptrfmt, Indfmt, Valfmt, (*Rhsfmt),
                   &Ptrcrd, &Indcrd, &Valcrd, &Rhscrd, Rhstype);
      fclose(in_file);
         if ( Nrhs == 0 ) {
-          fprintf(stderr,"Warn: Requested read of aux vector(s) when none are present.\n");
+          Rprintf("Warn: Requested read of aux vector(s) when none are present.\n");
           return 0;
         } else {
           ParseRfmt(*Rhsfmt,&Rhsperline,&Rhswidth,&Rhsprec,&Rhsflag);
           if ( Type[0] == 'C' ) {
-            fprintf(stderr, "Warning: Reading complex aux vector(s) from HB file %s.",filename);
-            fprintf(stderr, "         Real and imaginary parts will be interlaced in b[].");
+            Rprintf( "Warning: Reading complex aux vector(s) from HB file %s.",filename);
+            Rprintf( "         Real and imaginary parts will be interlaced in b[].");
             *b = (char *)malloc(Nrow*Nrhs*Rhswidth*sizeof(char)*2);
-            if ( *b == NULL ) IOHBTerminate("Insufficient memory for rhs.\n");
+            if ( *b == NULL ) error("Insufficient memory for rhs.\n");
 	    return readHB_aux_char(filename, AuxType, *b);
           } else {
             *b = (char *)malloc(Nrow*Nrhs*Rhswidth*sizeof(char));
-            if ( *b == NULL ) IOHBTerminate("Insufficient memory for rhs.\n");
+            if ( *b == NULL ) error("Insufficient memory for rhs.\n");
 	    return readHB_aux_char(filename, AuxType, *b);
           }
         } 
@@ -1352,10 +1352,10 @@ int writeHB_mat_char(const char* filename, int M, int N,
 
     if ( filename != NULL ) {
        if ( (out_file = fopen( filename, "w")) == NULL ) {
-         fprintf(stderr,"Error: Cannot open file: %s\n",filename);
+         Rprintf("Error: Cannot open file: %s\n",filename);
          return 0;
        }
-    } else out_file = stdout;
+    } else Rprintf("Error: No file specified.\n");
 
     if ( Ptrfmt == NULL ) Ptrfmt = "(8I10)";
     ParseIfmt(Ptrfmt,&Ptrperline,&Ptrwidth);
@@ -1482,7 +1482,7 @@ int writeHB_mat_char(const char* filename, int M, int N,
     }
 
     if ( fclose(out_file) != 0){
-      fprintf(stderr,"Error closing file in writeHB_mat_char().\n");
+      Rprintf("Error closing file in writeHB_mat_char().\n");
       return 0;
     } else return 1;
     
@@ -1558,7 +1558,7 @@ int ParseRfmt(char* fmt, int* perline, int* width, int* prec, int* flag)
     } else if (strchr(fmt,'F') != NULL) { 
        *flag = 'F';
     } else {
-      fprintf(stderr,"Real format %s in H/B file not supported.\n",fmt);
+      Rprintf("Real format %s in H/B file not supported.\n",fmt);
       return 0;
     }
     tmp = strchr(fmt,'(');
@@ -1580,7 +1580,7 @@ char* substr(const char* S, const int pos, const int len)
     char *SubS;
     if ( pos+len <= strlen(S)) {
     SubS = (char *)malloc(len+1);
-    if ( SubS == NULL ) IOHBTerminate("Insufficient memory for SubS.");
+    if ( SubS == NULL ) error("Insufficient memory for SubS.");
     for (i=0;i<len;i++) SubS[i] = S[pos+i];
     SubS[len] = (char) NULL;
     } else {
@@ -1598,10 +1598,3 @@ void upcase(char* S)
     for (i=0;i< len;i++)
        S[i] = toupper(S[i]);
 }
-
-void IOHBTerminate(char* message) 
-{
-   fprintf(stderr,message);
-   exit(1);
-}
-

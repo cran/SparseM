@@ -1,12 +1,20 @@
-.onLoad <- function(lib, pkg) {
-    if(getRversion() < "2.15.0"){
-        require(methods)
-        require(utils) # -> assignInNamespace {but "anyway"}
-        assignInNamespace("%x%", function (X, Y) kronecker(X, Y), ns = "base")
-        }
+.onLoad <-
+    if(getRversion() < "2.15.0") {
+function(lib, pkg) {
+    utils::assignInNamespace("%x%", function (X, Y) kronecker(X, Y), ns 
+= "base")
     packageStartupMessage(sprintf("Package %s (%s) loaded.
-	   To cite, see citation(\"%s\")\n", pkg, packageDescription(pkg)$Version, pkg))
+	   To cite, see citation(\"%s\")\n", pkg, 
+packageDescription(pkg)$Version, pkg))
 }
+} else {
+function(lib, pkg) {
+    packageStartupMessage(sprintf("Package %s (%s) loaded.
+	   To cite, see citation(\"%s\")\n", pkg, 
+packageDescription(pkg)$Version, pkg))
+}
+}
+
 #--------------------------------------------------------------------
 "is.matrix.csr" <- function(x, ...) is(x,"matrix.csr")
 #--------------------------------------------------------------------
@@ -73,28 +81,25 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 "as.matrix.csc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
 {
     if (is.matrix.csc(x)) x
-    else as.matrix.csc(as.matrix.csr(x))
-#    else as.matrix.csc(as.matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps))
+    else as.matrix.csc(as.matrix.csr(x,nrow = nrow, ncol = ncol, eps = eps))
 }
 #--------------------------------------------------------------------
 "as.matrix.ssr" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
 {
 	if (is.matrix.ssr(x)) x
-	else as.matrix.ssr(as.matrix.csr(x))
-#	else as.matrix.ssr(as.matrix.csr(x, nrow = 1, ncol = 1, eps = .Machine$double.eps))
+	else as.matrix.ssr(as.matrix.csr(x,nrow = nrow, ncol = ncol, eps = eps))
 }
 #--------------------------------------------------------------------
 "as.matrix.ssc" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
 {
 	if (is.matrix.ssc(x)) x
-	else as.matrix.ssc(as.matrix.csc(x))
-#	else as.matrix.ssc(as.matrix.csc(x, nrow = 1, ncol = 1, eps = .Machine$double.eps))
+	else as.matrix.ssc(as.matrix.csc(x,nrow = nrow, ncol = ncol, eps = eps))
 }
 #--------------------------------------------------------------------
 "as.matrix.coo" <- function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...)
 {
 	if (is.matrix.coo(x) && missing(nrow) && missing(ncol)) x
-	else as.matrix.coo(as.matrix.csr(x))
+	else as.matrix.coo(as.matrix.csr(x,nrow = nrow, ncol = ncol, eps = eps))
 }
 #--------------------------------------------------------------------
 #"ncol.matrix.csr" <-
@@ -1226,7 +1231,7 @@ function (x, digits = max(3, getOption("digits") - 3),
             digits = digits), "\nF-statistic:", formatC(x$fstatistic[1],
             digits = digits), "on", x$fstatistic[2], "and", x$fstatistic[3],
             "DF,\tp-value:", formatC(1 - pf(x$fstatistic[1],
-                x$fstatistic[2], x$fstatistic[3]), dig = digits),
+                x$fstatistic[2], x$fstatistic[3]), digits = digits),
             "\n")
     }
     correl <- x$correlation
@@ -1445,7 +1450,6 @@ function (x, rw = 1:x@dimension[1], cl = 1:x@dimension[2], value)
 return(x)
 }
 # All the S4 Methods stuff is collected below this point
-#require(methods) /*RSB*/ commented out
 setClass("matrix.csr",representation(ra="numeric",
 	ja="integer",ia="integer", dimension="integer"),
 	validity = function(object) {

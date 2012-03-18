@@ -1,6 +1,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include "iohb.h"
+#include "R.h"
 
 void read_HB1(char **filename, int* M, int* N, int* nonzeros, int* Nrhs,
 char **mxtype, char **Rhstype, int* errflg)
@@ -15,12 +16,12 @@ char **mxtype, char **Rhstype, int* errflg)
    char Ptrfmt[17], Indfmt[17], Valfmt[21], Rhsfmt[21];
 
     mat_type = (char *) malloc(4);
-    if ( mat_type == NULL ) IOHBTerminate("Insufficient memory for mat_typen");
+    if ( mat_type == NULL ) error("Insufficient memory for mat_typen");
 
    readHB_info(*filename, M, N, nonzeros, &Type, Nrhs);
    *mxtype = Type;
     if ( (in_file = fopen( *filename, "r")) == NULL ) {
-       fprintf(stderr,"Error: Cannot open file: %s\n",*filename);
+       Rprintf("Error: Cannot open file: %s\n",*filename);
        *errflg = -1;
        return;
     }

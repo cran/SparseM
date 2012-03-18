@@ -1,0 +1,16 @@
+
+Versions of SparseM prior to 0.95 included a LICENSE file that described
+some uncertainties over the licensing status of the fortran
+code in src/cholesky.f.  As of 9 March 2012, original authors of cholesky.f,
+Esmond Ng and Barry Peyton,  have now, very kindly,  given permission to
+use cholesky.f under an open source license.  They have requested that
+their code be credited via the following two publications:
+
+   Esmond G. Ng and Barry W. Peyton, "Block sparse Cholesky algorithms
+   on advanced uniprocessor computers". SIAM J. Sci. Stat. Comput.
+   14  (1993), pp. 1034-1056.
+
+   John R. Gilbert, Esmond G. Ng, and Barry W. Peyton, "An efficient
+   algorithm to compute row and column counts for sparse Cholesky
+   factorization". SIAM J. Matrix Anal. Appl. 15 (1994), pp. 1075-1091.
+
