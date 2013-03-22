@@ -461,3 +461,14 @@ The version 0.96
 	to deal with a problem with kronecker.  (This is provisional until
 	2.15 is released.)  Thanks to BDR for helpful advice on this and the
 	other items in  this revision.
+
+The version 0.96
+	1.  Fixed bug in element by element exponentiation when one of the
+	arguments was scalar.
+
+The version 0.97
+	1.  Removed iohb.c and readwrite.c which were deprecated much earlier
+	and produced various warning flags from clang in the initial testing
+	of R 3.0 beta.
+
+

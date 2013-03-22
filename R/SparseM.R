@@ -640,9 +640,9 @@ return(z)
 ".matrix.csr.expo" <- function(A,B){
 # Performs element-wise exponentiation on sparse matrices
 if(is.numeric(A) && length(A) == 1)
-        z <- new("matrix.csr",ra=A/B@ra,ja=B@ja,ia=B@ia,dimension=B@dimension)
+        z <- new("matrix.csr",ra=A^B@ra,ja=B@ja,ia=B@ia,dimension=B@dimension)
 else if(is.numeric(B) && length(B) == 1)
-        z <- new("matrix.csr",ra=B/A@ra,ja=A@ja,ia=A@ia,dimension=A@dimension)
+        z <- new("matrix.csr",ra=A@ra^B,ja=A@ja,ia=A@ia,dimension=A@dimension)
 else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
         if(is.matrix(A)) A <- as.matrix.csr(A)
         if(is.matrix(B)) B <- as.matrix.csr(B)
