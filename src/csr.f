@@ -12,7 +12,7 @@ c     ra(nnz) -- values of `a' stored in CSR format
 c     ja(nnz) -- column indices of the elements a(i,j) as stored in ra
 c     ia(m+1) -- pointers to the beginning of each row in ra and ja
 c        1         2         3         4         5         6         7
-      double precision a(m,1),ra(nnz),eps
+      double precision a(m,*),ra(nnz),eps
       integer ja(nnz),ia(m+1),m,n,nnz
       nnz = 0
       do 10 i = 1,m

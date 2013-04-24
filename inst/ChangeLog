@@ -471,4 +471,8 @@ The version 0.97
 	and produced various warning flags from clang in the initial testing
 	of R 3.0 beta.
 
+The version 0.98
+	1.  Fixed various dimension problems identified by the new R CMD check 
+	protocol.
+
 
