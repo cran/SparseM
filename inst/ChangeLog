@@ -475,4 +475,12 @@ The version 0.98
 	1.  Fixed various dimension problems identified by the new R CMD check 
 	protocol.
 
+The Version 1.00
+	1.  Added a paragraph in SparseM.solve.Rd about passed values of the
+	mysterious chol() storage allocation parameters.
 
+The version 1.01
+	1.  Removed the onLoad() call which seemed to cause problems for Uwe's
+	build of the windoz version due to some problem with the way %x% was
+	treated there.  Strange since whatever was happening was only supposed
+	to happen for R v2.15 and lesser.

@@ -1,7 +1,7 @@
-f55b7549d1914884d74406f4b20a8b2f *DESCRIPTION
+b97d5f11aaa37253d54aecd86707440f *DESCRIPTION
 465a182ae57c2d2ecb0a979f3da656bb *INDEX
 d211d99584eac92f45e808f953c14395 *NAMESPACE
-26392a4e29a7a29715ae61a1d4258147 *R/SparseM.R
+8099ae3bf1ddd4cf6cffb2786ff4c84c *R/SparseM.R
 1a1b53da5b3ba77df4d123d9dadf220f *README
 6aeb1615cc971cbbe5216d9077477a00 *data/lsq.rda
 94ee66529ae6c23a9b95948c901bcc60 *data/triogramX.rda
@@ -12,10 +12,10 @@ e00a7c28a18a2a7b46eb529e7fb60136 *demo/LeastSquares.R
 91c13c4679244617edc2c0f40d7254c0 *demo/LinearAlgebra.R
 330e65623a65292e9d45237e8619f55a *demo/Solve.R
 562ecc120d06e2f7d22ecd247d2a4664 *demo/Visualization.R
-3cd161220b69a77d65694ecbfb648684 *inst/ChangeLog
-615806583e18f5e7ae9f08b3c4609ffb *inst/doc/Makefile
+e701d1692e97a8a913c9c1ad8e3606c5 *inst/ChangeLog
+f07d6e72aaaf7711e2fd0d64d72d2f56 *inst/doc/SparseM.R
 e376c61610fdb1fc3552545c722b3403 *inst/doc/SparseM.Rnw
-267992233512cf10f2f1dededf3a7b61 *inst/doc/SparseM.pdf
+316c671719f615e90e19cb246060186f *inst/doc/SparseM.pdf
 c6589c5c8697dda9d5399540bc3a7abf *inst/extdata/lsq.out
 79ffa8d4a3ea5633c9e89b259a079e8d *inst/extdata/lsq.rra
 453c119e83ff6d1b28941938c2c13f90 *inst/extdata/rua_32_ax.rua
@@ -23,7 +23,7 @@ c6589c5c8697dda9d5399540bc3a7abf *inst/extdata/lsq.out
 028723608fc3764b43212e11c7d20e49 *man/SparseM.image.Rd
 92ff21874748fdf32fded0d08ca96ca4 *man/SparseM.ontology.Rd
 7de9d0cd981beed371bf1825b48fc5e9 *man/SparseM.ops.Rd
-3e43a6c092bbbcafaead07e1844a3a53 *man/SparseM.solve.Rd
+35f9bb0ea5995f6039751763f40a8197 *man/SparseM.solve.Rd
 c509c7e29f3184ff7dd51f6ef83f1fba *man/character-null-class.Rd
 cdf6774966428f893e7ff205234ca2d5 *man/lsq.Rd
 61112380cc5d504035d29275f68f2fe8 *man/matrix.coo-class.Rd
@@ -38,7 +38,7 @@ beb8926fa7f84b58360f7b274164cc47 *man/matrix.ssr-class.Rd
 a4551c2cad0fc75aaf78f30f0333d9dd *man/numeric-null-class.Rd
 874b0ff920b89f6af8348182e1dba536 *man/slm-class.Rd
 5cb57b1202f983d3fb665a19c7cc37da *man/slm.Rd
-3ecd51dd4d7245956885a686b76d21eb *man/slm.fit.Rd
+8c8e951cdf4bd26a37b00e99864cd224 *man/slm.fit.Rd
 bf723d042c5e00c3a4d021617f665eb8 *man/slm.methods.Rd
 4c83fca692a52ba7f8c61609e087cffe *man/summary.mslm-class.Rd
 cbe86a5e52f242349f2d17ef9cb06376 *man/summary.slm-class.Rd
@@ -51,3 +51,5 @@ c560a6a41916b6b685f5b5b70d5b660d *src/chol2csr.f
 e58fc1ca7b8a7af1e5a23b897596c34a *src/extract.f
 b4d37b5962a264d704f7e60f5c066304 *src/sparskit.f
 a521b97c0286e8c869c2eef5c7d4dab7 *src/subscr.f
+615806583e18f5e7ae9f08b3c4609ffb *vignettes/Makefile
+e376c61610fdb1fc3552545c722b3403 *vignettes/SparseM.Rnw

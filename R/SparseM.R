@@ -1,20 +1,3 @@
-.onLoad <-
-    if(getRversion() < "2.15.0") {
-function(lib, pkg) {
-    utils::assignInNamespace("%x%", function (X, Y) kronecker(X, Y), ns 
-= "base")
-    packageStartupMessage(sprintf("Package %s (%s) loaded.
-	   To cite, see citation(\"%s\")\n", pkg, 
-packageDescription(pkg)$Version, pkg))
-}
-} else {
-function(lib, pkg) {
-    packageStartupMessage(sprintf("Package %s (%s) loaded.
-	   To cite, see citation(\"%s\")\n", pkg, 
-packageDescription(pkg)$Version, pkg))
-}
-}
-
 #--------------------------------------------------------------------
 "is.matrix.csr" <- function(x, ...) is(x,"matrix.csr")
 #--------------------------------------------------------------------

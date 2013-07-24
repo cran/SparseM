@@ -65,6 +65,16 @@ compute the inverse of a matrix if the right-hand-side is missing.
 The determinant of the Cholesky factor is returned providing a
 means to efficiently compute the determinant of sparse positive
 definite symmetric matrices.
+
+There are several integer storage parameters that are set by default in the call
+to the Cholesky factorization, these can be overridden in any of the above
+functions and will be passed by the usual "dots" mechanism.  The necessity
+to do this is usually apparent from error messages like:  Error  
+in local(X...) increase tmpmax.   For example, one can use,
+\code{solve(A,b, tmpmax = 100*nrow(A))}.  The current default for tmpmax
+is \code{50*nrow(A)}. Some experimentation may be needed to
+select appropriate values, since they are highly problem dependent.  See
+the code of chol() for further details on the current defaults.
 }
 
 \note{
