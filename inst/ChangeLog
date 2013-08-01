@@ -484,3 +484,8 @@ The version 1.01
 	build of the windoz version due to some problem with the way %x% was
 	treated there.  Strange since whatever was happening was only supposed
 	to happen for R v2.15 and lesser.
+
+The version 1.03
+	1.  Moved SparseM.Rnw to a new vignettes directory at the suggestion
+	of Brian Ripley and removed the Makefile  for the vignette at the 
+	suggestion of Uwe Ligges.
