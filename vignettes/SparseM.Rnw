@@ -239,7 +239,7 @@ analogues of the familiar \texttt{lm} family. In the current implementation
 calls an intermediate function \texttt{slm.fit}, which in turn calls
 \texttt{slm.fit.csr} where the actual fitting occurs. Rather than the usual QR
 decomposition, \texttt{slm.fit.csr} proceeds by backsolving the triangular
-system resulting from a Cholesky decomposition of the $X'X$ matrix. The
+system resulting from a Cholesky decomposition of the $X^\top X$ matrix. The
 sparsity of the resulting structure is usually well preserved by this
 strategy. The use of sparse methods is quite transparent in the present 
 \texttt{slm} implementation and \texttt{summary.slm} with the associated

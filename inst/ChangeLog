@@ -489,3 +489,12 @@ The version 1.03
 	1.  Moved SparseM.Rnw to a new vignettes directory at the suggestion
 	of Brian Ripley and removed the Makefile  for the vignette at the 
 	suggestion of Uwe Ligges.
+
+The version 1.05
+    1.  Attempted to fix the definition of det and associated methods to
+    conform with procedure used by the Matrix package.  If I understand this
+    properly, the idea is that det can be defined as base::det which defaults
+    to the generic determinant() and then by defining the environment(det)
+    as environment() this ensures that calls to det() from SparseM will use
+    the methods appropriate to SparseM objects.
+

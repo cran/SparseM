@@ -1,6 +1,6 @@
 useDynLib(SparseM)
 
-importFrom(graphics, image, image.default)
+importFrom(graphics, image)
 importFrom(stats, model.matrix,model.response)
 importFrom(utils, packageDescription)
 
@@ -15,8 +15,8 @@ if(getRversion() >= "2.15.0")
 exportClasses(matrix.csr, matrix.csc, matrix.ssr, matrix.ssc, matrix.coo, matrix.csr.chol, matrix.csc.hb, matrix.ssc.hb, slm, mslm, summary.slm, matrix.diag.csr)
 
 exportMethods(as.matrix.csr, as.matrix.csc, as.matrix.ssr, as.matrix.ssc, as.matrix.coo, 
-	as.matrix, t, coerce, dim, diff, diag, "diag<-", det, norm, chol, backsolve, 
-	solve, model.matrix, model.response, "%*%", kronecker, image)
+	as.matrix, t, coerce, dim, diff, diag, "diag<-", norm, chol, backsolve, 
+	solve, model.matrix, model.response, "%*%", kronecker, "image")
 
 S3method(coef, slm)
 S3method(fitted, slm)

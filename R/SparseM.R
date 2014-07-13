@@ -1782,40 +1782,9 @@ setMethod("diag<-","matrix.diag.csr",function(x,value) {
 ## --> will define determinant() methods below, at least for now.
 ## <comment/>
 ##MM setGeneric("det")
-if(FALSE) ## possibly in the future
-setMethod("det","ANY",Matrix::det)
-setMethod("det","matrix",base::det)
-########################################################################
-#  BEGIN BEN ADDED                                                     #
-#                                                                      #
-#  I'm changing the det method so it can return the log det if asked   #
-#                                                                      #
-#  it was formerly:                                                    #
-#  setMethod("det","matrix.csr", function(x, ...) det(chol(x))^2)      #
-#                                                                      #
-setMethod("det","matrix.csr", function(x, logarithm=FALSE, ...)
-          {
-            if (logarithm)
-              return(2*det(chol(x), logarithm=TRUE))
-            else
-              return(det(chol(x))^2)
-          })
-
-#  I'm changing the det method so it can return the log det if asked   #
-#                                                                      #
-#  it was formerly:                                                    #
-#  setMethod("det","matrix.csr.chol", function(x, ...) x@det)          #
-#                                                                      #
-setMethod("det","matrix.csr.chol", function(x, logarithm=FALSE, ...)
-          {
-            if (logarithm)
-              return(x@log.det)
-            else
-              return(x@det)
-          })
-#                                                                      #
-#  END BEN ADDED                                                       #
-########################################################################
+## Altered 10 July 2014 to agree with procedure in Matrix
+det <- base::det
+environment(det) <- environment()
 setMethod("determinant", signature(x = "matrix.csr", logarithm = "missing"),
 	  function(x, logarithm, ...) determinant(x, logarithm = TRUE, ...))
 setMethod("determinant", signature(x = "matrix.csr.chol", logarithm = "missing"),
@@ -1834,9 +1803,6 @@ setMethod("determinant", signature(x = "matrix.csr", logarithm = "logical"),
 	      r$modulus <- if (logarithm) 2* r$modulus else r$modulus^2
 	      r
 	  })
-
-
-
 
 .norm.csr <- function(x, type, ...) {
     ## instead of default (above), need this [pre 2.11.0]:
@@ -2025,7 +1991,7 @@ setMethod("model.matrix","matrix.ssc.hb", function(object, ...){
 ##MM 	standardGeneric("model.response")) # /*RSB*/
 setMethod("model.response","ANY", # /*RSB*/
 function(data,type="any"){ # /*RSB*/
-	stats:::model.response(data, type="any") # /*RSB*/
+	stats::model.response(data, type="any") # /*RSB*/
 	}) # /*RSB*/
 
 
@@ -2082,7 +2048,7 @@ setMethod("kronecker",signature(X="matrix.csr",Y="matrix"),  tmp)
 rm(tmp)
 
 setGeneric("image", function(x, ...) standardGeneric("image"))
-	# /*RSB*/  changed definition
+#setGeneric("image")
 
 setMethod("image","matrix.csr",
 function(x,col=c("white","gray"),xlab="column",ylab="row", ...){
