@@ -1,6 +1,6 @@
-a7a61fd7d2076edbf6ff14a5474ee73d *DESCRIPTION
+d4910afac73ae3e8eae6988a5194d213 *DESCRIPTION
 465a182ae57c2d2ecb0a979f3da656bb *INDEX
-ebed3a14e09c6fba0b6543bb71b0a1bb *NAMESPACE
+f3fcb74ef0373c2963ac0aea40e1704a *NAMESPACE
 d5af21afbd2d581ae07aa02123f658f7 *R/SparseM.R
 1a1b53da5b3ba77df4d123d9dadf220f *README
 6aeb1615cc971cbbe5216d9077477a00 *data/lsq.rda
@@ -12,7 +12,7 @@ e00a7c28a18a2a7b46eb529e7fb60136 *demo/LeastSquares.R
 91c13c4679244617edc2c0f40d7254c0 *demo/LinearAlgebra.R
 330e65623a65292e9d45237e8619f55a *demo/Solve.R
 562ecc120d06e2f7d22ecd247d2a4664 *demo/Visualization.R
-2a4d514e849f24a14b7d1751b0fb5925 *inst/Changelog
+141beaeb8065ef5628f25be1608a7efa *inst/ChangeLog
 6c5e5addd9df174275b1140c78580b8e *inst/TODO
 316c671719f615e90e19cb246060186f *inst/doc/SparseM.pdf
 c6589c5c8697dda9d5399540bc3a7abf *inst/extdata/lsq.out
