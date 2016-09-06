@@ -113,14 +113,14 @@ C
 C
 C***********************************************************************
 C
-        INTEGER*4           BROTHR(*)     , FSON(*)       ,
+        INTEGER           BROTHR(*)     , FSON(*)       ,
      &                      PARENT(*)
 C
-        INTEGER*4           NEQNS
+        INTEGER           NEQNS
 C
 C***********************************************************************
 C
-        INTEGER*4           LROOT , NODE  , NDPAR
+        INTEGER           LROOT , NODE  , NDPAR
 C
 C***********************************************************************
 C
@@ -996,7 +996,7 @@ C
 C
 C***********************************************************************
 C
-        INTEGER*4           LROOT , NODE  , NDLSON, NDPAR
+        INTEGER           LROOT , NODE  , NDLSON, NDPAR
 C
 C***********************************************************************
 C
@@ -1327,15 +1327,15 @@ C
 C
 C***********************************************************************
 C
-        INTEGER*4           BROTHR(*)     , COLCNT(*)     , 
+        INTEGER           BROTHR(*)     , COLCNT(*)     , 
      &                      FSON(*)       , INVPOS(*)     , 
      &                      PARENT(*)     , STACK(*)
 C
-        INTEGER*4           ROOT
+        INTEGER           ROOT
 C
 C***********************************************************************
 C
-        INTEGER*4           ITOP  , NDPAR , NODE  , NUM   , NUNODE
+        INTEGER           ITOP  , NDPAR , NODE  , NUM   , NUNODE
 C
 C***********************************************************************
 C
@@ -1449,13 +1449,13 @@ C
 C
 C***********************************************************************
 C
-        INTEGER*4           ADJNCY(*)     , BROTHR(*)     ,
+        INTEGER           ADJNCY(*)     , BROTHR(*)     ,
      &                      FSON(*)       , INVP(*)       ,
      &                      INVPOS(*)     , PARENT(*)     ,
      &                      PERM(*)
 C
-        INTEGER*4           XADJ(*)
-        INTEGER*4           NEQNS
+        INTEGER           XADJ(*)
+        INTEGER           NEQNS
 C
 C***********************************************************************
 C
@@ -1527,15 +1527,15 @@ C
 C
 C***********************************************************************
 C
-        INTEGER*4           BROTHR(*)     , FSON(*)       ,
+        INTEGER           BROTHR(*)     , FSON(*)       ,
      &                      INVPOS(*)     , PARENT(*)     ,
      &                      STACK(*)
 C
-        INTEGER*4           ROOT
+        INTEGER           ROOT
 C
 C***********************************************************************
 C
-        INTEGER*4           ITOP  , NDPAR , NODE  , NUM   , NUNODE
+        INTEGER           ITOP  , NDPAR , NODE  , NUM   , NUNODE
 C
 C***********************************************************************
 C
@@ -1624,16 +1624,16 @@ C
 C
 C***********************************************************************
 C
-        INTEGER*4           ADJNCY(*)     , ANCSTR(*)     ,
+        INTEGER           ADJNCY(*)     , ANCSTR(*)     ,
      &                      INVP(*)       , PARENT(*)     ,
      &                      PERM(*)
 C
-        INTEGER*4           NEQNS
-        INTEGER*4           XADJ(*)
+        INTEGER           NEQNS
+        INTEGER           XADJ(*)
 C
 C***********************************************************************
 C
-        INTEGER*4           I     , J     , JSTOP , JSTRT , NBR   ,
+        INTEGER           I     , J     , JSTOP , JSTRT , NBR   ,
      &                      NEXT  , NODE
 C
 C***********************************************************************
@@ -2670,14 +2670,14 @@ C
 C
 C***********************************************************************
 C
-        INTEGER*4           INVP(*)       , INVP2(*)      ,
+        INTEGER           INVP(*)       , INVP2(*)      ,
      &                      PERM(*)
 C
-        INTEGER*4           NEQNS
+        INTEGER           NEQNS
 C
 C***********************************************************************
 C
-        INTEGER*4           I     , INTERM, NODE
+        INTEGER           I     , INTERM, NODE
 C
 C***********************************************************************
 C

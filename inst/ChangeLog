@@ -502,3 +502,7 @@ The version 1.05
 The version 1.7
 
 1.  Removed coerce from exports.
+
+The version 1.71
+
+1.  Fixed the REAL*8 and INTEGER*4 occurences in accordance with Kurt's email.

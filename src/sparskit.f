@@ -17,7 +17,7 @@ c----------------------------------------------------------------------c
       subroutine amask (nrow,ncol,a,ja,ia,jmask,imask,
      *                  c,jc,ic,iw,nzmax,ierr)
 c---------------------------------------------------------------------
-      real*8 a(*),c(*) 
+      double precision  a(*),c(*) 
       integer ia(nrow+1),ja(*),jc(*),ic(nrow+1),jmask(*),imask(nrow+1) 
       logical iw(ncol)
 c-----------------------------------------------------------------------
@@ -106,7 +106,7 @@ c-----------------------------------------------------------------------
       subroutine csort (n,a,ja,ia,iwork,values) 
       logical values
       integer n, ja(*), ia(n+1), iwork(*) 
-      real*8 a(*) 
+      double precision  a(*) 
 c-----------------------------------------------------------------------
 c This routine sorts the elements of  a matrix (stored in Compressed
 c Sparse Row Format) in increasing order of their column indices within 
@@ -285,7 +285,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------  
       subroutine dvperm (n, x, perm)
       integer n, perm(n)
-      real*8 x(n)
+      double precision  x(n)
 c-----------------------------------------------------------------------
 c this subroutine performs an in-place permutation of a real vector x 
 c according to the permutation array perm(*), i.e., on return, 
@@ -308,7 +308,7 @@ c----------------------------------------------------------------------c
 c           Y. Saad, Sep. 21 1989                                      c
 c----------------------------------------------------------------------c
 c local variables 
-      real*8 tmp, tmp1
+      double precision  tmp, tmp1
 c
       init      = 1
       tmp	= x(init)	
@@ -463,7 +463,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine rperm (nrow,a,ja,ia,ao,jao,iao,perm,job)
       integer nrow,ja(*),ia(nrow+1),jao(*),iao(nrow+1),perm(nrow),job
-      real*8 a(*),ao(*) 
+      double precision  a(*),ao(*) 
 c-----------------------------------------------------------------------
 c this subroutine permutes the rows of a matrix in CSR format. 
 c rperm  computes B = P A  where P is a permutation matrix.  
@@ -535,7 +535,7 @@ c-----------------------------------------------------------------------
       end
 c-----------------------------------------------------------------------
       subroutine filter1(n,rel,drptol,a,ja,ia,b,jb,ib,len,ierr)
-      real*8 a(*),b(*),drptol
+      double precision  a(*),b(*),drptol
       integer ja(*),jb(*),ia(*),ib(*),n,len,ierr
 c-----------------------------------------------------------------------
 c  Modification of the original filter subroutine in Sparskit2 on 6/17/02
@@ -576,7 +576,7 @@ c----------------------------------------------------------------------c
 c           contributed by David Day,  Sep 19, 1989.                   c
 c----------------------------------------------------------------------c
 c local variables
-      real*8 loctol
+      double precision  loctol
       integer index,row,k,k1,k2,rel 
 c
       index = 1
@@ -865,7 +865,7 @@ c Note: this module still incomplete.                                  c
 c----------------------------------------------------------------------c
        subroutine amub (nrow,ncol,job,a,ja,ia,b,jb,ib,
      *                  c,jc,ic,nzmax,iw,ierr) 
-      real*8 a(*), b(*), c(*) 
+      double precision  a(*), b(*), c(*) 
       integer ja(*),jb(*),jc(*),ia(nrow+1),ib(*),ic(*),iw(ncol)
 c-----------------------------------------------------------------------
 c performs the matrix by matrix product C = A B 
@@ -912,7 +912,7 @@ c   The row dimension of B is not needed. However there is no checking
 c   on the condition that ncol(A) = nrow(B). 
 c
 c----------------------------------------------------------------------- 
-      real*8 scal 
+      double precision  scal 
       logical values
       values = (job .ne. 0) 
       len = 0
@@ -957,7 +957,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine aplb (nrow,ncol,job,a,ja,ia,b,jb,ib,
      *     c,jc,ic,nzmax,iw,ierr)
-      real*8 a(*), b(*), c(*) 
+      double precision  a(*), b(*), c(*) 
       integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1),
      *     iw(ncol)
 c-----------------------------------------------------------------------
@@ -1048,7 +1048,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine aplsb (nrow,ncol,job,a,ja,ia,s,b,jb,ib,
      *     c,jc,ic,nzmax,iw,ierr)
-      real*8 a(*), b(*), c(*), s 
+      double precision  a(*), b(*), c(*), s 
       integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1),
      *     iw(ncol)
 c-----------------------------------------------------------------------
@@ -1141,7 +1141,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine aplsb1 (nrow,ncol,a,ja,ia,s,b,jb,ib,c,jc,ic,
      *     nzmax,ierr)
-      real*8 a(*), b(*), c(*), s
+      double precision  a(*), b(*), c(*), s
       integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1)
 c-----------------------------------------------------------------------
 c performs the operation C = A+s B for matrices in sorted CSR format.
@@ -1251,7 +1251,7 @@ c-----------------------------------------------------------------------
       end
 c-----------------------------------------------------------------------
       subroutine amudia (nrow,job, a, ja, ia, diag, b, jb, ib)
-      real*8 a(*), b(*), diag(*) 
+      double precision  a(*), b(*), diag(*) 
       integer ja(*),jb(*), ia(nrow+1),ib(nrow+1) 
 c-----------------------------------------------------------------------
 c performs the matrix by matrix product B = A * Diag  (in place) 
@@ -1308,7 +1308,7 @@ c-----------------------------------------------------------------------
       subroutine aemub (nrow,ncol,a,ja,ia,amask,jmask,imask,
      *                  c,jc,ic,iw,aw,nzmax,ierr)
 c---------------------------------------------------------------------
-      real*8 a(*),c(*),amask(*),aw(ncol)
+      double precision  a(*),c(*),amask(*),aw(ncol)
       integer ia(nrow+1),ja(*),jc(*),ic(nrow+1),jmask(*),imask(nrow+1)
       logical iw(ncol)
 c-----------------------------------------------------------------------
@@ -1401,7 +1401,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine aemub1 (nrow,ncol,a,ja,ia,b,jb,ib,c,jc,ic,
      *     nzmax,ierr)
-      real*8 a(*), b(*), c(*)
+      double precision  a(*), b(*), c(*)
       integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1)
 c-----------------------------------------------------------------------
 c A modification of aplsb by Pin Ng on 6/12/02 to
@@ -1507,7 +1507,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine aedib (nrow,ncol,job,a,ja,ia,b,jb,ib,
      *     c,jc,ic,nzmax,iw,aw,ierr)
-      real*8 a(*), b(*), c(*), aw(ncol) 
+      double precision  a(*), b(*), c(*), aw(ncol) 
       integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1),
      *     iw(ncol)
 c-----------------------------------------------------------------------
@@ -1602,7 +1602,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine aeexpb (nrow,ncol,job,a,ja,ia,b,jb,ib,
      *     c,jc,ic,nzmax,iw,aw,ierr)
-      real*8 a(*), b(*), c(*), aw(ncol) 
+      double precision  a(*), b(*), c(*), aw(ncol) 
       integer ja(*),jb(*),jc(*),ia(nrow+1),ib(nrow+1),ic(nrow+1),
      *     iw(ncol)
 c-----------------------------------------------------------------------
@@ -1709,7 +1709,7 @@ c----------------------------------------------------------------------c
 c 1)     M A T R I X    B Y    V E C T O R     P R O D U C T S         c
 c----------------------------------------------------------------------c
       subroutine amux (n, x, y, a,ja,ia) 
-      real*8  x(*), y(*), a(*) 
+      double precision   x(*), y(*), a(*) 
       integer n, ja(*), ia(*)
 c-----------------------------------------------------------------------
 c         A times a vector
@@ -1732,7 +1732,7 @@ c
 c-----------------------------------------------------------------------
 c local variables
 c
-      real*8 t
+      double precision  t
       integer i, k
 c-----------------------------------------------------------------------
       do 100 i = 1,n
@@ -1772,7 +1772,7 @@ c cscssc  : converts compressed sparse column to symmetric sparse      c
 c           column                                                     c
 c----------------------------------------------------------------------c
       subroutine csrdns(nrow,ncol,a,ja,ia,dns,ndns,ierr) 
-      real*8 dns(ndns,*),a(*)
+      double precision  dns(ndns,*),a(*)
       integer ja(*),ia(*)
 c-----------------------------------------------------------------------
 c Compressed Sparse Row    to    Dense 
@@ -1824,7 +1824,7 @@ c---- end of csrdns ----------------------------------------------------
 c-----------------------------------------------------------------------
       end
       subroutine dnscsr(nrow,ncol,nzmax,dns,ndns,a,ja,ia,ierr)
-      real*8 dns(ndns,*),a(*)
+      double precision  dns(ndns,*),a(*)
       integer ia(*),ja(*)
 c-----------------------------------------------------------------------
 c Dense		to    Compressed Row Sparse 
@@ -1880,7 +1880,7 @@ c-----------------------------------------------------------------------
 c----------------------------------------------------------------------- 
       subroutine coocsr(nrow,nnz,a,ir,jc,ao,jao,iao)
 c----------------------------------------------------------------------- 
-      real*8 a(*),ao(*),x
+      double precision  a(*),ao(*),x
       integer ir(*),jc(*),jao(*),iao(*)
 c-----------------------------------------------------------------------
 c  Coordinate     to   Compressed Sparse Row 
@@ -1948,7 +1948,7 @@ c-----------------------------------------------------------------------
 c----------------------------------------------------------------------- 
       subroutine coicsr (n,nnz,job,a,ja,ia,iwk)
       integer ia(nnz),ja(nnz),iwk(n+1) 
-      real*8 a(*)
+      double precision  a(*)
 c------------------------------------------------------------------------
 c IN-PLACE coo-csr conversion routine.
 c------------------------------------------------------------------------
@@ -1984,7 +1984,7 @@ c         if you want them sorted.
 c----------------------------------------------------------------------c
 c  Coded by Y. Saad, Sep. 26 1989                                      c
 c----------------------------------------------------------------------c
-      real*8 t,tnext
+      double precision  t,tnext
       logical values
 c----------------------------------------------------------------------- 
       values = (job .eq. 1) 
@@ -2047,7 +2047,7 @@ c------------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine csrcoo (nrow,job,nzmax,a,ja,ia,nnz,ao,ir,jc,ierr)
 c-----------------------------------------------------------------------
-      real*8 a(*),ao(*) 
+      double precision  a(*),ao(*) 
       integer ir(*),jc(*),ja(*),ia(nrow+1) 
 c----------------------------------------------------------------------- 
 c  Compressed Sparse Row      to      Coordinate 
@@ -2125,7 +2125,7 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine csrcsc2 (n,n2,job,ipos,a,ja,ia,ao,jao,iao)
       integer ia(n+1),iao(n2+1),ja(*),jao(*)
-      real*8  a(*),ao(*)
+      double precision   a(*),ao(*)
 c-----------------------------------------------------------------------
 c Compressed Sparse Row     to      Compressed Sparse Column
 c
@@ -2200,7 +2200,7 @@ c--------------- end of csrcsc2 ----------------------------------------
 c-----------------------------------------------------------------------
       end
       subroutine csrmsr (n,a,ja,ia,ao,jao,wk,iwk,nnzao,ierr)
-      real*8 a(*),ao(*),wk(n)
+      double precision  a(*),ao(*),wk(n)
       integer ia(n+1),ja(*),jao(*),iwk(n+1),nnzao,ierr
 c----------------------------------------------------------------------- 
 c Compressed Sparse Row   to      Modified - Sparse Row 
@@ -2317,7 +2317,7 @@ c-----------------------------------------------------------------------
       end
 c----------------------------------------------------------------------- 
       subroutine csrssr (nrow,a,ja,ia,nzmax,ao,jao,iao,ierr)
-      real*8 a(*), ao(*), t
+      double precision  a(*), ao(*), t
       integer ia(*), ja(*), iao(*), jao(*)
 c-----------------------------------------------------------------------
 c Compressed Sparse Row     to     Symmetric Sparse Row
@@ -2390,7 +2390,7 @@ c-----------------------------------------------------------------------
       end
 c----------------------------------------------------------------------- 
       subroutine cscssc (ncol,a,ja,ia,nzmax,ao,jao,iao,ierr)
-      real*8 a(*), ao(*)
+      double precision  a(*), ao(*)
       integer ia(*), ja(*), iao(*), jao(*)
 c-----------------------------------------------------------------------
 c Compressed Sparse Column   to   Symmetric Sparse Column
@@ -2473,7 +2473,7 @@ c     ..
 c     .. Array Arguments ..
       integer            ia(nrow+1), iao(nrow+1), indu(nrow),
      &                   iwk(nrow+1), ja(*), jao(nzmax)
-      real*8             a(*), ao(nzmax)
+      double precision              a(*), ao(nzmax)
 c     ..
 c-----------------------------------------------------------------------
 c     Symmetric Sparse Row to Compressed Sparse Row format
@@ -2539,7 +2539,7 @@ c
 c-----------------------------------------------------------------------
 c     .. Local Scalars ..
       integer            i, ipos, j, k, kfirst, klast, ko, kosav, nnz
-      real*8             tmp
+      double precision              tmp
 c     ..
 c     .. Executable Statements ..
       ierr = 0
@@ -2734,7 +2734,7 @@ c---- end of ssrcsr ----------------------------------------------------
       end
 c----------------------------------------------------------------------- 
       subroutine atmux (n, x, y, a, ja, ia)
-      real*8 x(*), y(*), a(*) 
+      double precision  x(*), y(*), a(*) 
       integer n, ia(*), ja(*)
 c-----------------------------------------------------------------------
 c         transp( A ) times a vector
