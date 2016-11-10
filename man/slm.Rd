@@ -84,8 +84,8 @@ data(lsq)
 X <- model.matrix(lsq) #extract the design matrix
 y <- model.response(lsq) # extract the rhs
 X1 <- as.matrix(X)
-slm.time <- unix.time(slm(y~X1-1) -> slm.o) # pretty fast
-lm.time <- unix.time(lm(y~X1-1) -> lm.o) # very slow
+slm.time <- system.time(slm(y~X1-1) -> slm.o) # pretty fast
+lm.time <- system.time(lm(y~X1-1) -> lm.o) # very slow
 cat("slm time =",slm.time,"\n")
 cat("slm Results: Reported Coefficients Truncated to 5  ","\n")
 sum.slm <- summary(slm.o)

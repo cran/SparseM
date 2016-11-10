@@ -506,3 +506,12 @@ The version 1.7
 The version 1.71
 
 1.  Fixed the REAL*8 and INTEGER*4 occurences in accordance with Kurt's email.
+
+The version 1.73
+
+1.  changed occurences of unix.time to system.time in accordance with Kurt's
+directive.
+
+The version 1.74
+
+1.  One more unix -> system

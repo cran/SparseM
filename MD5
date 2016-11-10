@@ -1,4 +1,4 @@
-b3a7b52f4c367eaaaaa222a1f2036ede *DESCRIPTION
+763d7839f3fc9e7bcc3a9951cc1da5d1 *DESCRIPTION
 465a182ae57c2d2ecb0a979f3da656bb *INDEX
 f3fcb74ef0373c2963ac0aea40e1704a *NAMESPACE
 d5af21afbd2d581ae07aa02123f658f7 *R/SparseM.R
@@ -9,15 +9,15 @@ bd32d6443c3f494b0f5f57f9fa125ca3 *build/vignette.rds
 6ddb4b6a5196af61e12a9d1e80794844 *demo/00Index
 837ba802116b859903e4c52634ef0912 *demo/Binding.R
 f867383e75cb81e04c8f487baa66a47a *demo/Coercion.R
-e00a7c28a18a2a7b46eb529e7fb60136 *demo/LeastSquares.R
+a1e23002df89ab4fb2e64bf621f9bbe6 *demo/LeastSquares.R
 91c13c4679244617edc2c0f40d7254c0 *demo/LinearAlgebra.R
-330e65623a65292e9d45237e8619f55a *demo/Solve.R
+0088f1be5e01158371693fd351716c34 *demo/Solve.R
 562ecc120d06e2f7d22ecd247d2a4664 *demo/Visualization.R
-c05e429f5d3e8cba848e2cb1d0386e30 *inst/ChangeLog
+d8b63fb0bf79e3ac1d0d7fdaceb4d245 *inst/ChangeLog
 6c5e5addd9df174275b1140c78580b8e *inst/TODO
-f07d6e72aaaf7711e2fd0d64d72d2f56 *inst/doc/SparseM.R
-f07a1c3a337e9a502738c3b598025f5f *inst/doc/SparseM.Rnw
-840b52e3a4dbd6bb160c2273ab0cf9a8 *inst/doc/SparseM.pdf
+7699ec748e30c58bec482b8d3a47fac3 *inst/doc/SparseM.R
+3f2396d6048ead2efa411b4c95147c09 *inst/doc/SparseM.Rnw
+aed7c3b74836e82029a3cb16faf67b30 *inst/doc/SparseM.pdf
 c6589c5c8697dda9d5399540bc3a7abf *inst/extdata/lsq.out
 79ffa8d4a3ea5633c9e89b259a079e8d *inst/extdata/lsq.rra
 453c119e83ff6d1b28941938c2c13f90 *inst/extdata/rua_32_ax.rua
@@ -39,9 +39,9 @@ beb8926fa7f84b58360f7b274164cc47 *man/matrix.ssr-class.Rd
 9749bc3989e59a7048fbdbcdc1544013 *man/mslm-class.Rd
 a4551c2cad0fc75aaf78f30f0333d9dd *man/numeric-null-class.Rd
 874b0ff920b89f6af8348182e1dba536 *man/slm-class.Rd
-5cb57b1202f983d3fb665a19c7cc37da *man/slm.Rd
+e0f12facb4d16f5209be2e0ccc3fb6be *man/slm.Rd
 8c8e951cdf4bd26a37b00e99864cd224 *man/slm.fit.Rd
-bf723d042c5e00c3a4d021617f665eb8 *man/slm.methods.Rd
+d2c63254267be45d7e7ce26bf5e307f5 *man/slm.methods.Rd
 4c83fca692a52ba7f8c61609e087cffe *man/summary.mslm-class.Rd
 cbe86a5e52f242349f2d17ef9cb06376 *man/summary.slm-class.Rd
 b453eb7e5c0b9d26b50c266ff87aacc4 *man/triogramX.Rd
@@ -53,4 +53,4 @@ c560a6a41916b6b685f5b5b70d5b660d *src/chol2csr.f
 e58fc1ca7b8a7af1e5a23b897596c34a *src/extract.f
 9a62fbc51b88ef44cbd558a906eddf19 *src/sparskit.f
 a521b97c0286e8c869c2eef5c7d4dab7 *src/subscr.f
-f07a1c3a337e9a502738c3b598025f5f *vignettes/SparseM.Rnw
+3f2396d6048ead2efa411b4c95147c09 *vignettes/SparseM.Rnw

@@ -19,6 +19,6 @@ b2[1:10]
 solve(XpX) -> XpX.inv  # (X'X)^-1
 class(XpX) # -> "matrix.csr"
 diag(XpX %*% XpX.inv) # diagonal of the 712 x 712 identity matrix
-unix.time(solve(XpX)) # faster
-unix.time(solve(as.matrix(XpX))) # much slower
+system.time(solve(XpX)) # faster
+system.time(solve(as.matrix(XpX))) # much slower
 image(XpX)
