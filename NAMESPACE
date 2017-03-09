@@ -1,4 +1,4 @@
-useDynLib(SparseM)
+useDynLib(SparseM, .registration = TRUE, .fixes = "f_")
 
 importFrom("utils", packageDescription)
 importFrom("graphics", "axis", "box", "image.default")

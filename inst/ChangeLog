@@ -515,3 +515,12 @@ directive.
 The version 1.74
 
 1.  One more unix -> system
+
+The version 1.75
+
+1.  package -> PACKAGE [per Kurt's email of 3/2/17]
+
+The version 1.76
+
+1.  Used package_native_routine_registration_skeleton  to remove
+    PACKAGE = SparseM  [per Kurt's email of 3/2/17]

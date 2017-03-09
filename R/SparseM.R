@@ -45,7 +45,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 			ia=as.integer(c(1:1,rep(2,dimx[1]))), dimension=dimx)
 		return(z)
         	}
-	z <- .Fortran("csr",
+	z <- .Fortran(f_csr,
 		as.double(x),
 		ra=double(nnz),
 		ja=integer(nnz),
@@ -53,8 +53,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 		as.integer(dimx[1]),
 		as.integer(dimx[2]),
 		nnz=as.integer(nnz),
-		as.double(eps),
-		PACKAGE = "SparseM")
+		as.double(eps))
 	if(nnz!=z$nnz)stop("nnz values inconsistent")
 	nnz <- z$nnz
 	z <- new("matrix.csr",ra = z$ra[1:nnz], ja = z$ja[1:nnz], ia = z$ia, dimension = dimx)
@@ -95,7 +94,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 	nrow <- x@dimension[1]
 	nnza <- x@ia[nrow+1]-1
 	nnzao <- 2*nnza #can be set smaller
-	z <- .Fortran("ssrcsr",
+	z <- .Fortran(f_ssrcsr,
 		job = as.integer(0),
 		value2 = as.integer(1),
 		nrow = as.integer(nrow),
@@ -108,8 +107,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 		iao = integer(nrow+1),
 		indu = integer(nrow),
 		iwk = integer(nrow+1),
-		ierr = integer(1),
-		PACKAGE = "SparseM")
+		ierr = integer(1))
 	if(z$ierr != 0) stop("Not enough space")
 	nnz <- z$iao[nrow+1]-1
 	z <- new("matrix.csr",ra=z$ao[1:nnz],ja=z$jao[1:nnz],ia=z$iao,dimension=x@dimension)
@@ -124,7 +122,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 
         if(sum(abs((t(as.matrix.csr(x))-as.matrix.csr(x))@ra))!=0)
                 stop("Cannot convert an asymmetric matrix into `matrix.ssr' class")
-	z <- .Fortran("csrssr",
+	z <- .Fortran(f_csrssr,
 		as.integer(nrow),
 		as.double(x@ra),
 		as.integer(x@ja),
@@ -133,8 +131,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 		ao = as.double(x@ra),
 		jao = as.integer(x@ja),
 		iao = as.integer(x@ia),
-		ierr = integer(1),
-		PACKAGE = "SparseM")
+		ierr = integer(1))
 	if(z$ierr != 0) stop("Not enough space. This is usually caused by trying to convert an asymmetric matrix into ssr format")
 	nnza <- z$iao[nrow+1]-1
 	z <- new("matrix.ssr",ra=z$ao[1:nnza],ja=z$jao[1:nnza],ia=z$iao,dimension=x@dimension)
@@ -148,7 +145,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
                 stop("Cannot convert an asymmetric matrix into `matrix.ssc' class")
         if(sum(abs((t(as.matrix.csr(x))-as.matrix.csr(x))@ra))!=0)
                 stop("Cannot convert an asymmetric matrix into `matrix.ssc' class")
-	z <- .Fortran("cscssc",
+	z <- .Fortran(f_cscssc,
 		as.integer(nrow),
 		as.double(x@ra),
 		as.integer(x@ja),
@@ -157,8 +154,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 		ao = as.double(x@ra),
 		jao = as.integer(x@ja),
 		iao = as.integer(x@ia),
-		ierr = integer(1),
-		PACKAGE = "SparseM")
+		ierr = integer(1))
 	if(z$ierr != 0) stop("Not enough space. This is usually caused by trying to convert an asymmetric matrix into ssc format")
 	nnza <- z$iao[nrow+1]-1
 	z <- new("matrix.ssc",ra=z$ao[1:nnza],ja=z$jao[1:nnza],ia=z$iao,dimension=x@dimension)
@@ -169,11 +165,10 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
     nrow <- x@dimension[1]
     ncol <- x@dimension[2]
     nnza <- length(x@ra)
-    z <- .Fortran("csrcoo", as.integer(nrow), as.integer(1),
+    z <- .Fortran(f_csrcoo, as.integer(nrow), as.integer(1),
         as.integer(nnza), as.double(x@ra), as.integer(x@ja),
         as.integer(x@ia), nnz = integer(1), ao = as.double(x@ra),
-        ir = integer(nnza), jc = as.integer(x@ja), ierr = integer(1),
-        PACKAGE = "SparseM")
+        ir = integer(nnza), jc = as.integer(x@ja), ierr = integer(1))
     if (z$ierr != 0)
         stop("Not enough space.")
     z <- new("matrix.coo", ra = x@ra, ja = x@ja, ia = z$ir, dimension = x@dimension)
@@ -442,7 +437,7 @@ return(z)
 		z <- list(ra=rep(1,nz),ja=rep(1:ncol,nrow),ia=seq(1,nz+1,by=ncol),dim=e1@dimension)
 		}
 	else{
-		z <- .Fortran("nzero",
+		z <- .Fortran(f_nzero,
 			as.double(e1@ra),
 			as.integer(e1@ja),
 			as.integer(e1@ia),
@@ -453,8 +448,7 @@ return(z)
 			ra = double(nz),
 			ja = integer(nz),
 			ia = integer(nrow+1),
-			logical(ncol),
-			PACKAGE = "SparseM")
+			logical(ncol))
 		z <- new("matrix.csr",ra=z$ra,ja=z$ja,ia=z$ia,dimension=e1@dimension)
 		}
 	z
@@ -474,7 +468,7 @@ nnza <- A@ia[nrow+1]-1
 nnzb <- B@ia[nrow+1]-1
 nnzmax <- length(union(A@ja+A@dimension[2]*(rep(1:A@dimension[1],diff(A@ia))-1),
 	B@ja+B@dimension[2]*(rep(1:B@dimension[1],diff(B@ia))-1)))+1
-z <- .Fortran("aplsb",
+z <- .Fortran(f_aplsb,
 	as.integer(nrow),
 	as.integer(ncol),
 	as.integer(1),
@@ -490,8 +484,7 @@ z <- .Fortran("aplsb",
 	ia = integer(nrow+1),
 	as.integer(nnzmax),
 	integer(ncol),
-	ierr = integer(1),
-	PACKAGE = "SparseM")
+	ierr = integer(1))
 if(z$ierr != 0) stop("insufficient space for sparse matrix addition")
 nnz <- z$ia[nrow+1]-1
 z <- new("matrix.csr",ra=z$ra[1:nnz],ja=z$ja[1:nnz],ia=z$ia,dimension=c(nrow,ncol))
@@ -540,7 +533,7 @@ else
         nnzb <- B@ia[Arow+1]-1
         nnzmax <- length(intersect(A@ja+A@dimension[2]*(rep(1:A@dimension[1],diff(A@ia))-1),
                 B@ja+B@dimension[2]*(rep(1:B@dimension[1],diff(B@ia))-1)))+1
-        z <- .Fortran("aemub",
+        z <- .Fortran(f_aemub,
                 as.integer(Arow),
                 as.integer(Acol),
                 as.double(A@ra),
@@ -555,8 +548,7 @@ else
                 integer(Acol),
                 double(Acol),
                 as.integer(nnzmax),
-                ierr = integer(1),
-                PACKAGE = "SparseM")
+                ierr = integer(1))
 	if(z$ierr != 0)
                 stop("insufficient space for element-wise sparse matrix multiplication")
         nnz <- z$ia[Arow+1]-1
@@ -586,7 +578,7 @@ else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
         nnzb <- B@ia[nrow+1]-1
 	nnzmax <- length(union(A@ja+A@dimension[2]*(rep(1:A@dimension[1],diff(A@ia))-1),
                 B@ja+B@dimension[2]*(rep(1:B@dimension[1],diff(B@ia))-1)))+1
-        z <- .Fortran("aedib",
+        z <- .Fortran(f_aedib,
                 as.integer(nrow),
                 as.integer(ncol),
 		as.integer(1),
@@ -602,8 +594,7 @@ else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
                 as.integer(nnzmax),
 		integer(ncol),
 		double(ncol),
-                ierr = integer(1),
-                PACKAGE = "SparseM")
+                ierr = integer(1))
         if(z$ierr != 0) stop("insufficient space for element-wise sparse matrix division")
         nnz <- z$ia[nrow+1]-1
         z1 <- vector("numeric",nrow*ncol)
@@ -638,7 +629,7 @@ else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
         nnzb <- B@ia[nrow+1]-1
 	nnzmax <- length(union(A@ja+A@dimension[2]*(rep(1:A@dimension[1],diff(A@ia))-1),
                 B@ja+B@dimension[2]*(rep(1:B@dimension[1],diff(B@ia))-1)))+1
-        z <- .Fortran("aeexpb",
+        z <- .Fortran(f_aeexpb,
                 as.integer(nrow),
                 as.integer(ncol),
 		as.integer(1),
@@ -654,8 +645,7 @@ else if(is.matrix.csr(A) || is.matrix.csr(B) || is.matrix(A) || is.matrix(B)){
                 as.integer(nnzmax),
 		integer(ncol),
 		double(ncol),
-                ierr = integer(1),
-                PACKAGE = "SparseM")
+                ierr = integer(1))
         if(z$ierr != 0) stop("insufficient space for element-wise sparse matrix exponentiation")
         nnz <- z$ia[nrow+1]-1
         z1 <- vector("numeric",nrow*ncol)
@@ -772,7 +762,7 @@ return(z)
 		flag <- TRUE
 		}
 	if(flag){
-		z <- .Fortran("filter1",
+		z <- .Fortran(f_filter1,
 			as.integer(nrow),
 			as.integer(relidx),
 			as.double(drptol),
@@ -783,8 +773,7 @@ return(z)
 			ja = integer(nnza),
 			ia = integer(nrow+1),
 			as.integer(nnza),
-			ierr = integer(1),
-		PACKAGE = "SparseM")
+			ierr = integer(1))
 		if(z$ierr !=0) stop("Not enough space")
 		nnza <- z$ia[nrow+1]-1
 		if(nnza==0){ # trap returned matrix with all zeros
@@ -866,7 +855,7 @@ if(is.matrix.csr(x)){
 		Brow <- y@dimension[1]
 		if(Acol != Brow)
 			stop("matrices not conformable for multiplication")
-		z <- .Fortran("amubdg",
+		z <- .Fortran(f_amubdg,
 			as.integer(nrow),
 			as.integer(Acol),
 			as.integer(ncol),
@@ -876,10 +865,9 @@ if(is.matrix.csr(x)){
 			as.integer(y@ia),
 			integer(nrow),
 			nnz = integer(1),
-			integer(ncol),
-			PACKAGE = "SparseM")
+			integer(ncol))
 		nnzmax <- z$nnz
-		z <- .Fortran("amub",
+		z <- .Fortran(f_amub,
 		   	as.integer(nrow),
 		   	as.integer(ncol),
 		   	as.integer(1),
@@ -894,8 +882,7 @@ if(is.matrix.csr(x)){
 		   	ia = integer(nrow+1),
 		   	as.integer(nnzmax),
 		   	integer(ncol),
-		   	ierr = integer(1),
-			PACKAGE = "SparseM")
+		   	ierr = integer(1))
 		nnz <- z$ia[nrow+1]-1
 		if(z$ierr != 0) stop("insufficient space for sparse matrix multiplication")
 		if(length(z$ra)==0){#trap zero matrix
@@ -917,14 +904,13 @@ if(is.matrix.csr(x)){
 			nrow <- x@dimension[1]
 			ncol <- x@dimension[2]
 			if(length(y) != ncol)stop("not conformable for multiplication")
-			z <- .Fortran("amux",
+			z <- .Fortran(f_amux,
 		   		as.integer(nrow),
 				as.double(y),
 			   	y=double(nrow),
 			   	as.double(x@ra),
 		   		as.integer(x@ja),
-		   		as.integer(x@ia),
-				PACKAGE = "SparseM")
+		   		as.integer(x@ia))
 			z <- z$y
 			dim(z) <- c(nrow,1)
 			}
@@ -942,14 +928,13 @@ else{
 		nrow <- y@dimension[1]
 		ncol <- y@dimension[2]
 		if(length(x) != ncol)stop("not conformable for multiplication")
-		z <- .Fortran("amux",
+		z <- .Fortran(f_amux,
    			as.integer(nrow),
 			as.double(x),
 		   	y=double(nrow),
 		   	as.double(y@ra),
    			as.integer(y@ja),
-   			as.integer(y@ia),
-			PACKAGE = "SparseM")
+   			as.integer(y@ia))
 		z <- z$y
 		dim(z) <- c(1,nrow)
 		}
@@ -1541,7 +1526,7 @@ setMethod("as.matrix.csr","matrix.coo", function(x, nrow, ncol,eps){
         nrow <- x@dimension[1]
         ncol <- x@dimension[2]
         nnz <- length(x@ra)
-        z <- .Fortran("coocsr",
+        z <- .Fortran(f_coocsr,
                 as.integer(nrow),
                 as.integer(nnz),
                 as.double(x@ra),
@@ -1549,8 +1534,7 @@ setMethod("as.matrix.csr","matrix.coo", function(x, nrow, ncol,eps){
                 as.integer(x@ja),
                 ao = double(nnz),
                 jao = integer(nnz),
-                iao = integer(nrow+1),
-                PACKAGE = "SparseM")
+                iao = integer(nrow+1))
         nnza <- z$ao[nrow+1]-1
         z <- new("matrix.csr",ra=z$ao,ja=z$jao,ia=z$iao,dimension=x@dimension)
         return(z)
@@ -1568,7 +1552,7 @@ setMethod("as.matrix.csr","matrix.csr.chol", function(x, nrow, ncol,
                                                       upper.tri=TRUE,
                                                       ...)
           {
-            returned.data <- .Fortran('chol2csr',
+            returned.data <- .Fortran('f_chol2csr',
                                       nrow=as.integer(x@nrow),
                                       nnzlindx=as.integer(x@nnzlindx),
                                       nsuper=as.integer(x@nsuper),
@@ -1580,8 +1564,7 @@ setMethod("as.matrix.csr","matrix.csr.chol", function(x, nrow, ncol,
                                       dim=integer(2),
                                       ra=double(x@nnzl),
                                       ia=integer(x@nrow+1),
-                                      ja=integer(x@nnzl),
-                                      package="SparseM")
+                                      ja=integer(x@nnzl))
 
             C0 <- new("matrix.csr",
                       ra = returned.data$ra,
@@ -1658,7 +1641,7 @@ setMethod("as.matrix","matrix.csr", function(x){
         x@ra[nan] <- uniq[1]
         x@ra[infty] <- uniq[2]
         x@ra[ninfty] <- uniq[3]
-        z <- .Fortran("csrdns",
+        z <- .Fortran(f_csrdns,
                 as.integer(nrow),
                 as.integer(ncol),
                 as.double(x@ra),
@@ -1666,8 +1649,7 @@ setMethod("as.matrix","matrix.csr", function(x){
                 as.integer(x@ia),
                 dns = double(nrow*ncol),
                 ndns = as.integer(nrow),
-                ierr = integer(1),
-                PACKAGE = "SparseM")
+                ierr = integer(1))
         if(z$ierr != 0) stop("insufficient space for dns")
         dns <- matrix(z$dns,nrow=nrow,ncol=ncol)
         dns[dns==uniq[1]] <- NaN
@@ -1683,10 +1665,9 @@ setMethod("t","matrix.csr",function(x){
 	nrow <- x@dimension[1]
         ncol <- x@dimension[2]
         nnz <- x@ia[nrow+1]-1
-        z <- .Fortran("csrcsc2", as.integer(nrow), as.integer(ncol),
+        z <- .Fortran(f_csrcsc2, as.integer(nrow), as.integer(ncol),
                 as.integer(1), as.integer(1), as.double(x@ra), as.integer(x@ja),
-                as.integer(x@ia), ao=double(nnz), jao=integer(nnz), iao=integer(ncol+1),
-                PACKAGE = "SparseM")
+                as.integer(x@ia), ao=double(nnz), jao=integer(nnz), iao=integer(ncol+1))
         dim <- as.integer(rev(x@dimension))
         new("matrix.csr",ra = z$ao, ja = z$jao, ia = z$iao, dimension = dim)
 	})
@@ -1694,10 +1675,10 @@ setMethod("t","matrix.csc",function(x) {
     nrow <- x@dimension[1]
     ncol <- x@dimension[2]
     nnz <- x@ia[ncol + 1] - 1
-    z <- .Fortran("csrcsc2", as.integer(ncol), as.integer(nrow),
+    z <- .Fortran(f_csrcsc2, as.integer(ncol), as.integer(nrow),
         as.integer(1), as.integer(1), as.double(x@ra), as.integer(x@ja),
         as.integer(x@ia), ao = double(nnz), jao = integer(nnz),
-        iao = integer(nrow + 1), PACKAGE = "SparseM")
+        iao = integer(nrow + 1))
     dim <- as.integer(rev(x@dimension))
     new("matrix.csc",ra = z$ao, ja = z$jao, ia = z$iao, dimension = dim)
    })
@@ -1843,7 +1824,7 @@ setMethod("chol","matrix.csr", function(x, pivot = FALSE,
         if(missing(nnzlmax)) nnzlmax <- max(4*nnzdmax,floor(.2*nnzdmax^1.3))
         if(missing(tmpmax)) tmpmax <- 50*nrow
         level <- 8
-        z <- .Fortran("chol", nrow = as.integer(nrow), nnzdmax = as.integer(nnzdmax),
+        z <- .Fortran(f_chol, nrow = as.integer(nrow), nnzdmax = as.integer(nnzdmax),
                 d = as.double(x@ra), jd = as.integer(x@ja), id = as.integer(x@ia),
                 nnzdsm = as.integer(nnzdsm), dsub = double(nnzdsm), jdsub = integer(nnzdsm),
                 nsub = integer(1), nsubmax = as.integer(nsubmax), lindx = integer(nsubmax),
@@ -1853,7 +1834,7 @@ setMethod("chol","matrix.csr", function(x, pivot = FALSE,
                 colcnt = integer(nrow), snode = integer(nrow), xsuper = integer(nrow+1),
                 split = integer(nrow), tmpmax = as.integer(tmpmax), tmpvec = double(tmpmax),
                 cachsz = as.integer(cachsz), level = as.integer(level), ierr = integer(1),
-                time = double(1), PACKAGE = "SparseM")
+                time = double(1))
 if (z$ierr != 0){
                 if(z$ierr == 9) mess <- "singularity problem"
                 else if(z$ierr == 4) mess <- "Increase nnzlmax"
@@ -1913,19 +1894,19 @@ function(r, x, k = NULL, upper.tri = NULL, transpose = NULL, twice = TRUE, ...){
         if(nrow(x) != m) stop("chol structure 'r' is not conformable with x")
         p <- ncol(x)
 	if(twice)
-           z <- .Fortran("bckslv", m = as.integer(m), nnzlindx = as.integer(r@nnzlindx),
+           z <- .Fortran(f_bckslv, m = as.integer(m), nnzlindx = as.integer(r@nnzlindx),
                 as.integer(r@nsuper), as.integer(p), as.integer(r@lindx),
                 as.integer(r@xlindx), as.integer(r@nnzl), as.double(r@lnz),
                 as.integer(r@xlnz), as.integer(r@invp), as.integer(r@perm),
                 as.integer(r@xsuper), double(m), sol = double(m*p), as.double(x),
-                time = double(1), PACKAGE = "SparseM")
+                time = double(1)) 
 	else
-	   z <- .Fortran("bckslb", m = as.integer(m), nnzlindx = as.integer(r@nnzlindx),
+	   z <- .Fortran(f_bckslb, m = as.integer(m), nnzlindx = as.integer(r@nnzlindx),
                 as.integer(r@nsuper), as.integer(p), as.integer(r@lindx),
                 as.integer(r@xlindx), as.integer(r@nnzl), as.double(r@lnz),
                 as.integer(r@xlnz), as.integer(r@invp), as.integer(r@perm),
                 as.integer(r@xsuper), double(m), sol = double(m*p),
-                as.double(x), time = double(1), PACKAGE = "SparseM")
+                as.double(x), time = double(1))
 
         z <- matrix(z$sol,nrow=nrow(x),ncol=ncol(x))
         drop(z)
@@ -1941,7 +1922,7 @@ setMethod("forwardsolve","matrix.csr.chol",
         if(!is.matrix(x)) x <- as.matrix(x)
         if(nrow(x)!=m)stop("chol not conformable with x")
         p <- ncol(x)
-        z <- .Fortran("bckslf", m = as.integer(m),
+        z <- .Fortran(f_bckslf, m = as.integer(m),
                       nnzlindx = as.integer(l@nnzlindx),
                       as.integer(l@nsuper), as.integer(p), as.integer(l@lindx),
                       as.integer(l@xlindx), as.integer(l@nnzl),
@@ -1950,7 +1931,7 @@ setMethod("forwardsolve","matrix.csr.chol",
                       as.integer(l@perm),
                       as.integer(l@xsuper), double(m), sol = double(m*p),
                       as.double(x),
-                      time = double(1),PACKAGE = "SparseM")
+                      time = double(1))
         z <- matrix(z$sol,nrow=nrow(x),ncol=ncol(x))
         drop(z)
         })
