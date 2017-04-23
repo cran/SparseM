@@ -1723,7 +1723,7 @@ setAs("matrix.csr","matrix.diag.csr",function(from){
         new("matrix.diag.csr", ra = from@ra, ja = from@ja, ia = from@ia, dimension = from@dimension)
         })
 setMethod("diag","matrix.csr", function (x = 1, nrow, ncol){
-    if (is.matrix.csr(x) && nargs() == 1) {
+    if (is.matrix.csr(x) && missing(nrow) && missing(ncol)) {
         if ((m <- min(dim(x))) == 0)
             return(numeric(0))
         y <- rep(0,m)
@@ -2027,9 +2027,6 @@ setMethod("kronecker",signature(X="numeric",Y="matrix.csr"), tmp)
 setMethod("kronecker",signature(X="matrix",Y="matrix.csr"),  tmp)
 setMethod("kronecker",signature(X="matrix.csr",Y="matrix"),  tmp)
 rm(tmp)
-
-setGeneric("image", function(x, ...) standardGeneric("image"))
-#setGeneric("image")
 
 setMethod("image","matrix.csr",
 function(x,col=c("white","gray"),xlab="column",ylab="row", ...){

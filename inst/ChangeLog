@@ -524,3 +524,9 @@ The version 1.76
 
 1.  Used package_native_routine_registration_skeleton  to remove
     PACKAGE = SparseM  [per Kurt's email of 3/2/17]
+
+The version 1.77 
+
+1.  Changed setMethod for diag (matrix.csr) in accordance with MM's suggestion
+
+2.  removed setGeneric for image also suggested by MM.
