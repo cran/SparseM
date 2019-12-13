@@ -119,8 +119,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 	nnza <- ceiling((x@ia[nrow+1]-1)/2)+nrow
 	if(nrow!=x@dimension[2])
                 stop("Cannot convert an asymmetric matrix into `matrix.ssr' class")
-
-        if(sum(abs((t(as.matrix.csr(x))-as.matrix.csr(x))@ra))!=0)
+        if(!all.equal(t(as.matrix.csr(x))@ra, as.matrix.csr(x)@ra))
                 stop("Cannot convert an asymmetric matrix into `matrix.ssr' class")
 	z <- .Fortran(f_csrssr,
 		as.integer(nrow),
@@ -143,7 +142,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...){
 	nnza <- ceiling((x@ia[nrow+1]-1)/2)+nrow
 	if(nrow!=x@dimension[1])
                 stop("Cannot convert an asymmetric matrix into `matrix.ssc' class")
-        if(sum(abs((t(as.matrix.csr(x))-as.matrix.csr(x))@ra))!=0)
+        if(!all.equal(t(as.matrix.csr(x))@ra, as.matrix.csr(x)@ra))
                 stop("Cannot convert an asymmetric matrix into `matrix.ssc' class")
 	z <- .Fortran(f_cscssc,
 		as.integer(nrow),
