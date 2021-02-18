@@ -1551,7 +1551,7 @@ setMethod("as.matrix.csr","matrix.csr.chol", function(x, nrow, ncol,
                                                       upper.tri=TRUE,
                                                       ...)
           {
-            returned.data <- .Fortran('f_chol2csr',
+            returned.data <- .Fortran('chol2csr',
                                       nrow=as.integer(x@nrow),
                                       nnzlindx=as.integer(x@nnzlindx),
                                       nsuper=as.integer(x@nsuper),

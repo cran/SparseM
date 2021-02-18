@@ -53,7 +53,7 @@
 }
 \references{
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
-\url{http://www.econ.uiuc.edu/~roger/research}
+\url{http://www.econ.uiuc.edu/~roger/research/home.html}
 }
 
 \author{ Roger Koenker }

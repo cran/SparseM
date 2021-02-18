@@ -39,8 +39,8 @@ length(y) # [1] 1850
 }
 \references{
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
-\url{http://www.econ.uiuc.edu/~roger/research}
+\url{http://www.econ.uiuc.edu/~roger/research/home.html}
 
-Matrix Market, \url{http://math.nist.gov/MatrixMarket/data/Harwell-Boeing/lsq/lsq.html}
+Matrix Market, \url{https://math.nist.gov/MatrixMarket/data/Harwell-Boeing/lsq/lsq.html}
 }
 \keyword{datasets}

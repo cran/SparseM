@@ -150,7 +150,7 @@ package.  To get an lower triangular \code{matric.csr} matrix, use either
 }
 \references{
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
-\url{http://www.econ.uiuc.edu/~roger/research}
+\url{http://www.econ.uiuc.edu/~roger/research/home.html}
 }
 \seealso{
 \code{SparseM.hb} for handling Harwell-Boeing sparse matrices.

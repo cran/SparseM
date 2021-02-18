@@ -81,7 +81,7 @@ The function \code{model.xexact} returns the xexact vector (or matrix).
 \references{ 
 Duff, I.S., Grimes, R.G. and Lewis, J.G. (1992) 
 User's Guide for Harwell-Boeing Sparse Matrix Collection at 
-\url{http://math.nist.gov/MatrixMarket/collections/hb.html}}
+\url{https://math.nist.gov/MatrixMarket/collections/hb.html}}
 \author{Pin Ng}
 \seealso{
 \code{slm} for sparse version of \code{lm} \cr

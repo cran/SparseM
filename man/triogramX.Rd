@@ -9,6 +9,6 @@ to illustrate the use of the sparse matrix image function.}
 \format{A 375 by 100 matrix stored in compressed sparse row format}
 \references{
 Koenker, R and Ng, P. (2002).  SparseM:  A Sparse Matrix Package for \R,\cr
-\url{http://www.econ.uiuc.edu/~roger/research}
+\url{http://www.econ.uiuc.edu/~roger/research/home.html}
 }
 \keyword{datasets}
