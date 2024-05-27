@@ -557,7 +557,8 @@ C 699    FORMAT(1X,' FOUND ',I6,' TINY DIAGONALS; REPLACED WITH INF')
 C
 C SET IFLAG TO -1 TO INDICATE PRESENCE OF TINY DIAGONALS
 C
-	IF(NTINY .NE. 0) IFLAG = -1
+	IF(NTINY .NE. 0) IFLAG = 17
+C PN(4/16/09): IFLAG was -1 but set to 17 to be consistent with ierr
 CxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPCxPC
         RETURN
       END
@@ -2484,26 +2485,25 @@ C
 C***********************************************************************
 C***********************************************************************
 C
-C   GTIMER is commented out for compatibility in the windoze boxes
-C
-CC
-C      REAL FUNCTION  GTIMER ()
-CC       --------------------------
-CC       FOR IBM RS/6000 ...
-CC       INTEGER     MCLOCK
-CC       GTIMER = MCLOCK()/100.0
-CC       --------------------------
-CC       FOR MOST BERKELEY UNIX ...
+      REAL FUNCTION  GTIMER ()
+C       --------------------------
+C       FOR IBM RS/6000 ...
+C       INTEGER     MCLOCK
+C       GTIMER = MCLOCK()/100.0
+C       --------------------------
+C       FOR MOST BERKELEY UNIX ...
 C        REAL        ETIME
 C        REAL        VEC(2)
 C        GTIMER = ETIME(VEC)
-CC       --------------------------
-CC       FOR CRAY ...
-CC       REAL        SECOND
-CC       GTIMER = SECOND()
-CC       --------------------------
-C        RETURN
-C      END
+C       --------------------------
+C       FOR CRAY ...
+C       REAL        SECOND
+C       GTIMER = SECOND()
+C       --------------------------
+C       AS RECOMMENDED BY BDR ...
+        GTIMER = 0.0
+        RETURN
+      END
 C***********************************************************************
 C***********************************************************************
 C
@@ -2786,7 +2786,7 @@ C
 C
         N = XSUPER(NSUPER+1) - 1
 C
-C        WRITE (OUTUNT,*) ' '
+C       WRITE (OUTUNT,*) ' '
 C       -------------------------------------------------------
 C       DETERMINE THE NUMBER OF NONZEROS IN CHOLESKY FACTOR AND
 C       THE NUMBER OF SUBSCRIPTS IN REPRESENTING THE SUPERNODAL
@@ -2795,11 +2795,11 @@ C       -------------------------------------------------------
         NOFNZ = XLNZ(N+1) - 1
         NOFSUB = XLINDX(NSUPER+1) - 1
 C       WRITE (OUTUNT,1) 
-C    &     '   NUMBER OF SUPERNODES               = ', NSUPER
+C     &     '   NUMBER OF SUPERNODES               = ', NSUPER
 C       WRITE (OUTUNT,1) 
-C    &      '   NUMBER OF NONZEROS IN L            = ', NOFNZ
+C     &     '   NUMBER OF NONZEROS IN L            = ', NOFNZ
 C       WRITE (OUTUNT,1) 
-C    &      '   NUMBER OF SUBSCRIPTS IN L          = ', NOFSUB
+C     &     '   NUMBER OF SUBSCRIPTS IN L          = ', NOFSUB
 C
 C       -------------------------------------------------------
 C       DETERMINE THE LARGEST SUPERNODE IN THE CHOLESKY FACTOR.
@@ -2821,9 +2821,9 @@ C           ----------------------------------------------------
             IF  ( JSIZE .GT. SUPSZE )  SUPSZE = JSIZE
   100   CONTINUE
 C       WRITE (OUTUNT,1) 
-C    &      '   LARGEST SUPERNODE BY COLUMNS       = ', MAXSUP
+C     &     '   LARGEST SUPERNODE BY COLUMNS       = ', MAXSUP
 C       WRITE (OUTUNT,1) 
-C    &      '   LARGEST SUPERNODE BY NONZEROS      = ', SUPSZE
+C     &     '   LARGEST SUPERNODE BY NONZEROS      = ', SUPSZE
 C
 C       WRITE (OUTUNT,1) 
 C    &      '   SIZE OF TEMPORARY WORK STORAGE     = ', TMPSIZ
@@ -2840,12 +2840,12 @@ C       ---------------------------
   400   CONTINUE
         SLVOPS = 2*SLVOPS
 C       WRITE (OUTUNT,2) 
-C    &      '   FACTORIZATION OPERATION COUNT      = ', FCTOPS
+C     &     '   FACTORIZATION OPERATION COUNT      = ', FCTOPS
 C       WRITE (OUTUNT,2) 
-C    &      '   TRIANGULAR SOLN OPERATION COUNT    = ', SLVOPS
+C     &     '   TRIANGULAR SOLN OPERATION COUNT    = ', SLVOPS
 C
-C   1   FORMAT ( A40, I10 )
-C   2   FORMAT ( A40, 1PD20.10 )
+C    1   FORMAT ( A40, I10 )
+C    2   FORMAT ( A40, 1PD20.10 )
         RETURN
       END
 C***********************************************************************
@@ -2945,7 +2945,14 @@ C            -----------------------------------------------------
                      DO  800  J = JSTRT, JSTOP
                          NODE = ADJNCY(J)
                          LINK = - NODE
-                         IF  ( NODE )  400, 900, 500
+C                        IF  ( NODE )  400, 900, 500
+                         IF (NODE .LT. 0) THEN 
+                             GO TO 400
+                         ELSE IF (NODE .GT. 0) THEN 
+                             GO TO 500
+                         ELSE 
+                             GO TO 900
+                         ENDIF
   500                    CONTINUE
                          IF  ( MARKER(NODE) .GE. TAG  .OR.
      1                         DFORW(NODE) .LT. 0 )  GO TO 800
@@ -2979,7 +2986,14 @@ C        --------------------------------------------------------
              DO  1700  I = ISTRT, ISTOP
                  RNODE = ADJNCY(I)
                  LINK = - RNODE
-                 IF  ( RNODE )  1100, 1800, 1200
+C                IF  ( RNODE )  1100, 1800, 1200
+                 IF (RNODE .LT. 0) THEN
+                     GO TO 1100
+                 ELSE IF (RNODE .GT. 0) THEN
+                     GO TO 1200
+                 ELSE 
+                     GO TO 1800
+                 ENDIF
  1200            CONTINUE
 C                --------------------------------------------
 C                IF RNODE IS IN THE DEGREE LIST STRUCTURE ...
@@ -3296,7 +3310,14 @@ C            ---------------------------------------------
                  DO  700  I = ISTRT, ISTOP
                      ENODE = ADJNCY(I)
                      LINK = - ENODE
-                     IF  ( ENODE )  400, 800, 500
+C                    IF  ( ENODE )  400, 800, 500
+                     IF (ENODE .LT. 0) THEN
+                         GO TO 400
+                     ELSE IF (ENODE .GT. 0) THEN
+                         GO TO 500
+                     ELSE 
+                         GO TO 800
+                     ENDIF
 C
   500                CONTINUE
                      IF  ( QSIZE(ENODE) .EQ. 0 )  GO TO 700
@@ -3353,7 +3374,14 @@ C                        --------------------------------------------
                              NODE = ADJNCY(I)
                              LINK = - NODE
                              IF  ( NODE .EQ. ENODE )  GO TO 1400
-                             IF  ( NODE )  1000, 2100, 1100
+C                            IF  ( NODE )  1000, 2100, 1100
+                             IF (NODE .LT. 0) THEN
+                                 GO TO 1000
+                             ELSE IF (NODE .GT. 0) THEN
+                                 GO TO 1100
+                             ELSE 
+                                 GO TO 2100
+                             ENDIF
 C
  1100                        CONTINUE
                              IF  ( QSIZE(NODE) .EQ. 0 )  GO TO 1400
@@ -3427,7 +3455,14 @@ C                                    -------------------------------
                                      DO  1900  J = JSTRT, JSTOP
                                          NODE = ADJNCY(J)
                                          LINK = - NODE
-                                         IF  ( NODE )  1700, 2000, 1800
+C                                        IF  ( NODE )  1700, 2000, 1800
+                                         IF (NODE .LT. 0) THEN
+                                             GO TO 1700
+                                         ELSE IF (NODE .GT. 0) THEN
+                                             GO TO 1800
+                                         ELSE 
+                                             GO TO 2000
+                                         ENDIF
 C
  1800                                    CONTINUE
                                          IF  ( MARKER(NODE) .GE. TAG )

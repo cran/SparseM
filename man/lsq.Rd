@@ -8,18 +8,18 @@ in the testing of LSQR}
 \format{
 A list of class \code{matrix.csc.hb} or \code{matrix.ssc.hb} depending
 on how the coefficient matrix is stored with the following components:
-\itemize{
-  \item{ra }{ra component of the csc or ssc format of the coefficient matrix, X.
-}   \item{ja }{ja component of the csc or ssc format of the coefficient matrix, X.
-}   \item{ia }{ia component of the csc or ssc format of the coefficient matrix, X.
-}   \item{rhs.ra }{ra component of the right-hand-side, y, if stored in csc or
-        ssc format; right-hand-side stored in dense vector or matrix otherwise.}
+\describe{  
+  \item{ra }{ra component of the csc or ssc format of the coefficient matrix, X.}   
+  \item{ja }{ja component of the csc or ssc format of the coefficient matrix, X.}   
+  \item{ia }{ia component of the csc or ssc format of the coefficient matrix, X.}   
+  \item{rhs.ra }{ra component of the right-hand-side, y, if stored in csc 
+      or ssc format; right-hand-side stored in dense vector or matrix otherwise.}
   \item{rhs.ja }{ja component of the right-hand-side, y, if stored in csc or 
         ssc format; a null vector otherwise.}
   \item{rhs.ia }{ia component of the right-hand-side, y, if stored in csc or
         ssc format; a null vector otherwise.}
-  \item{xexact}{vector of the exact solutions, b, if they exist; a null vector o
-therwise.}  \item{guess}{vector of the initial guess of the solutions if they exist;
+  \item{xexact}{vector of the exact solutions, b, if they exist; a null vector o therwise.}  
+  \item{guess}{vector of the initial guess of the solutions if they exist;
         a null vector otherwise.}
   \item{dim}{dimenson of the coefficient matrix, X.}
   \item{rhs.dim}{dimenson of the right-hand-side, y.}

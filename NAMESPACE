@@ -9,7 +9,7 @@ importFrom("stats", "coef", "coefficients", "fitted", "model.extract",
 
 export(is.matrix.csr, is.matrix.csc, is.matrix.ssr, is.matrix.ssc, is.matrix.coo,
        as.matrix.csr, as.matrix.csc, as.matrix.ssr, as.matrix.ssc, as.matrix.coo,
-       forwardsolve,
+       forwardsolve,as.matrix,
        read.matrix.hb, model.guess, model.xexact,
        rbind.matrix.csr, cbind.matrix.csr,
        Ops.matrix.csr, Ops.matrix.diag.csr,
@@ -53,14 +53,14 @@ S3method("[", matrix.diag.csr)
 S3method("[<-", matrix.coo)
 S3method("[<-", matrix.csr)
 
-S3method("as", matrix.coo)
-S3method("as", matrix.csr)
-S3method("as", matrix.csc)
-S3method("as", matrix.ssr)
-S3method("as", matrix.ssc)
-S3method("is", matrix.coo)
-S3method("is", matrix.csr)
-S3method("is", matrix.csc)
-S3method("is", matrix.ssr)
-S3method("is", matrix.ssc)
+#S3method("as", matrix.coo)
+#S3method("as", matrix.csr)
+#S3method("as", matrix.csc)
+#S3method("as", matrix.ssr)
+#S3method("as", matrix.ssc)
+#S3method("is", matrix.coo)
+#S3method("is", matrix.csr)
+#S3method("is", matrix.csc)
+#S3method("is", matrix.ssr)
+#S3method("is", matrix.ssc)
 

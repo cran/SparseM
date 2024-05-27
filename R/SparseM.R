@@ -2027,8 +2027,7 @@ setMethod("kronecker",signature(X="matrix",Y="matrix.csr"),  tmp)
 setMethod("kronecker",signature(X="matrix.csr",Y="matrix"),  tmp)
 rm(tmp)
 
-setMethod("image","matrix.csr",
-function(x,col=c("white","gray"),xlab="column",ylab="row", ...){
+.image.csr <- function(x,col=c("white","gray"),xlab="column",ylab="row", ...){
 	n <- x@dimension[1]
 	p <- x@dimension[2]
 	z <- matrix(0,n,p)
@@ -2039,7 +2038,8 @@ function(x,col=c("white","gray"),xlab="column",ylab="row", ...){
 	axis(1,pretty(1:p), ...)
 	axis(2,pretty(-(n:1)),labels=rev(pretty(1:n)), ...)
 	box()
-	})
+	}
+setMethod("image", c(x="matrix.csr"),.image.csr)
 #setMethod("summary","slm",summary.slm)
 #setMethod("summary","mslm",summary.mslm)
 #setMethod("coef","slm",coef.slm)

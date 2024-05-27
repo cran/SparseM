@@ -540,3 +540,8 @@ The version 1.79
 
 1.  Removed a "f_" from the .Fortran call in chol2csr following bug report
 by Alex Ballantynea (Melbourne U)
+
+The version 1.82
+
+1.  Modernized the cholesky.f to remove arithmetic ifs, suggested by BDR.
+2.  Repaired some syntax errors in lsq.Rd.
