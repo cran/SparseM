@@ -42,6 +42,7 @@
 \alias{det,matrix-method}
 \alias{det,matrix.csr-method}
 \alias{det,matrix.csr.chol-method}
+\alias{determinant}
 \alias{determinant,matrix.csr.chol,missing-method}
 \alias{determinant,matrix.csr.chol,logical-method}
 \alias{determinant,matrix.csr,missing-method}

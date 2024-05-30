@@ -31,7 +31,7 @@ chol(x, \dots)%%MM chol(x, pivot = FALSE, \dots)
 \S4method{backsolve}{matrix.csr.chol}(r, x, k = NULL, upper.tri = NULL,
           transpose = NULL, twice = TRUE, \dots)
 forwardsolve(l, x, k = ncol(l), upper.tri = FALSE, transpose = FALSE)
-solve(a, b, \dots)
+\S4method{solve}{matrix.csr}(a, b, \dots)
 }
 \arguments{
 \item{a}{symmetric positive definite matrix of class \code{matrix.csr}.}
@@ -78,6 +78,10 @@ the code of chol() for further details on the current defaults.
 }
 
 \note{
+There is no explicit checking for positive definiteness of the matrix
+so users are advised to ensure that this condition is satisfied.
+Messages such as "insufficient space" may indicate that one is trying
+to factor a singular matrix.
 Because the sparse Cholesky algorithm re-orders the positive
 definite sparse matrix \code{A}, the value of
 \code{x <- backsolve(C, b)} does \emph{not} equal the solution to the

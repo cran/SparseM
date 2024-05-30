@@ -545,3 +545,20 @@ The version 1.82
 
 1.  Modernized the cholesky.f to remove arithmetic ifs, suggested by BDR.
 2.  Repaired some syntax errors in lsq.Rd.
+3.  Commented out S3Method lines at the end of NAMESPACE file, at suggestion
+of Ivan Krylov, see mail of May 27, 2024.
+4.  This version was accepted by Uwe for CRAN, despite generating an error 
+with balanceTest() in the RItools package.
+5.  After some chaos involving namespace issues that were due to extraneous
+conditions, the package passed R CMD check after adding a setGeneric(image)
+command in SparseM.R.  (This allowed me to restore the vignette in its Rnw
+form.  
+6.  This left things in the status quo ante with the problem in RItools, which
+I'm hoping Jake Bowers and his collaborators can help debug.
+7.  Meanwhile there is a broken 1.82 on CRAN that I've asked Uwe to remove.
+8.  The problem with the RItools example turned out to be that chol was being
+applied to a singular matrix. I've added a warning in the documentation that
+is no pre-checking for PD matrices.
+9.  I also found that determinant wasn't acknowledged to be generic, so this
+has been repaired, however there is still a problem with accessing the
+documentation of this.

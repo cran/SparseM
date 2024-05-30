@@ -1,5 +1,6 @@
 \name{SparseM.ontology}
 \alias{SparseM.ontology}
+\alias{as.matrix}
 \alias{matrix.csr}
 \alias{matrix.csc}
 \alias{initialize,ANY-method}

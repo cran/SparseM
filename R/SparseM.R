@@ -1763,8 +1763,7 @@ setMethod("diag<-","matrix.diag.csr",function(x,value) {
 ## <comment/>
 ##MM setGeneric("det")
 ## Altered 10 July 2014 to agree with procedure in Matrix
-det <- base::det
-environment(det) <- environment()
+setGeneric("determinant")
 setMethod("determinant", signature(x = "matrix.csr", logarithm = "missing"),
 	  function(x, logarithm, ...) determinant(x, logarithm = TRUE, ...))
 setMethod("determinant", signature(x = "matrix.csr.chol", logarithm = "missing"),
@@ -2026,6 +2025,7 @@ setMethod("kronecker",signature(X="numeric",Y="matrix.csr"), tmp)
 setMethod("kronecker",signature(X="matrix",Y="matrix.csr"),  tmp)
 setMethod("kronecker",signature(X="matrix.csr",Y="matrix"),  tmp)
 rm(tmp)
+setGeneric("image")
 
 .image.csr <- function(x,col=c("white","gray"),xlab="column",ylab="row", ...){
 	n <- x@dimension[1]

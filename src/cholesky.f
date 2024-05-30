@@ -2844,8 +2844,8 @@ C     &     '   FACTORIZATION OPERATION COUNT      = ', FCTOPS
 C       WRITE (OUTUNT,2) 
 C     &     '   TRIANGULAR SOLN OPERATION COUNT    = ', SLVOPS
 C
-C    1   FORMAT ( A40, I10 )
-C    2   FORMAT ( A40, 1PD20.10 )
+C   1   FORMAT ( A40, I10 )
+C   2   FORMAT ( A40, 1PD20.10 )
         RETURN
       END
 C***********************************************************************
