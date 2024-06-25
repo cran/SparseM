@@ -1,10 +1,12 @@
 \name{matrix.ssr-class}
+\title{Class "matrix.ssr" - Sparse Matrices in [S]ymmetric [S]parse [R]ow Format}
 \docType{class}
 \alias{matrix.ssr-class}
-\title{Class "matrix.ssr"}
-\description{A new class for sparse matrices stored in symmetric sparse row format}
+\description{
+  A class for sparse matrices stored in symmetric sparse row ('ssr') format.
+}
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("matrix.ssr", ...)}.
+  Objects can be created by calls of the form \code{new("matrix.ssr", ...)}.
 }
 \section{Slots}{
   \describe{
@@ -19,7 +21,7 @@ Objects can be created by calls of the form \code{new("matrix.ssr", ...)}.
         `ia[i]' indicates the position in the arrays `ra' and `ja'
         where the ith row begins. The last, (n+1)st, element of `ia'
         indicates where the n+1 row would start, if it existed.
- }
+      }
     \item{\code{dimension}:}{Object of class \code{integer}, dimension of the matrix }
   }
 }
@@ -33,5 +35,9 @@ Objects can be created by calls of the form \code{new("matrix.ssr", ...)}.
   }
 }
 \seealso{\code{\link{matrix.csr-class}}}
+\examples{
+  ssr <- as.matrix.ssr(diag(c(2,3,5,7)))
+  ssr
+}
 \keyword{classes}
 

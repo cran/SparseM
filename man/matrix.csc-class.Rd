@@ -1,10 +1,13 @@
 \name{matrix.csc-class}
+\title{Class "matrix.csc" - Sparse Matrices in [C]ompressed [S]parse [C]olumn Format}
 \docType{class}
 \alias{matrix.csc-class}
-\title{Class "matrix.csc"}
-\description{A new class for sparse matrices stored in compressed sparse column format}
+\description{
+  A class for sparse matrices stored in compressed sparse column ('csc')
+  format.
+}
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("matrix.csc", ...)}.
+  Objects can be created by calls of the form \code{new("matrix.csc", ...)}.
 }
 \section{Slots}{
   \describe{
@@ -18,8 +21,7 @@ Objects can be created by calls of the form \code{new("matrix.csc", ...)}.
         the beginning of each column in the arrays `ra' and `ja'. Thus
         `ia[i]' indicates the position in the arrays `ra' and `ja'
         where the ith column begins. The last, (n+1)st, element of `ia'
-        indicates where the n+1 column would start, if it existed.
- }
+        indicates where the n+1 column would start, if it existed.}
     \item{\code{dimension}:}{Object of class \code{integer}, dimension of the matrix }
   }
 }
@@ -36,6 +38,11 @@ Objects can be created by calls of the form \code{new("matrix.csc", ...)}.
 }
 
 \seealso{ \code{\link{matrix.csr-class}}}
-
+\examples{
+  cscM <- as.matrix.csc(as(diag(4:1), "matrix.csr"))
+  cscM
+  str(cscM)
+  stopifnot(identical(dim(cscM), c(4L, 4L)))
+}
 \keyword{classes}
 

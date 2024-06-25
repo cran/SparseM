@@ -1,8 +1,11 @@
 \name{matrix.ssc-class}
+\title{Class "matrix.ssc" - Sparse Matrices in [S]ymmetric [S]parse [C]olumn Format}
 \docType{class}
 \alias{matrix.ssc-class}
-\title{Class "matrix.ssc"}
-\description{A new class for sparse matrices stored in symmetric sparse column format}
+\description{
+  A class for sparse matrices stored in symmetric sparse column ('ssc')
+  format.
+}
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("matrix.ssc", ...)}.
 }
@@ -19,7 +22,7 @@ Objects can be created by calls of the form \code{new("matrix.ssc", ...)}.
         `ia[i]' indicates the position in the arrays `ra' and `ja'
         where the ith column begins. The last, (n+1)st, element of `ia'
         indicates where the n+1 column would start, if it existed.
- }
+      }
     \item{\code{dimension}:}{Object of class \code{integer}, dimension of the matrix }
   }
 }

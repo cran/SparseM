@@ -1,7 +1,7 @@
       subroutine chol(m,nnzdmax,d,jd,id,nnzdsm,dsub,jdsub,nsub,nsubmax,
      &                lindx,xlindx,nsuper,nnzlmax,lnz,xlnz,invp,perm,
      &                iwmax,iwork,colcnt,snode,xsuper,split,tmpmax,
-     &                tmpvec,cachsz,level,ierr,timed)
+     &                tmpvec,cachsz,level,ierr,timed, tiny, Large)
 c        1         2         3         4         5         6         7
 c23456789012345678901234567890123456789012345678901234567890123456789012
 c Sparse least squares solver via Ng-Peyton's sparse Cholesky 
@@ -42,10 +42,12 @@ c     split -- an m-vector with splitting of supernodes so that
 c              they fit into cache
 c     tmpmax -- upper bound of the dimension of tmpvec
 c     tmpvec -- a tmpmax-vector of temporary vector
-c     cachsz -- size of the cache (in kilobytes) on the target
-c               machine
+c     cachsz -- size of the cache (in kilobytes) on the target machine
 c     level -- level of loop unrolling while performing numerical
 c              factorization
+c     tiny  -- tiny number; values below tiny * max(diag) are replaced by 'Large';      was 10^{-30} hardcoded
+c     Large -- Large number ("Infinite") to replace tiny diagonal entries in Cholesky ; was 10^{128}   "
+c OUTPUT:
 c     ierr -- error flag
 c       1 -- insufficient work space in call to extract
 c       2 -- insufficient storage in iwork when calling ordmmd;
@@ -55,13 +57,10 @@ c       5 -- nsub > nsubmax when calling sfinit
 c       6 -- insufficient work space in iwork when calling symfct
 c       7 -- inconsistancy in input when calling symfct
 c       8 -- tmpsiz > tmpmax when calling symfct; increase tmpmax
-c       9 -- nonpositive diagonal encountered when calling
-c            blkfct
-c       10 -- insufficient work storage in tmpvec when calling
-c            blkfct
-c       11 -- insufficient work storage in iwork when calling
-c            blkfct
-c OUTPUT:
+c       9 -- nonpositive diagonal encountered when calling blkfct
+c       10 -- insufficient work storage in tmpvec when calling blkfct   
+c       11 -- insufficient work storage in iwork when calling blkfct
+c    >= 17 -- == 16 + n_tiny; n_tiny := #{diagonal elements <= 'tiny' in PCHOL() partial Cholesky}
 c     y -- an m-vector of least squares solution
 c     nsub -- number of subscripts in lindx
 c WORK ARRAYS:
@@ -70,7 +69,7 @@ c              working storage iwork; set at 7*m+3
 c     iwork -- an iwsiz-vector of integer as work space
 c        1         2         3         4         5         6         7
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      integer nsub,nsuper,nnzdmax,nnzdsm,nnzl,iwsiz,tmpsiz,iwmax,
+      integer m, nsub,nsuper,nnzdmax,nnzdsm,nnzl,iwsiz,tmpsiz,iwmax,
      &        nnzlmax,nsubmax,cachsz,level,tmpmax,ierr,
      &        jdsub(nnzdsm),jd(nnzdmax),
      &        id(m+1),lindx(nsubmax),xlindx(m+1),
@@ -78,7 +77,7 @@ c23456789012345678901234567890123456789012345678901234567890123456789012
      &        colcnt(m),snode(m),xsuper(m+1),split(m)
       double precision dsub(nnzdsm),d(nnzdmax),
      &        lnz(nnzlmax),tmpvec(tmpmax)
-      double precision timed
+      double precision timed, tiny, Large
 c      real gtimer,timbegw,timendw
       external smxpy1,smxpy2,smxpy4,smxpy8
       external mmpy1,mmpy2,mmpy4,mmpy8
@@ -177,16 +176,20 @@ c
       iwsiz = 2 * m + 2 * nsuper
       if (level .eq. 1) then
          call blkfct(m,nsuper,xsuper,snode,split,xlindx,lindx,xlnz,
-     &               lnz,iwsiz,iwork,tmpsiz,tmpvec,ierr,mmpy1,smxpy1)
+     &                  lnz,iwsiz,iwork,tmpsiz,tmpvec,ierr,mmpy1,smxpy1,
+     &        tiny, Large )
       elseif (level .eq. 2) then
          call blkfct(m,nsuper,xsuper,snode,split,xlindx,lindx,xlnz,
-     &               lnz,iwsiz,iwork,tmpsiz,tmpvec,ierr,mmpy2,smxpy2)
+     &                  lnz,iwsiz,iwork,tmpsiz,tmpvec,ierr,mmpy2,smxpy2,
+     &                  tiny, Large )
       elseif (level .eq. 4) then
          call blkfct(m,nsuper,xsuper,snode,split,xlindx,lindx,xlnz,
-     &               lnz,iwsiz,iwork,tmpsiz,tmpvec,ierr,mmpy4,smxpy4)
+     &                  lnz,iwsiz,iwork,tmpsiz,tmpvec,ierr,mmpy4,smxpy4,
+     &                  tiny, Large )
       elseif (level .eq. 8) then
          call blkfct(m,nsuper,xsuper,snode,split,xlindx,lindx,xlnz,
-     &               lnz,iwsiz,iwork,tmpsiz,tmpvec,ierr,mmpy8,smxpy8)
+     &                  lnz,iwsiz,iwork,tmpsiz,tmpvec,ierr,mmpy8,smxpy8,
+     &                  tiny, Large )
       endif
       if (ierr .eq. -1) then
          ierr = 9

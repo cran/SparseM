@@ -36,9 +36,9 @@ c  fill out the ja slot
                ja(place) = lindx2(k)
 c               write(*,*) 'i =', i, ' j =', j,' k =', k,' place =',place
                place = place + 1
- 225            continue
- 250         continue
- 300     continue
+ 225        continue
+ 250     continue
+ 300  continue
 
       END subroutine
 

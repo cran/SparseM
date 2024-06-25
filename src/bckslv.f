@@ -52,7 +52,7 @@ c
             sol(i,j) = newrhs(invp(i))
          enddo
       enddo
-  100 continue
+c 100 continue
 c      timendw=gtimer()
 c      timed = timendw - timbegw
       return
@@ -123,7 +123,6 @@ c         write(*,*) 'newrhs =', newrhs
             sol(i,j) = newrhs(invp(i))
          enddo
       enddo
-  100 continue
 
       return
       end
@@ -182,7 +181,7 @@ c         write(*,*) 'newrhs =', newrhs
             sol(i,j) = newrhs(invp(i))
          enddo
       enddo
-  100 continue
+c 100 continue
 
       return
       end

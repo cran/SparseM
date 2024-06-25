@@ -1,11 +1,14 @@
 \name{matrix.csc.hb-class}
+\title{Class "matrix.csc.hb" - Column Compressed Sparse Matrices stored in Harwell-Boeing Format}
 \docType{class}
 \alias{matrix.csc.hb-class}
-\title{Class "matrix.csc.hb"}
-\description{A new class consists of the coefficient matrix and
-the right-hand-side of a linear system of equations,
-initial guess of the solution and the exact solutions if they exist stored
-in external files using the Harwell-Boeing format.
+\alias{show,matrix.csc.hb-method}
+\alias{show,matrix.ssc.hb-method}
+\description{
+  A class consisting of the coefficient matrix and the right-hand-side of a
+  linear system of equations, initial guess of the solution and the exact
+  solutions if they exist stored in external files using the
+  Harwell-Boeing format.
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("matrix.csc.hb", ...)}.
@@ -30,9 +33,11 @@ Objects can be created by calls of the form \code{new("matrix.csc.hb", ...)}.
 \section{Methods}{
   \describe{
     \item{model.matrix}{\code{signature(object = "matrix.csc.hb")}: ... }
+    \item{show}{\code{signature(object = "matrix.csc.hb")}:
+      \code{\link{show}()} the object, notably also when auto-printing.}
   }
 }
 \seealso{\code{\link{model.matrix}}, \code{\link{model.response}}, 
-\code{\link{read.matrix.hb}},  \code{\link{matrix.ssc.hb-class}}}
+  \code{\link{read.matrix.hb}},  \code{\link{matrix.ssc.hb-class}}}
 \keyword{classes}
 

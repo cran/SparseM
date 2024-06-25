@@ -1,4 +1,5 @@
 \name{SparseM.ops}
+\title{Basic Linear Algebra for Sparse Matrices}
 \alias{Ops.matrix.csr}
 \alias{Ops.matrix.diag.csr}
 \alias{\%*\%-methods}
@@ -32,16 +33,9 @@
 \alias{|,matrix.csr-method}
 \alias{norm}
 \alias{norm,ANY-method}
-% For R 2.10.x and earlier:
-\alias{norm,matrix.csr-method}
-% For R 2.11.0 and later:
 \alias{norm,matrix.csr,character-method}
 \alias{norm,matrix.csr,missing-method}
-% FIXME(MM) - deprecate det() methods, propagating determinant()
-\alias{det,ANY-method}
-\alias{det,matrix-method}
-\alias{det,matrix.csr-method}
-\alias{det,matrix.csr.chol-method}
+\alias{det}% our own, calling _our_ determinant()
 \alias{determinant}
 \alias{determinant,matrix.csr.chol,missing-method}
 \alias{determinant,matrix.csr.chol,logical-method}
@@ -77,9 +71,10 @@
 \alias{[<-.matrix.diag.csr}
 \alias{[.matrix.coo}
 \alias{[<-.matrix.coo}
-\title{Basic Linear Algebra for Sparse Matrices}
-\description{Basic linear algebra operations for sparse matrices
-of class \code{matrix.csr}.}
+\description{
+  Basic linear algebra operations for sparse matrices,
+  mostly of class \code{matrix.csr}.
+}
 \arguments{
 \item{x}{matrix of class \code{matrix.csr}.}
 \item{y}{matrix of class \code{matrix.csr} or a dense matrix or vector.}
@@ -101,22 +96,24 @@ diagonal of a \code{matrix.csr} object, to create a sparse diagonal see
 
 The function \code{\link[base]{determinant}} computes the (log) determinant,
 of the argument, returning a \code{"det"} object as the base function.
-This is \emph{preferred} over using the function \code{det()}
-which is a simple wrapper for \code{determinant()}.
-Using \code{det()} in the following way is somewhat deprecated:
-\cr
-\code{det()} computes the determinant of the argument
+This is typically \emph{preferred} over using the function \code{det()}
+which is a simple wrapper for \code{determinant()}, in a way it will work
+for our sparse matrices, as well.
+\code{determinant()} computes the determinant of the argument
 matrix.  If the matrix is of class \code{matrix.csr} then it must
 be symmetric, or an error will be returned.  If the matrix is of
-class \code{matrix.csr.chol} then the determinant of the Cholesky
-factor is returned, ie the product of the diagonal elements.
-% rather have them use determinant()...
-%For the log determinant, use \code{det(x, logarithm=TRUE)}.
+class \code{matrix.csr.chol} then the (pre-computed) determinant of the Cholesky
+factor is returned, i.e., the product of the diagonal elements.
 
-The function \code{norm} is used to check for symmetry by
-computing the maximum of the elements of the difference between
-the matrix and its transpose.  Optionally, this sup norm can
-be replaced by the Hilbert-Schmidt norm, or the l1 norm.
+The function \code{norm}, i.e. \code{norm(x, type)}, by default computes
+the \dQuote{sup} (or \code{"M"}aximum norm, i.e., the maximum of the matrix
+elements.  Optionally, this \code{type = "sup"} (equivalently, \code{type = "M"}) norm can
+be replaced by the Hilbert-Schmidt, \code{type = "HS"} or equivalently, \code{type = "F"}
+norm, or the \code{type = "l1"}, norm.
+Note that for historical reasons, the default \code{type} differs from \R's
+own \code{\link[base]{norm}()}, see the examples using \code{B}, below.
+The \code{"sup" === "M"} and \code{"HS" === "F"} equivalences have been
+introduced in \pkg{SparseM} version 1.84.
 }
 \references{
   Koenker, R and Ng, P. (2002).
@@ -124,26 +121,54 @@ be replaced by the Hilbert-Schmidt norm, or the l1 norm.
   \url{http://www.econ.uiuc.edu/~roger/research/home.html}
 }
 \seealso{
-\code{slm} for sparse linear model fitting.
-\code{SparseM.ontology} for coercion and other class relations involving the
-sparse matrix classes.
+  \code{\link{slm}} for sparse linear model fitting.
+  \code{\link{SparseM.ontology}} for coercion and other class relations
+  involving our sparse matrix classes.
 }
 \examples{
 n1 <- 10
 n2 <- 10
 p <- 6
 y <- rnorm(n1)
-a <- rnorm(n1*p)
+a <- round(rnorm(n1*p), 2)
 a[abs(a) < 0.5] <- 0
-A <- matrix(a,n1,p)
+A <- matrix(a, n1,p)
 A.csr <- as.matrix.csr(A)
-b <- rnorm(n2*p)
-b[abs(b)<1.0] <- 0
-B <- matrix(b,n2,p)
+
+B <- matrix(c(1.5, 0,  0,  0, -1.4,    0,    0,   0,   0, -1.4,
+              2,   0, -1,  0,  0,      2.1, -1.9, 1.4, 0,  0,
+              0,-2.3,  0,  0, -1.9,    0,    0,   0,   0, -1.4,
+              0,   0,  0,  0,  0,     -3,    0,   1.3, 0,  1.1,
+              0,   0,  0,  0,  2,      0,    0,   0,  -1,  0,
+              0,   0, -1.6,0,  0,      0,    0,   0,  -1.7,0),
+            10L, 6L)
+rcond(B) # 0.21 .. i.e., quite well conditioned
 B.csr <- as.matrix.csr(B)
+B.csr
+
+## norm() : different 'type' for base R and  SparseM:
+(nR <- vapply(c("1", "I", "F", "M", "2"), norm, 0, x = B))
+##        1        I        F        M        2
+## 8.400000 5.300000 7.372923 3.000000 4.464801
+(nSpM <- vapply(c("sup","M",  "HS","F",  "l1"), norm, 0, x = B.csr))
+##      sup         M        HS         F        l1
+## 3.000000  3.000000  7.372923  7.372923 30.000000
+stopifnot(all.equal(unname(nSpM[c("M", "F")]),
+                    unname(nR  [c("M", "F" )]), tolerance = 1e-14))
 
 # matrix transposition and multiplication
-A.csr\%*\%t(B.csr)
+BtB <- crossprod(B) # == t(B) \%*\% B  {more efficiently}
+
+A.csr \%*\% t(B.csr)
+BtBs <- t(B.csr) \%*\% B.csr
+BtBs
+stopifnot(all.equal(    BtB,  as.matrix(BtBs),  tolerance = 1e-14),
+          all.equal(det(BtB), print(det(BtBs)), tolerance = 1e-14))
+
+# matrix  o  vector
+stopifnot(all.equal(y \%*\%  A , y   \%*\% A.csr) ,
+          all.equal(A \%*\% 1:6, A.csr \%*\% 1:6)
+)
 
 # kronecker product - via kronecker() methods:
 A.csr \%x\% matrix(1:4,2,2)
