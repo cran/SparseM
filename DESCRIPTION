@@ -1,5 +1,5 @@
 Package: SparseM
-Version: 1.84
+Version: 1.84-2
 Authors@R: c(
     person("Roger", "Koenker",  role = c("cre","aut"), email =  "rkoenker@uiuc.edu"),
     person(c("Pin", "Tian"), "Ng",  role = c("ctb"),
@@ -20,7 +20,7 @@ License: GPL (>= 2)
 Title: Sparse Linear Algebra
 URL: http://www.econ.uiuc.edu/~roger/research/sparse/sparse.html
 NeedsCompilation: yes
-Packaged: 2024-06-15 19:23:09 UTC; maechler
+Packaged: 2024-07-17 11:01:25 UTC; ripley
 Author: Roger Koenker [cre, aut],
   Pin Tian Ng [ctb] (Contributions to Sparse QR code),
   Yousef Saad [ctb] (author of sparskit2),
@@ -28,4 +28,4 @@ Author: Roger Koenker [cre, aut],
   Martin Maechler [ctb] (chol() tweaks; S4,
     <https://orcid.org/0000-0002-8685-9910>)
 Repository: CRAN
-Date/Publication: 2024-06-25 12:00:01 UTC
+Date/Publication: 2024-07-17 16:10:06 UTC

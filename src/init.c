@@ -5,7 +5,7 @@
 static const R_FortranMethodDef FortranEntries[] = {
     {"aedib",    (DL_FUNC) &F77_SUB(aedib),    16},
     {"aeexpb",   (DL_FUNC) &F77_SUB(aeexpb),   16},
-    {"aemub",    (DL_FUNC) &F77_SUB(aemub),    15},
+    {"aemub",    (DL_FUNC) &F77_SUB(aemub),    13},
     {"amub",     (DL_FUNC) &F77_SUB(amub),     15},
     {"amubdg",   (DL_FUNC) &F77_SUB(amubdg),   10},
     {"amux",     (DL_FUNC) &F77_SUB(amux),      6},
@@ -23,7 +23,7 @@ static const R_FortranMethodDef FortranEntries[] = {
     {"csrdns",   (DL_FUNC) &F77_SUB(csrdns),    8},
     {"csrssr",   (DL_FUNC) &F77_SUB(csrssr),    9},
     {"filter1",  (DL_FUNC) &F77_SUB(filter1),  11},
-    {"nzero",    (DL_FUNC) &F77_SUB(nzero),    11},
+    {"nzero",    (DL_FUNC) &F77_SUB(nzero),    9},
     {"ssrcsr",   (DL_FUNC) &F77_SUB(ssrcsr),   13},
     {NULL, NULL, 0}
 };

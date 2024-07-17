@@ -1,4 +1,6 @@
 #include <R.h>
+/* for int_least32_t : */
+#include <stdint.h>
 
 /* .Fortran() calls from R code :*/
 
@@ -21,8 +23,8 @@ void F77_NAME(chol2csr)(int *nrow, int *nnzlindx, int *nsuper, int *lindx, int *
 			int *xlnz, int *dim, double *ra, int *ia, int *ja);
 // csr.f :
 void F77_NAME(csr)(double *a, double *ra, int *ja, int *ia, int *m, int *n, int *nnz, double *eps);
-void F77_NAME(nzero)(double *ra, int *ja, int *ia, int *nrow, int *ncol, int *nnz, int *nz,
-		     double *rao, int *jao, int *iao, int *colmn);
+void F77_NAME(nzero)(int *ja, int *ia, int *nrow, int *ncol, int *nnz, int *nz,
+		     double *rao, int *jao, int *iao);
 
 // sparskit.f : ------------------------------------------------------------
 
@@ -36,7 +38,7 @@ void F77_NAME(aedib)(int *nrow, int *ncol, int *job, double *a, int *ja, int *ia
 void F77_NAME(aeexpb)(int *nrow, int *ncol, int *job, double *a, int *ja, int *ia, double *b, int *jb, int *ib,
 		      double *c, int *jc, int *ic, int *nzmax, int *iw, double *aw, int *ierr);
 void F77_NAME(aemub)(int *nrow, int *ncol, double *a, int *ja, int *ia, double *amask, int *jmask, int *imask,
-		     double *c, int *jc, int *ic, int *iw, double *aw, int *nzmax, int *ierr);
+		     double *c, int *jc, int *ic, int *nzmax, int *ierr);
 void F77_NAME(amub)(int *nrow, int *ncol, int *job, double *a, int *ja, int *ia, double *b, int *jb, int *ib,
 		    double *c, int *jc, int *ic, int *nzmax, int *iw, int *ierr);
 void F77_NAME(amux)(int *n, double *x, double *y, double *a, int *ja, int *ia);

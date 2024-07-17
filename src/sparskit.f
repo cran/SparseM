@@ -1315,7 +1315,7 @@ c-----------end-of-amudiag----------------------------------------------
       end
 c-----------------------------------------------------------------------
       subroutine aemub (nrow,ncol,a,ja,ia,amask,jmask,imask,
-     *                  c,jc,ic,iw,aw,nzmax,ierr)
+     *                  c,jc,ic,nzmax,ierr)
 c---------------------------------------------------------------------
       double precision  a(*),c(*),amask(*),aw(ncol)
       integer ia(nrow+1),ja(*),jc(*),ic(nrow+1),jmask(*),imask(nrow+1)

@@ -4009,9 +4009,12 @@ C           -----------------------------
 C           BOUNDARY CODE FOR THE K LOOP.
 C           -----------------------------
 C
-            GO TO ( 1100,  900,  700,  500 ), N-K+2
+c           GO TO ( 1100,  900,  700,  500 ), N-K+2
+c                     1     2     3     4
+            select case (n-k+2)
 C
-  500       CONTINUE
+            case (4)
+c     500       CONTINUE
 C
 C               -----------------------------------
 C               THREE COLUMNS UPDATING TWO COLUMNS.
@@ -4051,7 +4054,8 @@ C
 C
                 GO TO 1100
 C
-  700       CONTINUE
+             case (3)
+c  700       CONTINUE
 C
 C               ---------------------------------
 C               TWO COLUMNS UPDATING TWO COLUMNS.
@@ -4085,7 +4089,8 @@ C
 C
                 GO TO 1100
 C
-  900       CONTINUE
+             case (2)
+c  900       CONTINUE
 C
 C               --------------------------------
 C               ONE COLUMN UPDATING TWO COLUMNS.
@@ -4112,6 +4117,8 @@ C
  1000           CONTINUE
 C
                 GO TO 1100
+            case (1)
+            end select
 C
 C           -----------------------------------------------
 C           PREPARE FOR NEXT PAIR OF COLUMNS TO BE UPDATED.
@@ -4315,10 +4322,14 @@ C           -----------------------------
 C           BOUNDARY CODE FOR THE K LOOP.
 C           -----------------------------
 C
-            GO TO ( 2000, 1700, 1500, 1300,
-     &              1100,  900,  700,  500  ), N-K+2
+c            GO TO ( 2000, 1700, 1500, 1300,
+c                      1     2     3     4
+c     &              1100,  900,  700,  500  ), N-K+2
+c                      5     6     7     8
+            select case (n - k + 2)
 C
-  500       CONTINUE
+            case (8)
+c  500       CONTINUE
 C
 C               -----------------------------------
 C               SEVEN COLUMNS UPDATING TWO COLUMNS.
@@ -4384,7 +4395,8 @@ C
 C
                 GO TO 2000
 C
-  700       CONTINUE
+             case (7)
+c  700       CONTINUE
 C
 C               ---------------------------------
 C               SIX COLUMNS UPDATING TWO COLUMNS.
@@ -4444,7 +4456,8 @@ C
 C
                 GO TO 2000
 C
-  900       CONTINUE
+             case (6)
+c  900       CONTINUE
 C
 C               ----------------------------------
 C               FIVE COLUMNS UPDATING TWO COLUMNS.
@@ -4496,7 +4509,8 @@ C
 C
                 GO TO 2000
 C
- 1100       CONTINUE
+             case (5)
+c 1100       CONTINUE
 C
 C               ----------------------------------
 C               FOUR COLUMNS UPDATING TWO COLUMNS.
@@ -4542,7 +4556,8 @@ C
 C
                 GO TO 2000
 C
- 1300       CONTINUE
+             case (4)
+c 1300       CONTINUE
 C
 C               -----------------------------------
 C               THREE COLUMNS UPDATING TWO COLUMNS.
@@ -4582,7 +4597,8 @@ C
 C
                 GO TO 2000
 C
- 1500       CONTINUE
+             case (3)
+c 1500       CONTINUE
 C
 C               ---------------------------------
 C               TWO COLUMNS UPDATING TWO COLUMNS.
@@ -4616,7 +4632,9 @@ C
 C
                 GO TO 2000
 C
- 1700       CONTINUE
+             case (2)
+c
+c 1700       CONTINUE
 C
 C               --------------------------------
 C               ONE COLUMN UPDATING TWO COLUMNS.
@@ -4643,6 +4661,10 @@ C
  1800           CONTINUE
 C
                 GO TO 2000
+             case (1)
+             case default
+C            GO TO 2000
+             end select
 C
 C           -----------------------------------------------
 C           PREPARE FOR NEXT PAIR OF COLUMNS TO BE UPDATED.
@@ -5178,18 +5200,22 @@ C***********************************************************************
 C
       REMAIN = MOD ( N, LEVEL )
 C
-      GO TO ( 2000, 100 ), REMAIN+1
+c      GO TO ( 2000, 100 ), REMAIN+1
+c                1    2
+      if(REMAIN+1 .eq. 1) then
 C
-  100 CONTINUE
+c  100 CONTINUE
       I1 = APNT(1+1) - M
       A1 = - A(I1)
       DO  150  I = 1, M
           Y(I) = Y(I) + A1*A(I1)
           I1 = I1 + 1
   150 CONTINUE
-      GO TO 2000
+c      GO TO 2000
+      else ! REMAIN+1 == 2
+      end if
 C
- 2000 CONTINUE
+c 2000 CONTINUE
       DO  4000  J = REMAIN+1, N, LEVEL
           I1 = APNT(J+1) - M
           I2 = APNT(J+2) - M
@@ -5264,18 +5290,21 @@ C***********************************************************************
 C
       REMAIN = MOD ( N, LEVEL )
 C
-      GO TO ( 2000, 100, 200, 300 ), REMAIN+1
+c      GO TO ( 2000, 100, 200, 300 ), REMAIN+1
+c                1    2    3    4
+      select case (REMAIN+1)
 C
-  100 CONTINUE
+      case (2)  !  n | 4 == 1
+c  100 CONTINUE
       I1 = APNT(1+1) - M
       A1 = - A(I1)
       DO  150  I = 1, M
           Y(I) = Y(I) + A1*A(I1)
           I1 = I1 + 1
   150 CONTINUE
-      GO TO 2000
 C
-  200 CONTINUE
+      case (3)  !  n | 4 == 2
+c  200 CONTINUE
       I1 = APNT(1+1) - M
       I2 = APNT(1+2) - M
       A1 = - A(I1)
@@ -5286,9 +5315,9 @@ C
           I1 = I1 + 1
           I2 = I2 + 1
   250 CONTINUE
-      GO TO 2000
 C
-  300 CONTINUE
+      case (4)  !  n | 4 == 3
+c  300 CONTINUE
       I1 = APNT(1+1) - M
       I2 = APNT(1+2) - M
       I3 = APNT(1+3) - M
@@ -5303,9 +5332,11 @@ C
           I2 = I2 + 1
           I3 = I3 + 1
   350 CONTINUE
-      GO TO 2000
 C
- 2000 CONTINUE
+      case (1)
+c     2000 CONTINUE
+      end select
+
       DO  4000  J = REMAIN+1, N, LEVEL
           I1 = APNT(J+1) - M
           I2 = APNT(J+2) - M
@@ -5367,7 +5398,6 @@ C     PARAMETERS.
 C     -----------
 C
       INTEGER             M, N, LEVEL
-C
       INTEGER             APNT(*)
 C
       DOUBLE PRECISION    Y(*), A(*)
@@ -5387,19 +5417,23 @@ C***********************************************************************
 C
       REMAIN = MOD ( N, LEVEL )
 C
-      GO TO ( 2000, 100, 200, 300,
-     &         400, 500, 600, 700  ), REMAIN+1
+c      GO TO ( 2000, 100, 200, 300,
+c                1    2    3    4
+c     &         400, 500, 600, 700  ), REMAIN+1
+c                5    6    7    8
+      select case (REMAIN+1)
+      case (2)                  !   n | 8 == 1
 C
-  100 CONTINUE
+c  100 CONTINUE
       I1 = APNT(1+1) - M
       A1 = - A(I1)
       DO  150  I = 1, M
           Y(I) = Y(I) + A1*A(I1)
           I1 = I1 + 1
   150 CONTINUE
-      GO TO 2000
 C
-  200 CONTINUE
+      case (3)                  !   n | 8 == 2
+c  200 CONTINUE
       I1 = APNT(1+1) - M
       I2 = APNT(1+2) - M
       A1 = - A(I1)
@@ -5410,9 +5444,9 @@ C
           I1 = I1 + 1
           I2 = I2 + 1
   250 CONTINUE
-      GO TO 2000
 C
-  300 CONTINUE
+      case (4)                  !   n | 8 == 3
+c  300 CONTINUE
       I1 = APNT(1+1) - M
       I2 = APNT(1+2) - M
       I3 = APNT(1+3) - M
@@ -5427,9 +5461,9 @@ C
           I2 = I2 + 1
           I3 = I3 + 1
   350 CONTINUE
-      GO TO 2000
 C
-  400 CONTINUE
+      case (5)                  !   n | 8 == 4
+c  400 CONTINUE
       I1 = APNT(1+1) - M
       I2 = APNT(1+2) - M
       I3 = APNT(1+3) - M
@@ -5447,9 +5481,9 @@ C
           I3 = I3 + 1
           I4 = I4 + 1
   450 CONTINUE
-      GO TO 2000
 C
-  500 CONTINUE
+      case (6)                  !   n | 8 == 5
+c  500 CONTINUE
       I1 = APNT(1+1) - M
       I2 = APNT(1+2) - M
       I3 = APNT(1+3) - M
@@ -5471,9 +5505,9 @@ C
           I4 = I4 + 1
           I5 = I5 + 1
   550 CONTINUE
-      GO TO 2000
 C
-  600 CONTINUE
+      case (7)                  !   n | 8 == 6
+c  600 CONTINUE
       I1 = APNT(1+1) - M
       I2 = APNT(1+2) - M
       I3 = APNT(1+3) - M
@@ -5498,9 +5532,9 @@ C
           I5 = I5 + 1
           I6 = I6 + 1
   650 CONTINUE
-      GO TO 2000
 C
-  700 CONTINUE
+      case (8)                  !   n | 8 == 7
+c  700 CONTINUE
       I1 = APNT(1+1) - M
       I2 = APNT(1+2) - M
       I3 = APNT(1+3) - M
@@ -5529,9 +5563,11 @@ C
           I6 = I6 + 1
           I7 = I7 + 1
   750 CONTINUE
-      GO TO 2000
 C
- 2000 CONTINUE
+      case (1)
+      end select
+c     2000 CONTINUE
+
       DO  4000  J = REMAIN+1, N, LEVEL
           I1 = APNT(J+1) - M
           I2 = APNT(J+2) - M
@@ -5549,8 +5585,8 @@ C
           A6 = - A(I6)
           A7 = - A(I7)
           A8 = - A(I8)
-          DO  3000  I = 1, M
-              Y(I) = ((((((( (Y(I))
+          DO I = 1, M
+             Y(I) = ((((((( (Y(I))
      &               + A1*A(I1)) + A2*A(I2))
      &               + A3*A(I3)) + A4*A(I4))
      &               + A5*A(I5)) + A6*A(I6))
@@ -5563,7 +5599,7 @@ C
               I6 = I6 + 1
               I7 = I7 + 1
               I8 = I8 + 1
- 3000     CONTINUE
+          end do
  4000 CONTINUE
 C
       RETURN

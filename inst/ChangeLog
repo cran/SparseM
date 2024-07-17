@@ -1,5 +1,5 @@
 This directory contains the development version of the sparse matrix
-package SparseM.  This is an informal revision history.
+`package SparseM.  This is an informal revision history.
 
 The initial version 0.01 was sent to David Meyer in Vienna June 10, 2002.
 
@@ -564,7 +564,7 @@ has been repaired, however there is still a problem with accessing the
 documentation of this.
 
 The version 1.84
-		 (much by Martin Maechler who also adds himself as to the Authors 'ctb')
+		 (much by Martin Maechler who also adds himself to the Authors 'ctb')
 
 1.  chol(<matrix.csr)     gets new argument `warn.only = FALSE` in order to
 	still return in case of errors (as this has happened in older
@@ -591,3 +591,9 @@ The version 1.84
     structural zeros shown as  " . "
 6.  norm(<matrix.csr>, "I") now gives an error (instead of invisible(NULL)).
 7.  demo(LeastSquares)  and  demo(Solve)  work now.
+
+The version 1.84-1
+
+- src/SparseM.h : use 'int_least32_t' instead of 'int'  for Fortran 'logical', in two cases (fixing 'LTO').
+- src/csr.f (etc): drop first *unused* argument 'ra' from nzero().
+- src/cholesky.f:  replace computed goto's in code by  select case(.) case() ...

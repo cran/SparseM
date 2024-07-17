@@ -30,7 +30,7 @@ c        1         2         3         4         5         6         7
       return
       end
 c
-      subroutine nzero (ra,ja,ia,nrow,ncol,nnz,nz,rao,jao,iao,colmn)
+      subroutine nzero (ja,ia,nrow,ncol,nnz,nz,rao,jao,iao)
 c        1         2         3         4         5         6         7
 c23456789012345678901234567890123456789012345678901234567890123456789012
 c Return the structure of the zero entries in ra,ja,ia, in 
@@ -44,10 +44,9 @@ c     nz -- number of zero elements
 c OUTPUT:
 c     rao, jao, iao -- strucvture of the zero entries in csr format
 c WORK ARRAY:
-c     colmn -- logical vector of length ncol
 c        1         2         3         4         5         6         7
 c23456789012345678901234567890123456789012345678901234567890123456789012
-      double precision ra(nnz),rao(nz),one
+      double precision rao(nz),one
       integer ja(nnz),ia(nrow+1),jao(nz),iao(nrow+1),
      &        nrow,ncol,nnz,nz,inz
       logical colmn(ncol)

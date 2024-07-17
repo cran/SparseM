@@ -419,7 +419,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...) {
 		}
 	else{
 		z <- .Fortran(f_nzero,
-			as.double(e1@ra),
+                              ## as.double(e1@ra),
 			as.integer(e1@ja),
 			as.integer(e1@ia),
 			as.integer(nrow),
@@ -428,8 +428,7 @@ function(x, nrow = 1, ncol = 1, eps = .Machine$double.eps, ...) {
 			as.integer(nz),
 			ra = double(nz),
 			ja = integer(nz),
-			ia = integer(nrow+1),
-			logical(ncol))
+			ia = integer(nrow+1))
 		z <- new("matrix.csr",ra=z$ra,ja=z$ja,ia=z$ia,dimension=e1@dimension)
 		}
 	z
@@ -526,8 +525,6 @@ else
                 ra = double(nnzmax),
                 ja = integer(nnzmax),
                 ia = integer(Arow+1),
-                integer(Acol),
-                double(Acol),
                 as.integer(nnzmax),
                 ierr = integer(1))
 	if(z$ierr != 0)
